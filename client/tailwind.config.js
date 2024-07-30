@@ -18,7 +18,7 @@ export default {
         "main-800": "#1E2640",
         "main-900": "#0F1320"
       },
-      color: {
+      colors: {
         "main-50": "#EDEFF6",
         "main-100": "#DBDFEC",
         "main-200": "#B7BFD9",
