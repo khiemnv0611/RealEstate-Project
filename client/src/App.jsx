@@ -9,10 +9,14 @@ import {
   Search,
 } from "./pages/public";
 import path from "./utils/path";
+import { Modal } from "./components";
+import { useAppStore } from "./store/useAppStore";
 
 const App = () => {
+  const { isShowModal } = useAppStore();
   return (
-    <div className="">
+    <>
+      {isShowModal && <Modal />}
       <Routes>
         <Route path={path.PUBLIC_LAYOUT} element={<PublicLayout />}>
           <Route path={path.HOME} element={<Home />} />
@@ -22,7 +26,7 @@ const App = () => {
           <Route path={path.PROPERTIES} element={<Properties />} />
         </Route>
       </Routes>
-    </div>
+    </>
   );
 };
 
