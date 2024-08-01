@@ -1,0 +1,3 @@
+### Reigister
+POST http://localhost:5000/api/auth/register?name=khiem&phone=123
+Content-Type: application/json

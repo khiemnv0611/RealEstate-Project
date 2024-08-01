@@ -1,11 +1,23 @@
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { InputForm } from "..";
 import { useForm } from "react-hook-form";
+import { Button } from "..";
 
 const Login = () => {
   const [variant, setVariant] = useState("LOGIN");
-  const { register } = useForm();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm();
+  useEffect(() => {
+    reset();
+  }, [variant]);
+  const onSubmit = (data) => {
+    console.log(data);
+  };
   return (
     <div
       onClick={(e) => e.stopPropagation()}
@@ -34,13 +46,15 @@ const Login = () => {
           Đăng ký
         </span>
       </div>
-      <div className="flex flex-col gap-4 w-full px-4">
+      <form className="flex flex-col gap-4 w-full px-4">
         <InputForm
           label="Số điện thoại"
           register={register}
           inputClassname="rounded-md"
           id="phone"
           placeholder="Nhập số điện thoại ..."
+          validate={{ required: "Trường này không được để trống" }}
+          errors={errors}
         />
         <InputForm
           label="Mật khẩu"
@@ -49,8 +63,30 @@ const Login = () => {
           id="password"
           placeholder="Nhập mật khẩu ..."
           type="password"
+          validate={{ required: "Trường này không được để trống" }}
+          errors={errors}
         />
-      </div>
+        {variant === "REGISTER" && (
+          <InputForm
+            label="Họ và tên"
+            register={register}
+            inputClassname="rounded-md"
+            id="name"
+            placeholder="Nhập mật khẩu ..."
+            validate={{ required: "Trường này không được để trống" }}
+            errors={errors}
+          />
+        )}
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          className="py-2 mt-4 font-bold"
+        >
+          {variant === "LOGIN" ? "Đăng nhập" : "Đăng ký"}
+        </Button>
+        <span className="cursor-pointer text-main-500 hover:underline font-bold w-full text-center">
+          Quên mật khẩu?
+        </span>
+      </form>
     </div>
   );
 };

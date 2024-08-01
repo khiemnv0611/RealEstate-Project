@@ -9,7 +9,7 @@ const InputForm = ({
   id,
   type = "text",
   register,
-  errors,
+  errors = {},
   inputClassname,
   validate,
   placeholder,
@@ -28,6 +28,9 @@ const InputForm = ({
         {...register(id, validate)}
         placeholder={placeholder}
       />
+      {errors[id] && (
+        <small className="text-red-500">{errors[id]?.message}</small>
+      )}
     </div>
   );
 };
