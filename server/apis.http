@@ -1,3 +1,19 @@
-### Reigister
-POST http://localhost:5000/api/auth/register?name=khiem&phone=123
+### Register
+POST http://localhost:5000/api/auth/register
 Content-Type: application/json
+
+{
+    "password": "12345",
+    "name": "khiemnv",
+    "phone": "0789799013",
+    "role": "AGENT"
+}
+
+### Sign In
+POST http://localhost:5000/api/auth/signin
+Content-Type: application/json
+
+{
+    "password": "12345",
+    "phone": "0789799013"
+}
