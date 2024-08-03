@@ -22,8 +22,8 @@ const register = asyncHandler(async (req, res) => {
   return res.json({
     success: response[1],
     mes: response[1]
-      ? "Your account is created."
-      : "PhoneNumber already had exists",
+      ? "Tài khoản của bạn đã được tạo."
+      : "Số điện thoại đã tồn tại.",
   });
 });
 
@@ -37,14 +37,14 @@ const signIn = asyncHandler(async (req, res, next) => {
   if (!user)
     return throwErrorWithStatus(
       401,
-      "User with that phone havent registed.",
+      "Số điện thoại chưa được đăng ký.",
       res,
       next
     );
 
   const isMatchingPassword = bcrypt.compareSync(password, user.password);
   if (!isMatchingPassword)
-    return throwErrorWithStatus(401, "Password is wrong.", res, next);
+    return throwErrorWithStatus(401, "Sai mật khẩu.", res, next);
 
   const token = jwt.sign(
     { uid: user.id, role: user.role },
@@ -54,7 +54,7 @@ const signIn = asyncHandler(async (req, res, next) => {
 
   return res.json({
     success: true,
-    mes: "Sign in is successfully.",
+    mes: "Đăng nhập thành công.",
     accessToken: token,
   });
 });
