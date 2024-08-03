@@ -10,22 +10,26 @@ import { useAppStore } from "~/store/useAppStore";
 
 const Login = () => {
   const [variant, setVariant] = useState("LOGIN");
+  const [isLoading, setIsLoading] = useState(false);
   const { setModal } = useAppStore();
   const {
     register,
     formState: { errors },
     handleSubmit,
+    watch,
     reset,
   } = useForm();
   useEffect(() => {
     reset();
   }, [variant]);
 
-  //Submit btn function
+  // Submit btn function
   const onSubmit = async (data) => {
-    //Register
+    setIsLoading(true);
+    // Register
     if (variant === "REGISTER") {
       const response = await apiRegister(data);
+      setIsLoading(false);
       if (response.success) {
         Swal.fire({
           icon: "success",
@@ -39,10 +43,11 @@ const Login = () => {
       } else toast.error(response.mes);
     }
 
-    //SignIn
+    // SignIn
     if (variant === "LOGIN") {
       const { name, role, ...payload } = data;
       const response = await apiSignIn(payload);
+      setIsLoading(false);
       if (response.success) {
         toast.success(response.mes);
         setModal(false, null);
@@ -110,7 +115,7 @@ const Login = () => {
             register={register}
             inputClassname="rounded-md"
             id="name"
-            placeholder="Nhập mật khẩu ..."
+            placeholder="Nhập họ và tên ..."
             validate={{ required: "Trường này không được để trống" }}
             errors={errors}
           />
@@ -131,8 +136,13 @@ const Login = () => {
         <Button
           onClick={handleSubmit(onSubmit)}
           className="py-2 mt-4 font-bold"
+          disabled={isLoading}
         >
-          {variant === "LOGIN" ? "Đăng nhập" : "Đăng ký"}
+          {isLoading
+            ? "Đang xử lý..."
+            : variant === "LOGIN"
+            ? "Đăng nhập"
+            : "Đăng ký"}
         </Button>
         <span className="cursor-pointer text-main-500 hover:underline font-bold w-full text-center">
           Quên mật khẩu?
