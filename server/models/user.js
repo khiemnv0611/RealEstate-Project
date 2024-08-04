@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
           this.setDataValue("password", bcrypt.hashSync(value, salt));
         },
       },
-      role: {
+      roleCode: {
         type: DataTypes.ENUM,
         values: ["ADMIN", "AGENT", "USER"],
       },
@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "User", //Key
+      modelName: "User",
     }
   );
   return User;
