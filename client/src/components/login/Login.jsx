@@ -7,11 +7,13 @@ import { apiRegister, apiSignIn } from "~/apis/auth";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { useAppStore } from "~/store/useAppStore";
+import { useUserStore } from "~/store/useUserStore";
 
 const Login = () => {
   const [variant, setVariant] = useState("LOGIN");
   const [isLoading, setIsLoading] = useState(false);
   const { setModal } = useAppStore();
+  const { token, setToken } = useUserStore();
   const {
     register,
     formState: { errors },
@@ -23,12 +25,15 @@ const Login = () => {
     reset();
   }, [variant]);
 
-  // Submit btn function
+  // Submit btn
   const onSubmit = async (data) => {
     setIsLoading(true);
     // Register
     if (variant === "REGISTER") {
-      const response = await apiRegister(data);
+      // Loại bỏ confirmPassword khỏi data trước khi gửi
+      const { confirmPassword, ...registerData } = data;
+      // Gửi dữ liệu đã loại bỏ confirmPassword lên server
+      const response = await apiRegister(registerData); // Lấy apiRegister
       setIsLoading(false);
       if (response.success) {
         Swal.fire({
@@ -46,14 +51,17 @@ const Login = () => {
     // SignIn
     if (variant === "LOGIN") {
       const { name, role, ...payload } = data;
-      const response = await apiSignIn(payload);
+      const response = await apiSignIn(payload); // Lấy apiSignIn
       setIsLoading(false);
       if (response.success) {
         toast.success(response.mes);
+        setToken(response.accessToken);
         setModal(false, null);
       } else toast.error(response.mes);
     }
   };
+
+  console.log(token);
 
   return (
     <div
@@ -110,28 +118,42 @@ const Login = () => {
           errors={errors}
         />
         {variant === "REGISTER" && (
-          <InputForm
-            label="Họ và tên"
-            register={register}
-            inputClassname="rounded-md"
-            id="name"
-            placeholder="Nhập họ và tên ..."
-            validate={{ required: "Trường này không được để trống" }}
-            errors={errors}
-          />
-        )}
-        {variant === "REGISTER" && (
-          <InputRadio
-            label="Loại tài khoản"
-            register={register}
-            id="role"
-            validate={{ required: "Trường này không được để trống" }}
-            errors={errors}
-            options={[
-              { label: "Người mua", value: "USER" },
-              { label: "Người môi giới", value: "AGENT" },
-            ]}
-          />
+          <>
+            <InputForm
+              label="Nhập lại mật khẩu"
+              register={register}
+              inputClassname="rounded-md"
+              id="confirmPassword"
+              placeholder="Nhập lại mật khẩu ..."
+              type="password"
+              validate={{
+                required: "Trường này không được để trống",
+                validate: (value) =>
+                  value === watch("password") || "Mật khẩu không khớp",
+              }}
+              errors={errors}
+            />
+            <InputForm
+              label="Họ và tên"
+              register={register}
+              inputClassname="rounded-md"
+              id="name"
+              placeholder="Nhập họ và tên ..."
+              validate={{ required: "Trường này không được để trống" }}
+              errors={errors}
+            />
+            <InputRadio
+              label="Loại tài khoản"
+              register={register}
+              id="role"
+              validate={{ required: "Trường này không được để trống" }}
+              errors={errors}
+              options={[
+                { label: "Người mua", value: "USER" },
+                { label: "Người môi giới", value: "AGENT" },
+              ]}
+            />
+          </>
         )}
         <Button
           onClick={handleSubmit(onSubmit)}

@@ -7,7 +7,12 @@ const instance = axios.create({
 // Add a request interceptor
 instance.interceptors.request.use(
   function (config) {
-    // Do something before request is sent
+    let token = window.localStorage.getItem("realEstate");
+    if (token) token = JSON.parse(token);
+    if (token.state?.token)
+      config.headers = {
+        Authorization: `Bearer ${token.state?.token}`,
+      };
     return config;
   },
   function (error) {
