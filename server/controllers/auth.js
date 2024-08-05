@@ -47,7 +47,7 @@ const signIn = asyncHandler(async (req, res, next) => {
     return throwErrorWithStatus(401, "Sai mật khẩu.", res, next);
 
   const token = jwt.sign(
-    { uid: user.id, role: user.role },
+    { uid: user.id, roleCode: user.roleCode },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );

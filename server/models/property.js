@@ -42,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       bathRoom: DataTypes.STRING,
       propertySize: DataTypes.FLOAT,
       yearBuilt: DataTypes.INTEGER,
+      owner: DataTypes.UUID,
     },
     {
       sequelize,

@@ -2,16 +2,10 @@ const asyncHandler = require("express-async-handler");
 const db = require("../models");
 const { throwErrorWithStatus } = require("../middlewares/errorHandler");
 
-//Lấy user
-const getCurrent = asyncHandler(async (req, res) => {
-  //DTO
-  const { uid } = req.user;
+// Tạo dự án mới
+const createNewProperty = asyncHandler(async (req, res) => {
   //Handle logic
-  const response = await db.User.findByPk(uid, {
-    attributes: {
-      exclude: ["password"],
-    },
-  });
+  const response = await db.User.createNewProperty;
 
   return res.json({
     success: Boolean(response),
@@ -21,5 +15,5 @@ const getCurrent = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  getCurrent,
+  createNewProperty,
 };
