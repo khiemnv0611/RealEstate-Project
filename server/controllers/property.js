@@ -5,7 +5,7 @@ const { throwErrorWithStatus } = require("../middlewares/errorHandler");
 // Tạo dự án mới
 const createNewProperty = asyncHandler(async (req, res) => {
   //Handle logic
-  const response = await db.User.createNewProperty;
+  const response = await db.User.create;
 
   return res.json({
     success: Boolean(response),
