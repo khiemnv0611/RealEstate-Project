@@ -16,7 +16,19 @@ router.post(
   ctrls.createPropertyType
 );
 
-//Get
+// Get
 router.get("/", ctrls.getPropertyTypes);
+
+// Update
+router.patch(
+  "/:id",
+  verifyToken,
+  isAdmin,
+  validateDto(Joi.object({ name: string, description: string, image: string })),
+  ctrls.updatePropertyType
+);
+
+//Delete
+router.delete("/:id", verifyToken, isAdmin, ctrls.deletePropertyType);
 
 module.exports = router;
