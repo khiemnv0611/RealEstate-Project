@@ -4,6 +4,14 @@ const cors = require("cors");
 const dbconn = require("./config/dbconn");
 const initRoutes = require("./routes");
 const app = express();
+const compression = require("compression");
+//require("./config/redis.config");
+
+app.use(
+  compression({
+    threshold: 0,
+  })
+);
 
 app.use(
   cors({

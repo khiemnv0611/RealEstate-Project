@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const db = require("../models");
 const { throwErrorWithStatus } = require("../middlewares/errorHandler");
 const { Op, Sequelize, where } = require("sequelize");
+const redis = require("../config/redis.config");
 
 // Create
 const createPropertyType = asyncHandler(async (req, res) => {
@@ -51,12 +52,24 @@ const getPropertyTypes = asyncHandler(async (req, res) => {
     options.order = order;
   }
 
-  //
+  // Set limit
   if (!limit) {
+    //Redis
+    // const alreadyGetAll = await redis.get("set-property-type");
+    // if (alreadyGetAll)
+    //   return res.json({
+    //     success: true,
+    //     mes: "Got.",
+    //     propertyType: JSON.parse(alreadyGetAll),
+    //   });
+
     const response = await db.PropertyType.findAll({
       where: query,
       ...options,
     });
+
+    // redis.set("set-property-type", JSON.stringify(response));
+
     return res.json({
       success: response.length > 0,
       mes: response.length > 0 ? "Got." : "Cannot get propertyTypes.",

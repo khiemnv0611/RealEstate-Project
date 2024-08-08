@@ -2,7 +2,7 @@ import axios from "~/axios";
 
 export const apiRegister = (data) =>
   axios({
-    url: "/auth/register",
+    url: "/auth/signup",
     method: "post",
     data,
   });
