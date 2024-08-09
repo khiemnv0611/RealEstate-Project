@@ -9,7 +9,7 @@ import { useUserStore } from "~/store/useUserStore";
 import { useAppStore } from "~/store/useAppStore";
 
 const Navigation = ({ location, navigate }) => {
-  const { token } = useUserStore();
+  const { current } = useUserStore();
   const { setModal } = useAppStore();
   return (
     <div
@@ -43,7 +43,7 @@ const Navigation = ({ location, navigate }) => {
             {el.text}
           </NavLink>
         ))}
-        {!token ? (
+        {!current ? (
           <Button
             className={twMerge(
               clsx(

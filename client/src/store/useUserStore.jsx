@@ -12,6 +12,7 @@ export const useUserStore = create(
         const response = await apiGetCurrent();
         if (response.success)
           return set(() => ({ current: response.currentUser }));
+        else return set(() => ({ current: null }));
       },
     }),
     {

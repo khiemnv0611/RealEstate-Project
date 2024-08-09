@@ -34,7 +34,7 @@ export const adminSidebar = [
   {
     id: 10,
     name: "Bảng điều khiển",
-    path: `${path.ADMIN_LAYOUT}/${path.DASHBOARD}`,
+    path: `/${path.ADMIN_LAYOUT}/${path.DASHBOARD}`,
     icon: <RiDashboardLine />,
     type: "SINGLE",
   },
@@ -46,12 +46,12 @@ export const adminSidebar = [
     subs: [
       {
         id: 111,
-        path: `${path.ADMIN_LAYOUT}/${path.CREATE_PROPERTY_TYPE}`,
+        path: `/${path.ADMIN_LAYOUT}/${path.CREATE_PROPERTY_TYPE}`,
         name: "Tạo mới",
       },
       {
         id: 112,
-        path: `${path.ADMIN_LAYOUT}/${path.MANAGE_PROPERTY_TYPE}`,
+        path: `/${path.ADMIN_LAYOUT}/${path.MANAGE_PROPERTY_TYPE}`,
         name: "Quản lý",
       },
     ],

@@ -27,7 +27,6 @@ const App = () => {
   useEffect(() => {
     getCurrent();
   }, [token]);
-  console.log(current);
   return (
     <>
       {isShowModal && <Modal />}
