@@ -149,8 +149,8 @@ const Login = () => {
               validate={{ required: "Trường này không được để trống" }}
               errors={errors}
               options={[
-                { label: "Người mua", value: "USER" },
-                { label: "Người môi giới", value: "AGENT" },
+                { label: "Khách hàng", value: "ROL7" },
+                { label: "Người môi giới", value: "ROL5" },
               ]}
             />
           </>

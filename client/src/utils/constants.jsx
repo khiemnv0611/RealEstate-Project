@@ -1,4 +1,6 @@
 import path from "./path";
+import { RiDashboardLine } from "react-icons/ri";
+import { FaProjectDiagram } from "react-icons/fa";
 
 export const navigations = [
   {
@@ -25,5 +27,33 @@ export const navigations = [
     id: 5,
     path: `/${path.SEARCH}`,
     text: "TÌM KIẾM",
+  },
+];
+
+export const adminSidebar = [
+  {
+    id: 10,
+    name: "Bảng điều khiển",
+    path: `${path.ADMIN_LAYOUT}/${path.DASHBOARD}`,
+    icon: <RiDashboardLine />,
+    type: "SINGLE",
+  },
+  {
+    id: 11,
+    name: "Loại dự án",
+    icon: <FaProjectDiagram />,
+    type: "PARENT",
+    subs: [
+      {
+        id: 111,
+        path: `${path.ADMIN_LAYOUT}/${path.CREATE_PROPERTY_TYPE}`,
+        name: "Tạo mới",
+      },
+      {
+        id: 112,
+        path: `${path.ADMIN_LAYOUT}/${path.MANAGE_PROPERTY_TYPE}`,
+        name: "Quản lý",
+      },
+    ],
   },
 ];

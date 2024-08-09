@@ -6,7 +6,7 @@ const { stringReq, numberReq, string } = require("../middlewares/joiSchema");
 
 // Phải thỏa các điều kiện của validateDto thì mới thực hiện
 router.post(
-  "/signup",
+  "/register",
   validateDto(
     Joi.object({
       password: stringReq,
