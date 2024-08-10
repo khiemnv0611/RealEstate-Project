@@ -23,9 +23,10 @@ import {
 
 const App = () => {
   const { isShowModal } = useAppStore();
-  const { getCurrent, current, token } = useUserStore();
+  const { getCurrent, getRoles, token } = useUserStore();
   useEffect(() => {
     getCurrent();
+    getRoles();
   }, [token]);
   return (
     <>

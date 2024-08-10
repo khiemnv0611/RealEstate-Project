@@ -13,7 +13,7 @@ const Login = () => {
   const [variant, setVariant] = useState("LOGIN");
   const [isLoading, setIsLoading] = useState(false);
   const { setModal } = useAppStore();
-  const { token, setToken } = useUserStore();
+  const { token, setToken, roles } = useUserStore();
   const {
     register,
     formState: { errors },
@@ -60,8 +60,6 @@ const Login = () => {
       } else toast.error(response.mes);
     }
   };
-
-  console.log(token);
 
   return (
     <div
@@ -145,13 +143,16 @@ const Login = () => {
             <InputRadio
               label="Loại tài khoản"
               register={register}
-              id="role"
+              id="roleCode"
               validate={{ required: "Trường này không được để trống" }}
+              optionsClassname="grid grid-cols-3 gap-4"
               errors={errors}
-              options={[
-                { label: "Khách hàng", value: "ROL7" },
-                { label: "Người môi giới", value: "ROL5" },
-              ]}
+              options={roles
+                ?.filter((el) => el.code !== "ROL1")
+                ?.map((el) => ({
+                  label: el.value,
+                  value: el.code,
+                }))}
             />
           </>
         )}

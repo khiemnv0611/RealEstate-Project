@@ -9,7 +9,7 @@ module.exports.roles = [
   },
   {
     code: "ROL5",
-    value: "Người môi giới",
+    value: "Môi giới",
   },
   {
     code: "ROL7",

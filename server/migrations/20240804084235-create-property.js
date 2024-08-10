@@ -32,6 +32,13 @@ module.exports = {
           key: "id",
         },
       },
+      owner: {
+        type: Sequelize.UUID,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+      },
       status: {
         type: Sequelize.ENUM(["Chờ duyệt", "Bị hủy", "Đã duyệt"]),
         defaultValue: "Chờ duyệt",

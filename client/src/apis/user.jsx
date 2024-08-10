@@ -5,3 +5,9 @@ export const apiGetCurrent = () =>
     url: "/user/current",
     method: "get",
   });
+
+export const apiGetRoles = () =>
+  axios({
+    url: "/user/roles",
+    method: "get",
+  });

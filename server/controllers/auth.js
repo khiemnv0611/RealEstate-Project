@@ -3,6 +3,7 @@ const db = require("../models");
 const { throwErrorWithStatus } = require("../middlewares/errorHandler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { where } = require("sequelize");
 
 //Đăng ký
 const register = asyncHandler(async (req, res) => {
@@ -12,12 +13,21 @@ const register = asyncHandler(async (req, res) => {
   // client api/user/:id => req.params
 
   // DTO = Data Transfer Object
-  const { phone } = req.body;
+  const { phone, password, name } = req.body;
   //Handle logic
   const response = await db.User.findOrCreate({
     where: { phone },
-    defaults: req.body,
+    defaults: { phone, password, name },
   });
+
+  const userId = response[0]?.id;
+  if (userId) {
+    const roleCode = ["ROL7"];
+    if (req.body?.roleCode) roleCode.push(req.body?.roleCode);
+    const roleCodeBulk = roleCode.map((role) => ({ userId, roleCode: role }));
+    const updateRole = await db.User_Role.bulkCreate(roleCodeBulk);
+    if (!updateRole) await db.User.destroy({ where: { id: userId } });
+  }
 
   return res.json({
     success: response[1],
