@@ -45,11 +45,18 @@ const CreatePropertyType = () => {
           label="Mô tả"
         />
         <InputFile
-          id="image"
+          id="images"
           register={register}
           errors={errors}
           validate={{ required: "Trường này không được để trống." }}
           label="Hình ảnh"
+          multiple={true}
+          getImages={(images) =>
+            setValue(
+              "images",
+              images?.map((el) => el.path)
+            )
+          }
         />
       </form>
     </div>
