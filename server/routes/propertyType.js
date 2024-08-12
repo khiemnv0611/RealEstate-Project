@@ -4,15 +4,15 @@ const ctrls = require("../controllers/propertyType");
 const validateDto = require("../middlewares/validation");
 const { stringReq, string } = require("../middlewares/joiSchema");
 const { verifyToken, isAdmin } = require("../middlewares/verifyToken");
-const rateLimiter = require("../middlewares/rateLimiter");
+//const rateLimiter = require("../middlewares/rateLimiter");
 
-router.use(rateLimiter);
+//router.use(rateLimiter);
 
 // Create
 router.post(
   "/",
   verifyToken,
-  isAdmin,
+  // isAdmin,
   validateDto(
     Joi.object({ name: stringReq, description: stringReq, image: stringReq })
   ),

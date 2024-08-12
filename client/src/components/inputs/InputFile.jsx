@@ -14,36 +14,41 @@ const InputFile = ({
   validate,
   multiple,
   getImages,
+  errors,
+  resetKey, // Thay đổi thuộc tính này
 }) => {
-  const {
-    register,
-    formState: { errors },
-    watch,
-  } = useForm();
+  const { register, watch, setValue } = useForm();
 
   // Xử lý upLoad ảnh
   const rawImages = watch(id);
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
   const handleUpload = async (files) => {
     const formData = new FormData();
-    const imageLink = [];
     setIsLoading(true);
+    const uploadPromises = [];
     for (let file of files) {
       formData.append("file", file);
       formData.append(
         "upload_preset",
         import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESETS
       );
-      const response = await apiUploadImages(formData);
-      if (response.status === 200)
-        imageLink.push({
-          id: response.data.public_id,
-          path: response.data.secure_url,
-        });
+      uploadPromises.push(apiUploadImages(formData));
     }
+    const response = await Promise.all(uploadPromises);
     setIsLoading(false);
-    setImages(imageLink);
+    if (response && response.length > 0) {
+      const tempArrayImage = [];
+      for (let result of response) {
+        if (result.status === 200)
+          tempArrayImage.push({
+            id: result.data.public_id,
+            path: result.data.secure_url,
+          });
+      }
+      setImages(tempArrayImage);
+    } else toast.error("Có gì đó không ổn!");
   };
 
   useEffect(() => {
@@ -53,8 +58,20 @@ const InputFile = ({
   }, [rawImages]);
 
   useEffect(() => {
-    if (images && images.length > 0) getImages(images);
+    getImages(images);
   }, [images]);
+
+  // Xóa image
+  const handleDeleteImage = (e, imageId) => {
+    e.preventDefault();
+    setImages((prev) => prev.filter((el) => el.id !== imageId));
+  };
+
+  // Reset khi resetKey thay đổi
+  useEffect(() => {
+    setImages([]);
+    setValue(id, []); // Reset giá trị của input file
+  }, [resetKey]);
 
   return (
     <div
@@ -83,11 +100,7 @@ const InputFile = ({
             {images?.map((el, idx) => (
               <div key={idx} className="col-span-1 relative">
                 <span
-                  onClick={() =>
-                    setImages((prev) =>
-                      prev.filter((item) => item.id !== el.id)
-                    )
-                  }
+                  onClick={(e) => handleDeleteImage(e, el.id)}
                   className="w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer absolute top-1 right-1"
                 >
                   <IoClose size={18} />

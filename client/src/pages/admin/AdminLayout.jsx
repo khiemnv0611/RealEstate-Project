@@ -5,7 +5,7 @@ import { AdminSidebar } from "~/components";
 const AdminLayout = () => {
   return (
     <main className="grid grid-cols-12">
-      <div className="col-span-2 bg-main-700 text-white h-full max-h-screen overflow-y-auto">
+      <div className="col-span-2 bg-main-700 text-white h-full overflow-y-auto">
         <AdminSidebar />
       </div>
       <div className="col-span-10">
