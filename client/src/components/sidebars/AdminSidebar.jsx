@@ -1,8 +1,9 @@
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { adminSidebar } from "~/utils/constants";
 import { FaCaretRight, FaCaretDown } from "react-icons/fa6";
+import { TiArrowForwardOutline } from "react-icons/ti";
 
 const AdminSidebar = () => {
   const [activeTabs, setActiveTabs] = useState([]);
@@ -27,7 +28,7 @@ const AdminSidebar = () => {
               <NavLink
                 className={({ isActive }) =>
                   clsx(
-                    "flex items-center gap-2 text-lg px-4 py-3 hover:bg-white hover:text-main-700 rounded-2xl",
+                    "flex items-center gap-4 text-lg px-4 py-3 hover:bg-white hover:text-main-700 rounded-2xl",
                     isActive && "bg-white text-main-700"
                   )
                 }
@@ -43,7 +44,7 @@ const AdminSidebar = () => {
                   onClick={() => handleActiveTabs(el.id)}
                   className="flex items-center justify-between text-lg px-4 py-3 hover:bg-white hover:text-main-700 rounded-2xl cursor-pointer"
                 >
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center gap-4">
                     <span>{el.icon}</span>
                     <span className="select-none">{el.name}</span>
                   </span>
@@ -73,6 +74,17 @@ const AdminSidebar = () => {
                 )}
               </>
             )}
+            <Link
+              className={clsx(
+                "flex items-center gap-4 text-lg px-4 py-3 hover:bg-white hover:text-main-700 rounded-2xl"
+              )}
+              to={"/"}
+            >
+              <span>
+                <TiArrowForwardOutline size={25} />
+              </span>
+              <span className="select-none">Quay lại Trang Chủ</span>
+            </Link>
           </Fragment>
         ))}
       </div>

@@ -35,13 +35,13 @@ export const adminSidebar = [
     id: 10,
     name: "Bảng điều khiển",
     path: `/${path.ADMIN_LAYOUT}/${path.DASHBOARD}`,
-    icon: <RiDashboardLine />,
+    icon: <RiDashboardLine size={25} />,
     type: "SINGLE",
   },
   {
     id: 11,
     name: "Loại dự án",
-    icon: <FaProjectDiagram />,
+    icon: <FaProjectDiagram size={25} />,
     type: "PARENT",
     subs: [
       {

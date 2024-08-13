@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { useAppStore } from "~/store/useAppStore";
 import { useUserStore } from "~/store/useUserStore";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import auth from "~/utils/firebase";
 
 const Login = () => {
   const [variant, setVariant] = useState("LOGIN");
@@ -25,30 +27,63 @@ const Login = () => {
     reset();
   }, [variant]);
 
-  // Submit btn
+  //Captcha
+  const handleCaptchaVerify = () => {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        "recaptcha-verifier",
+        {
+          size: "invisible",
+          callback: (response) => {
+            console.log({ callback: response });
+            handleSendOTP(); // Gọi hàm gửi OTP khi captcha được xác minh
+          },
+          "expired-callback": (response) => {
+            console.log({ expired: response });
+          },
+        },
+        auth
+      );
+    }
+  };
+
+  const handleSendOTP = (phone) => {
+    handleCaptchaVerify();
+    const verifier = window.recaptchaVerify;
+    const formatPhone = "+84" + phone.slice(1);
+    signInWithPhoneNumber(auth, formatPhone, verifier)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const onSubmit = async (data) => {
-    setIsLoading(true);
-    // Register
     if (variant === "REGISTER") {
-      // Loại bỏ confirmPassword khỏi data trước khi gửi
-      const { confirmPassword, ...registerData } = data;
-      // Gửi dữ liệu đã loại bỏ confirmPassword lên server
-      const response = await apiRegister(registerData); // Lấy apiRegister
-      setIsLoading(false);
-      if (response.success) {
-        Swal.fire({
-          icon: "success",
-          title: "Chúc mừng!",
-          text: response.mes,
-          showConfirmButton: true,
-          confirmButtonText: "Đi đến đăng nhập",
-        }).then(({ isConfirmed }) => {
-          if (isConfirmed) setVariant("LOGIN");
-        });
-      } else toast.error(response.mes);
+      if (data?.roleCode !== "ROL7") {
+        handleSendOTP(data.phone);
+      }
+      // setIsLoading(true);
+      // // Loại bỏ confirmPassword khỏi data trước khi gửi
+      // const { confirmPassword, ...registerData } = data;
+      // // Gửi dữ liệu đã loại bỏ confirmPassword lên server
+      // const response = await apiRegister(registerData); // Lấy apiRegister
+      // setIsLoading(false);
+      // if (response.success) {
+      //   Swal.fire({
+      //     icon: "success",
+      //     title: "Chúc mừng!",
+      //     text: response.mes,
+      //     showConfirmButton: true,
+      //     confirmButtonText: "Đi đến đăng nhập",
+      //   }).then(({ isConfirmed }) => {
+      //     if (isConfirmed) setVariant("LOGIN");
+      //   });
+      // } else toast.error(response.mes);
     }
 
-    // SignIn
     if (variant === "LOGIN") {
       const { name, role, ...payload } = data;
       const response = await apiSignIn(payload); // Lấy apiSignIn
@@ -79,6 +114,7 @@ const Login = () => {
         >
           Đăng nhập
         </span>
+        <div id="recaptcha-verifier"></div>
         <span
           onClick={() => setVariant("REGISTER")}
           className={clsx(
