@@ -8,3 +8,7 @@ html,
 body {
   height: 100%;
 }
+
+.otp-item {
+  width: 3em !important;
+}

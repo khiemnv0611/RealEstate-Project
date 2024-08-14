@@ -12,6 +12,13 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FB_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FB_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FB_APP_ID,
+
+  // apiKey: "AIzaSyD2HF7gFI_Wr4a3UKByI7RPSJDf-uyXRR8",
+  // authDomain: "realestate-a74d5.firebaseapp.com",
+  // projectId: "realestate-a74d5",
+  // storageBucket: "realestate-a74d5.appspot.com",
+  // messagingSenderId: "184082671175",
+  // appId: "1:184082671175:web:8cc630357bbe29778b3362",
 };
 
 // Initialize Firebase

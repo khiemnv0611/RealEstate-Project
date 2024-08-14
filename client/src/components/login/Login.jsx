@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
-import { InputForm, InputRadio } from "..";
+import { InputForm, InputRadio, OTPVerifier } from "..";
 import { useForm } from "react-hook-form";
 import { Button } from "..";
 import { apiRegister, apiSignIn } from "~/apis/auth";
@@ -9,12 +9,14 @@ import { toast } from "react-toastify";
 import { useAppStore } from "~/store/useAppStore";
 import { useUserStore } from "~/store/useUserStore";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import auth from "~/utils/firebase";
+import auth from "~/utils/firebaseConfig";
+import { twMerge } from "tailwind-merge";
 
 const Login = () => {
   const [variant, setVariant] = useState("LOGIN");
   const [isLoading, setIsLoading] = useState(false);
   const { setModal } = useAppStore();
+  const [isShowConfirmOTP, setIsShowConfirmOTP] = useState(false);
   const { token, setToken, roles } = useUserStore();
   const {
     register,
@@ -32,35 +34,36 @@ const Login = () => {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
         auth,
-        "recaptcha-container", // ID của phần tử HTML
+        "recaptcha-container",
         {
           size: "invisible",
-          callback: (response) => {
-            // Xử lý khi reCAPTCHA được xác minh
-          },
-          "expired-callback": (response) => {
-            // Xử lý khi reCAPTCHA hết hạn
-          },
+          callback: () => {},
+          "expired-callback": () => {},
         }
       );
-      //console.log("RecaptchaVerifier created:", window.recaptchaVerifier);
     }
   };
 
   // Send OTP
   const handleSendOTP = (phone) => {
+    setIsLoading(true);
     handleCaptchaVerify();
     const verifier = window.recaptchaVerifier;
     const formatPhone = "+84" + phone.slice(1);
     signInWithPhoneNumber(auth, formatPhone, verifier)
-      .then((result) => {
+      .then((confirmationResult) => {
+        setIsLoading(false);
+        window.confirmationResult = confirmationResult;
         toast.success("OTP đã được gửi đến số điện thoại của bạn.");
+        setIsShowConfirmOTP(true);
       })
       .catch((error) => {
+        setIsLoading(false);
         if (error.code === "auth/too-many-requests") {
           toast.error("Quá nhiều yêu cầu. Vui lòng thử lại sau.");
         } else {
           toast.error("Lỗi khi gửi OTP:", error);
+          console.log(error);
         }
       });
   };
@@ -70,28 +73,11 @@ const Login = () => {
       if (data?.roleCode !== "ROL7") {
         handleSendOTP(data.phone);
       }
-      // setIsLoading(true);
-      // // Loại bỏ confirmPassword khỏi data trước khi gửi
-      // const { confirmPassword, ...registerData } = data;
-      // // Gửi dữ liệu đã loại bỏ confirmPassword lên server
-      // const response = await apiRegister(registerData); // Lấy apiRegister
-      // setIsLoading(false);
-      // if (response.success) {
-      //   Swal.fire({
-      //     icon: "success",
-      //     title: "Chúc mừng!",
-      //     text: response.mes,
-      //     showConfirmButton: true,
-      //     confirmButtonText: "Đi đến đăng nhập",
-      //   }).then(({ isConfirmed }) => {
-      //     if (isConfirmed) setVariant("LOGIN");
-      //   });
-      // } else toast.error(response.mes);
     }
 
     if (variant === "LOGIN") {
       const { name, role, ...payload } = data;
-      const response = await apiSignIn(payload); // Lấy apiSignIn
+      const response = await apiSignIn(payload);
       setIsLoading(false);
       if (response.success) {
         toast.success(response.mes);
@@ -101,11 +87,39 @@ const Login = () => {
     }
   };
 
+  const handleRegister = async (data) => {
+    const { confirmPassword, ...registerData } = data; // Loại bỏ confirmPassword
+    const response = await apiRegister(registerData); // Gửi dữ liệu đã loại bỏ confirmPassword lên server
+
+    if (response.success) {
+      Swal.fire({
+        icon: "success",
+        title: "Chúc mừng!",
+        text: response.mes,
+        showConfirmButton: true,
+        confirmButtonText: "Đi đến đăng nhập",
+      }).then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          setVariant("LOGIN");
+          setIsShowConfirmOTP(false);
+        }
+      });
+    } else toast.error(response.mes);
+  };
+
   return (
     <div
       onClick={(e) => e.stopPropagation()}
-      className="bg-white text-base rounded-md px-6 py-8 w-[500px] flex flex-col items-center gap-4"
+      className="bg-white relative text-base rounded-md px-6 py-8 w-[500px] flex flex-col items-center gap-4"
     >
+      {isShowConfirmOTP && (
+        <div className="absolute inset-0 bg-white rounded-md">
+          <OTPVerifier cb={handleSubmit(handleRegister)} />
+        </div>
+      )}
+      {/* <div className="absolute inset-0 bg-white rounded-md">
+        <OTPVerifier />
+      </div> */}
       <h1 className="text-3xl font-josejinsans font-semibold tracking-tight">
         Chào mừng đến với REIS
       </h1>
