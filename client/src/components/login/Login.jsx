@@ -31,32 +31,37 @@ const Login = () => {
   const handleCaptchaVerify = () => {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
-        "recaptcha-verifier",
+        auth,
+        "recaptcha-container", // ID của phần tử HTML
         {
           size: "invisible",
           callback: (response) => {
-            console.log({ callback: response });
-            handleSendOTP(); // Gọi hàm gửi OTP khi captcha được xác minh
+            // Xử lý khi reCAPTCHA được xác minh
           },
           "expired-callback": (response) => {
-            console.log({ expired: response });
+            // Xử lý khi reCAPTCHA hết hạn
           },
-        },
-        auth
+        }
       );
+      //console.log("RecaptchaVerifier created:", window.recaptchaVerifier);
     }
   };
 
+  // Send OTP
   const handleSendOTP = (phone) => {
     handleCaptchaVerify();
-    const verifier = window.recaptchaVerify;
+    const verifier = window.recaptchaVerifier;
     const formatPhone = "+84" + phone.slice(1);
     signInWithPhoneNumber(auth, formatPhone, verifier)
       .then((result) => {
-        console.log(result);
+        toast.success("OTP đã được gửi đến số điện thoại của bạn.");
       })
       .catch((error) => {
-        console.log(error);
+        if (error.code === "auth/too-many-requests") {
+          toast.error("Quá nhiều yêu cầu. Vui lòng thử lại sau.");
+        } else {
+          toast.error("Lỗi khi gửi OTP:", error);
+        }
       });
   };
 
@@ -114,7 +119,7 @@ const Login = () => {
         >
           Đăng nhập
         </span>
-        <div id="recaptcha-verifier"></div>
+        <div id="recaptcha-container"></div>
         <span
           onClick={() => setVariant("REGISTER")}
           className={clsx(
