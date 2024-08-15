@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   PropertyFeature.init(
     {
-      propertyId: DataTypes.UUID,
-      featureId: DataTypes.UUID,
+      propertyId: DataTypes.INTEGER,
+      featureId: DataTypes.INTEGER,
     },
     {
       sequelize,

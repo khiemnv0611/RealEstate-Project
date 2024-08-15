@@ -1,23 +1,23 @@
-### Register
-POST http://localhost:5000/api/auth/register
-Content-Type: application/json
+# ### Register
+# POST http://localhost:5000/api/auth/register
+# Content-Type: application/json
 
-{
-    "password": "12345",
-    "name": "khiemnv",
-    "phone": "0789799013",
-    "role": "AGENT"
-}
+# {
+#     "password": "12345",
+#     "name": "khiemnv",
+#     "phone": "0789799013",
+#     "role": "AGENT"
+# }
 
-### Sign In
-POST http://localhost:5000/api/auth/signin
-Content-Type: application/json
+# ### Sign In
+# POST http://localhost:5000/api/auth/signin
+# Content-Type: application/json
 
-{
-    "password": "12345",
-    "phone": "0789799013"
-}
+# {
+#     "password": "12345",
+#     "phone": "0789799013"
+# }
 
-### Insert
-POST http://localhost:5000/api/insert/roles
-Content-Type: application/json
+# ### Insert
+# POST http://localhost:5000/api/insert/roles
+# Content-Type: application/json
