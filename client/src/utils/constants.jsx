@@ -57,3 +57,30 @@ export const adminSidebar = [
     ],
   },
 ];
+
+export const showOptions = [
+  {
+    id: 1,
+    name: "Cá nhân",
+    code: "ROL7",
+    path: `/${path.USER_LAYOUT}/${path.PERSONAL}`,
+  },
+  {
+    id: 2,
+    name: "Môi giới",
+    code: "ROL5",
+    path: `/${path.AGENT_LAYOUT}/${path.AGENT_DASHBOARD}`,
+  },
+  {
+    id: 3,
+    name: "Chủ sở hữu",
+    code: "ROL3",
+    path: `/${path.OWNER_LAYOUT}/${path.OWNER_DASHBOARD}`,
+  },
+  {
+    id: 4,
+    name: "Quản trị viên",
+    code: "ROL1",
+    path: `/${path.ADMIN_LAYOUT}/${path.ADMIN_DASHBOARD}`,
+  },
+];

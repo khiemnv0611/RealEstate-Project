@@ -9,9 +9,21 @@ const path = {
 
   // ADMIN
   ADMIN_LAYOUT: "admin",
-  DASHBOARD: "dashboard",
+  ADMIN_DASHBOARD: "dashboard",
   MANAGE_PROPERTY_TYPE: "manage-property-type",
   CREATE_PROPERTY_TYPE: "create-property-type",
+
+  // USER
+  USER_LAYOUT: "user",
+  PERSONAL: "personal",
+
+  // AGENT
+  AGENT_LAYOUT: "agent",
+  AGENT_DASHBOARD: "dashboard",
+
+  // OWNER
+  OWNER_LAYOUT: "owner",
+  OWNER_DASHBOARD: "dashboard",
 };
 
 export default path;

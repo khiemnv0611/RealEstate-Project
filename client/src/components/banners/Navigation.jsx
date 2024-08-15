@@ -15,7 +15,7 @@ const Navigation = ({ location, navigate }) => {
     <div
       className={twMerge(
         clsx(
-          "w-full bg-transparent flex items-center justify-between fixed z-50 top-[85px] px-[100px] py-[26px]",
+          "w-full bg-transparent flex items-center justify-between fixed z-40 top-[85px] px-[100px] py-[26px]",
           location.pathname !== "/" && "bg-white"
         )
       )}
@@ -64,7 +64,7 @@ const Navigation = ({ location, navigate }) => {
               )
             )}
           >
-            Đăng xuất
+            Thêm danh sách
           </Button>
         )}
       </div>
