@@ -8,6 +8,7 @@ export { default as InputForm } from "./inputs/InputForm";
 export { default as InputRadio } from "./inputs/InputRadio";
 export { default as InputText } from "./inputs/InputText";
 export { default as InputFile } from "./inputs/InputFile";
+export { default as InputSelect } from "./inputs/InputSelect";
 export { default as Textarea } from "./inputs/Textarea";
 export { default as AdminSidebar } from "./sidebars/AdminSidebar";
 export { default as OTPVerifier } from "./auth/OTPVerifier";
