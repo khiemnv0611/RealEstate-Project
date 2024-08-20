@@ -1,4 +1,5 @@
 import React from "react";
+import { Search } from "~/components";
 
 const Home = () => {
   return (
@@ -13,6 +14,7 @@ const Home = () => {
           </p>
         </div>
       </div>
+      <Search />
       <div className="w-main mx-auto">Content</div>
     </div>
   );
