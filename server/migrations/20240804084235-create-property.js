@@ -17,6 +17,14 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
+      address: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      city: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       listingType: {
         type: Sequelize.ENUM(["Bán", "Cho thuê"]),
         allowNull: false,

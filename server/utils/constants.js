@@ -225,8 +225,10 @@ module.exports = {
   ],
 
   properties: Array.from([...Array(60).keys()]).map(() => ({
-    name: faker.lorem.sentence({ max: 1, min: 1 }).replace(".", ""),
-    description: faker.lorem.sentences({ min: 5, max: 10 }),
+    name: faker.lorem.sentence({ max: 10, min: 5 }).replace(".", ""),
+    description: faker.lorem.sentences({ max: 10, min: 5 }),
+    address: faker.location.streetAddress({ useFullAddress: true }),
+    city: faker.location.city(),
     listingType: faker.helpers.arrayElement(["Bán", "Cho thuê"]),
     price: faker.number.int({ max: 1000000, min: 1000 }) * 1000,
     propertyTypeId: faker.number.int({ max: 13, min: 1 }),

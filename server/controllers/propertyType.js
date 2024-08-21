@@ -73,7 +73,7 @@ const getPropertyTypes = asyncHandler(async (req, res) => {
     return res.json({
       success: response.length > 0,
       mes: response.length > 0 ? "Got." : "Cannot get propertyTypes.",
-      propertyType: response,
+      propertyTypes: response,
     });
   }
 
@@ -89,9 +89,9 @@ const getPropertyTypes = asyncHandler(async (req, res) => {
   });
 
   return res.json({
-    success: response.length > 0,
-    mes: response.length > 0 ? "Got." : "Cannot get propertyTypes.",
-    propertyType: response,
+    success: Boolean(response),
+    mes: response ? "Got." : "Cannot get propertyTypes.",
+    propertyTypes: response,
   });
 });
 

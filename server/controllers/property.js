@@ -77,12 +77,24 @@ module.exports = {
     const response = await db.Property.findAndCountAll({
       where: query,
       ...options,
+      include: [
+        {
+          model: db.User,
+          as: "rPostedBy",
+          attributes: ["avatar", "phone", "name", "email"],
+        },
+        {
+          model: db.User,
+          as: "rOwner",
+          attributes: ["avatar", "phone", "name", "email"],
+        },
+      ],
     });
 
     return res.json({
-      success: response.rows.length > 0,
-      mes: response.rows.length > 0 ? "Got." : "Cannot get properties.",
-      properties: response.rows,
+      success: Boolean(response),
+      mes: response ? "Got." : "Cannot get properties.",
+      properties: response,
     });
   }),
 };
