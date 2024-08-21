@@ -55,7 +55,7 @@ const getPropertyTypes = asyncHandler(async (req, res) => {
   // Set limit
   if (!limit) {
     //Redis
-    // const alreadyGetAll = await redis.get("set-property-type");
+    // const alreadyGetAll = await redis.get("get-property-type");
     // if (alreadyGetAll)
     //   return res.json({
     //     success: true,
@@ -68,7 +68,7 @@ const getPropertyTypes = asyncHandler(async (req, res) => {
       ...options,
     });
 
-    // redis.set("set-property-type", JSON.stringify(response));
+    // redis.set("get-property-type", JSON.stringify(response));
 
     return res.json({
       success: response.length > 0,

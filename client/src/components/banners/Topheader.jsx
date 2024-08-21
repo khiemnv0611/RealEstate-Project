@@ -20,15 +20,15 @@ const Topheader = ({ location }) => {
   const [isShowOptions, setIsShowOptions] = useState(false);
   useEffect(() => {
     const handleOnClick = (e) => {
-      if (optionBox.current.contains(e.target)) {
+      if (optionBox.current && optionBox.current.contains(e.target)) {
         setIsShowOptions(true);
       } else setIsShowOptions(false);
     };
 
-    window.addEventListener("click", handleOnClick);
+    document.addEventListener("click", handleOnClick);
 
     return () => {
-      window.removeEventListener("click", handleOnClick);
+      document.removeEventListener("click", handleOnClick);
     };
   }, []);
 
