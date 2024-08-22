@@ -21,7 +21,15 @@ const Navigation = ({ location, navigate }) => {
       )}
     >
       <Link to="/">
-        <img src="/logo.png" alt="logo" className="w-[120px] object-contain" />
+        <img
+          src={location.pathname !== "/" ? "/logo_blue.png" : "/logo_white.png"}
+          alt="logo"
+          className={twMerge(
+            clsx("object-contain", {
+              "w-[120px]": true,
+            })
+          )}
+        />
       </Link>
       <div
         className={clsx(

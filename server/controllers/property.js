@@ -69,8 +69,7 @@ module.exports = {
     }
 
     //Phân trang
-    const prevPage = page - 1 > 0 ? page - 1 : 1;
-    const offset = (prevPage - 1) * limit;
+    const offset = (page && +page > 1 ? +page - 1 : 0) * limit;
     if (offset) options.offset = offset;
     options.limit = +limit;
 
@@ -94,7 +93,9 @@ module.exports = {
     return res.json({
       success: Boolean(response),
       mes: response ? "Got." : "Cannot get properties.",
-      properties: response,
+      properties: response
+        ? { ...response, limit: +limit, page: +page ? +page : 1 }
+        : null,
     });
   }),
 };
