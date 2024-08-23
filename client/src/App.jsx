@@ -21,13 +21,16 @@ import {
   ManagePropertyType,
 } from "./pages/admin";
 import { Personal, UserLayout } from "./pages/user";
+import { usePropertiesStore } from "./store/usePropertiesStore";
 
 const App = () => {
   const { isShowModal } = useAppStore();
   const { getCurrent, getRoles, token } = useUserStore();
+  const { getPropertyTypes } = usePropertiesStore();
   useEffect(() => {
     getCurrent();
     getRoles();
+    getPropertyTypes({ fields: "id,name,image" });
   }, [token]);
   return (
     <>
