@@ -15,7 +15,7 @@ const Home = () => {
         </div>
       </div>
       <Search />
-      <div className="w-main mx-auto">Content</div>
+      <div className="w-main h-96 mx-auto">Content</div>
     </div>
   );
 };

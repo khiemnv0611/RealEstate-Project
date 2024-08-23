@@ -11,7 +11,8 @@ module.exports = {
     });
   }),
   getProperties: asyncHandler(async (req, res) => {
-    const { limit, page, fields, name, sort, ...query } = req.query;
+    const { limit, page, fields, name, sort, address, city, ...query } =
+      req.query;
     const options = {};
 
     // Giới hạn trường
@@ -26,12 +27,12 @@ module.exports = {
     }
 
     // Tìm kiếm theo tên
-    // if (name)
-    //   query.name = Sequelize.where(
-    //     Sequelize.fn("LOWER", Sequelize.col("name")),
-    //     "LIKE",
-    //     `%${name.toLocaleLowerCase()}%`
-    //   );
+    if (address)
+      query.address = Sequelize.where(
+        Sequelize.fn("LOWER", Sequelize.col("address")),
+        "LIKE",
+        `%${address.toLocaleLowerCase()}%`
+      );
 
     //Sắp xếp
     if (sort) {

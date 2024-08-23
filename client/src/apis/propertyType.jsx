@@ -6,3 +6,10 @@ export const apiCreatePropertyType = (data) =>
     method: "post",
     data,
   });
+
+export const apiGetPropertyTypes = (params) =>
+  axios({
+    url: "/property-type/",
+    method: "get",
+    params,
+  });

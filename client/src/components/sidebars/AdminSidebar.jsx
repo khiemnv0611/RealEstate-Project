@@ -16,7 +16,7 @@ const AdminSidebar = () => {
   return (
     <div className="h-screen w-full">
       <div className="w-full p-4 flex flex-col justify-center items-center gap-6">
-        <img src="/logo.png" alt="logo" className="object-contain" />
+        <img src="/logo_white.png" alt="logo" className="object-contain" />
         <span className="font-semibold text-2xl italic text-yellow-300">
           Quản trị viên
         </span>
