@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../models");
+const { Sequelize } = require("sequelize");
 
 module.exports = {
   createNewProperty: asyncHandler(async (req, res) => {
@@ -29,7 +30,7 @@ module.exports = {
     // Tìm kiếm theo tên
     if (address)
       query.address = Sequelize.where(
-        Sequelize.fn("LOWER", Sequelize.col("address")),
+        Sequelize.fn("LOWER", Sequelize.col("Property.address")),
         "LIKE",
         `%${address.toLocaleLowerCase()}%`
       );

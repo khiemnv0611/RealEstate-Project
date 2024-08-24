@@ -4,8 +4,16 @@ import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { apiGetProperties } from "~/apis/properties";
-import { BreadCrumb, Button, InputSelect, PropertyCard } from "~/components";
+import {
+  BreadCrumb,
+  Button,
+  InputSelect,
+  PropertyCard,
+  Search,
+} from "~/components";
 import { Pagination } from "~/components/paginations";
+import { CiBoxList } from "react-icons/ci";
+import { useAppStore } from "~/store/useAppStore";
 
 const Properties = () => {
   const [properties, setProperties] = useState();
@@ -18,6 +26,7 @@ const Properties = () => {
   } = useForm();
   const sort = watch("sort");
 
+  const { setModal } = useAppStore();
   useEffect(() => {
     const fetchProperties = async (params) => {
       const response = await apiGetProperties({
@@ -27,9 +36,9 @@ const Properties = () => {
       if (response.success) setProperties(response.properties);
     };
     const params = Object.fromEntries([...searchParams]);
-    console.log(params);
+    if (sort) params.sort = sort;
     fetchProperties(params);
-  }, [searchParams]);
+  }, [searchParams, sort]);
 
   return (
     <div className="w-full">
@@ -48,20 +57,29 @@ const Properties = () => {
       </div>
       <div className="w-main mx-auto my-20">
         <div className="my-4 flex justify-between items-center">
-          <InputSelect
-            register={register}
-            id="sort"
-            errors={errors}
-            options={[
-              { label: "Mới nhất", value: "-createdAt" },
-              { label: "Cũ hơn", value: "createdAt" },
-              { label: "A - Z", value: "name" },
-              { label: "Z - A", value: "-name" },
-            ]}
-            containerClassname="flex-row items-center gap-2"
-            label="Sắp xếp: "
-            inputClassname="w-fit rounded-md"
-          />
+          <div className="flex items-center justify-center gap-2">
+            <span
+              onClick={() => setModal(true, <Search direction="vertical" />)}
+              className="cursor-pointer "
+            >
+              <CiBoxList size={22} />
+            </span>
+            <InputSelect
+              register={register}
+              id="sort"
+              errors={errors}
+              placeholder="Thứ tự"
+              options={[
+                { label: "Mới nhất", value: "-createdAt" },
+                { label: "Cũ hơn", value: "createdAt" },
+                { label: "A - Z", value: "name" },
+                { label: "Z - A", value: "-name" },
+              ]}
+              containerClassname="flex-row items-center gap-2"
+              label="Sắp xếp: "
+              inputClassname="w-fit rounded-md"
+            />
+          </div>
           <div className="flex items-center gap-4">
             <Button
               onClick={() => setMode("ALL")}
