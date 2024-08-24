@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 import Select from "react-select";
+import { twMerge } from "tailwind-merge";
 
 const SelectLib = ({
   style = "form-select",
@@ -14,6 +15,7 @@ const SelectLib = ({
   validate,
   placeholder,
   options = [],
+  onChange,
 }) => {
   return (
     <div
@@ -32,10 +34,11 @@ const SelectLib = ({
         isClearable
         options={options}
         isSearchable
+        onChange={(val) => onChange(val)}
         formatOptionLabel={(option) => (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center px-2 gap-2">
             <img src={option.image} alt="" className="w-5 h-5 object-cover" />
-            <span>{option.label}</span>
+            <span>{option.name}</span>
           </div>
         )}
         className={{
