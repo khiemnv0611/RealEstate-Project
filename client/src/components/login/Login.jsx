@@ -153,10 +153,10 @@ const Login = () => {
           placeholder="Nhập số điện thoại ..."
           validate={{
             required: "Trường này không được để trống",
-            pattern: {
-              value: /(0[3|5|7|9])+([0-9]{8})\b/,
-              message: "Số điện thoại không hợp lệ.",
-            },
+            // pattern: {
+            //   value: /(0[1|3|5|7|9])+([0-9]{8})\b/,
+            //   message: "Số điện thoại không hợp lệ.",
+            // },
           }}
           errors={errors}
         />
