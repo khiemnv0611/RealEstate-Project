@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../models");
-const { Sequelize } = require("sequelize");
+const { Sequelize, Op } = require("sequelize");
 
 module.exports = {
   createNewProperty: asyncHandler(async (req, res) => {
@@ -12,9 +12,25 @@ module.exports = {
     });
   }),
   getProperties: asyncHandler(async (req, res) => {
-    const { limit, page, fields, name, sort, address, city, ...query } =
+    const { limit, page, fields, name, sort, address, city, price, ...query } =
       req.query;
     const options = {};
+
+    // Giá
+    if (price) {
+      const isBetweenFilter = price?.every((el) => !isNaN(el));
+
+      if (isBetweenFilter) {
+        query.price = { [Op.between]: price };
+      } else {
+        const number = price?.find((el) => !isNaN(el));
+        const operator = price?.find((el) => isNaN(el)); // `lte` or `gte`
+
+        if (number !== undefined && operator !== undefined) {
+          query.price = { [Op[operator]]: number };
+        }
+      }
+    }
 
     // Giới hạn trường
     if (fields) {
@@ -70,7 +86,7 @@ module.exports = {
       });
     }
 
-    //Phân trang
+    // Phân trang
     const offset = (page && +page > 1 ? +page - 1 : 0) * limit;
     if (offset) options.offset = offset;
     options.limit = +limit;

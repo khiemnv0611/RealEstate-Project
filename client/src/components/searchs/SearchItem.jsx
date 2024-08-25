@@ -7,7 +7,8 @@ const SearchItem = ({ title, children, className }) => {
     <div
       className={twMerge(
         clsx(
-          "flex relative flex-col border-r gap-2 justify-center items-center"
+          "flex relative flex-col border-r gap-2 justify-center items-center",
+          className
         )
       )}
     >

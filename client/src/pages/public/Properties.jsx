@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { apiGetProperties } from "~/apis/properties";
 import {
@@ -25,7 +25,7 @@ const Properties = () => {
     watch,
   } = useForm();
   const sort = watch("sort");
-
+  const navigate = useNavigate();
   const { setModal } = useAppStore();
   useEffect(() => {
     const fetchProperties = async (params) => {
@@ -36,7 +36,9 @@ const Properties = () => {
       if (response.success) setProperties(response.properties);
     };
     const params = Object.fromEntries([...searchParams]);
+    if (params.price) params.price = searchParams.getAll("price");
     if (sort) params.sort = sort;
+
     fetchProperties(params);
   }, [searchParams, sort]);
 
@@ -70,15 +72,21 @@ const Properties = () => {
               errors={errors}
               placeholder="Thứ tự"
               options={[
-                { label: "Mới nhất", value: "-createdAt" },
-                { label: "Cũ hơn", value: "createdAt" },
-                { label: "A - Z", value: "name" },
-                { label: "Z - A", value: "-name" },
+                { label: "Mới nhất", code: "-createdAt" },
+                { label: "Cũ hơn", code: "createdAt" },
+                { label: "A - Z", code: "name" },
+                { label: "Z - A", code: "-name" },
               ]}
               containerClassname="flex-row items-center gap-2"
               label="Sắp xếp: "
               inputClassname="w-fit rounded-md"
             />
+            <Button
+              onClick={() => navigate(location.pathname)}
+              className="whitespace-nowrap"
+            >
+              Làm mới
+            </Button>
           </div>
           <div className="flex items-center gap-4">
             <Button
