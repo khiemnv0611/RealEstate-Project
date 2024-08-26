@@ -1,6 +1,7 @@
 import path from "./path";
 import { RiDashboardLine } from "react-icons/ri";
 import { FaProjectDiagram } from "react-icons/fa";
+import { FaHouseChimneyUser } from "react-icons/fa6";
 
 export const navigations = [
   {
@@ -55,6 +56,16 @@ export const adminSidebar = [
         name: "Quản lý",
       },
     ],
+  },
+];
+
+export const userSidebar = [
+  {
+    id: 10,
+    name: "Thông tin cá nhân",
+    path: `/${path.USER_LAYOUT}/${path.PERSONAL}`,
+    icon: <FaHouseChimneyUser size={25} />,
+    type: "SINGLE",
   },
 ];
 

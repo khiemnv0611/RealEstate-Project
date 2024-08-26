@@ -12,6 +12,7 @@ export { default as InputFile } from "./inputs/InputFile";
 export { default as InputSelect } from "./inputs/InputSelect";
 export { default as Textarea } from "./inputs/Textarea";
 export { default as AdminSidebar } from "./sidebars/AdminSidebar";
+export { default as UserSidebar } from "./sidebars/UserSidebar";
 export { default as OTPVerifier } from "./auth/OTPVerifier";
 export { default as Search } from "./searchs/Search";
 export { default as SelectPrice } from "./searchs/SelectPrice";

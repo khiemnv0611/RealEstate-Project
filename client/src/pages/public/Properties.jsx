@@ -83,7 +83,7 @@ const Properties = () => {
             />
             <Button
               onClick={() => navigate(location.pathname)}
-              className="whitespace-nowrap"
+              className="whitespace-nowrap py-2"
             >
               Làm mới
             </Button>

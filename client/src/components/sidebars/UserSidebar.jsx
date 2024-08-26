@@ -1,11 +1,11 @@
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { adminSidebar } from "~/utils/constants";
+import { adminSidebar, userSidebar } from "~/utils/constants";
 import { FaCaretRight, FaCaretDown } from "react-icons/fa6";
 import { TiArrowForwardOutline } from "react-icons/ti";
 
-const AdminSidebar = () => {
+const UserSidebar = () => {
   const [activeTabs, setActiveTabs] = useState([]);
   const handleActiveTabs = (tabId) => {
     if (activeTabs.some((el) => el === tabId))
@@ -22,7 +22,7 @@ const AdminSidebar = () => {
         </span>
       </div>
       <div className="mt-6 mx-3 flex flex-col gap-0">
-        {adminSidebar.map((el) => (
+        {userSidebar.map((el) => (
           <Fragment key={el.id}>
             {el.type === "SINGLE" && (
               <NavLink
@@ -92,4 +92,4 @@ const AdminSidebar = () => {
   );
 };
 
-export default AdminSidebar;
+export default UserSidebar;

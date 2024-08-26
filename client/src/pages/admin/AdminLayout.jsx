@@ -4,8 +4,8 @@ import { AdminSidebar } from "~/components";
 
 const AdminLayout = () => {
   return (
-    <main className="grid grid-cols-12">
-      <div className="col-span-2 bg-main-700 text-white h-full overflow-y-auto">
+    <main className="w-full grid grid-cols-12 min-h-screen max-h-screen overflow-auto">
+      <div className="col-span-2">
         <AdminSidebar />
       </div>
       <div className="col-span-10">

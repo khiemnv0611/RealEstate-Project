@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { Login } from "~/components";
+import { Login, UserSidebar } from "~/components";
 import { useAppStore } from "~/store/useAppStore";
 import { useUserStore } from "~/store/useUserStore";
 
@@ -30,7 +30,14 @@ const UserLayout = () => {
   return (
     <>
       {current?.userRoles?.some((el) => el.roleCode === "ROL7") && (
-        <div>user layout</div>
+        <div className="w-full grid grid-cols-12 min-h-screen max-h-screen overflow-auto">
+          <div className="col-span-2">
+            <UserSidebar />
+          </div>
+          <div className="col-span-10">
+            <Outlet />
+          </div>
+        </div>
       )}
     </>
   );
