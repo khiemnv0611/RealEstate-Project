@@ -72,7 +72,7 @@ const Login = () => {
     if (variant === "REGISTER") {
       if (data?.roleCode !== "ROL7") {
         handleSendOTP(data.phone);
-      }
+      } else handleRegister(data);
     }
 
     if (variant === "LOGIN") {
@@ -117,9 +117,6 @@ const Login = () => {
           <OTPVerifier cb={handleSubmit(handleRegister)} />
         </div>
       )}
-      {/* <div className="absolute inset-0 bg-white rounded-md">
-        <OTPVerifier />
-      </div> */}
       <h1 className="text-3xl font-josejinsans font-semibold tracking-tight">
         Chào mừng đến với REIS
       </h1>

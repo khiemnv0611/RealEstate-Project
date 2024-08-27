@@ -4,9 +4,11 @@ import { Link, NavLink } from "react-router-dom";
 import { adminSidebar, userSidebar } from "~/utils/constants";
 import { FaCaretRight, FaCaretDown } from "react-icons/fa6";
 import { TiArrowForwardOutline } from "react-icons/ti";
+import { useUserStore } from "~/store/useUserStore";
 
 const UserSidebar = () => {
   const [activeTabs, setActiveTabs] = useState([]);
+  const { current } = useUserStore();
   const handleActiveTabs = (tabId) => {
     if (activeTabs.some((el) => el === tabId))
       setActiveTabs((prev) => prev.filter((el) => !el == tabId));
@@ -15,10 +17,16 @@ const UserSidebar = () => {
 
   return (
     <div className="h-full w-full bg-main-700 text-white">
-      <div className="w-full p-4 flex flex-col justify-center items-center gap-6">
-        <img src="/logo_white.png" alt="logo" className="object-contain" />
-        <span className="font-semibold text-2xl italic text-yellow-300">
-          Quản trị viên
+      <div className="w-full p-4 flex flex-col justify-center items-center gap-2">
+        <img
+          src={current?.avatar || "/user.svg"}
+          alt="logo"
+          className="w-28 h-28 object-cover rounded-full"
+        />
+        <span className="text-orange-500 font-bold">{current?.name}</span>
+        {/* <span>{current?.phone}</span> */}
+        <span>
+          {current?.userRoles?.map((el) => el.roleName.value)?.join(" / ")}
         </span>
       </div>
       <div className="mt-6 mx-3 flex flex-col gap-0">

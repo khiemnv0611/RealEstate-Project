@@ -22,7 +22,7 @@ const register = asyncHandler(async (req, res) => {
 
   const userId = response[0]?.id;
   if (userId) {
-    const roleCode = ["ROL7"];
+    const roleCode = [];
     if (req.body?.roleCode) roleCode.push(req.body?.roleCode);
     const roleCodeBulk = roleCode.map((role) => ({ userId, roleCode: role }));
     const updateRole = await db.User_Role.bulkCreate(roleCodeBulk);
