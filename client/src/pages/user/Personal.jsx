@@ -1,18 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { InputFile, InputForm, Title } from "~/components";
+import { Button, InputFile, InputForm, Title } from "~/components";
 import { useUserStore } from "~/store/useUserStore";
 
 const Personal = () => {
   const { current } = useUserStore();
+  const [isChangeAvatar, setIsChangeAvatar] = useState(false);
   const {
     register,
-    formState: { errors },
+    formState: { errors, isDirty },
     handleSubmit,
     setValue,
     clearErrors,
     reset,
+    watch,
   } = useForm();
+  const avatar = watch("avatar");
+
   useEffect(() => {
     if (current) {
       reset({
@@ -24,6 +28,7 @@ const Personal = () => {
       });
     }
   }, [current]);
+
   const getImages = (images) => {
     if (images && images.length > 0) clearErrors("images");
     setValue(
@@ -31,7 +36,9 @@ const Personal = () => {
       images?.map((el) => el.path)
     );
   };
-  console.log(current);
+
+  const onSubmit = (data) => {};
+
   return (
     <div className="h-full px-8">
       <Title title="THÔNG TIN CÁ NHÂN"></Title>
@@ -53,7 +60,12 @@ const Personal = () => {
           label="Số điện thoại"
           required
           placeholder="Nhập số điện thoại..."
-          readOnly={!current?.userRoles?.some((el) => el.roleCode === "ROL7")}
+          readOnly={
+            !(
+              current?.userRoles?.length === 1 &&
+              current?.userRoles[0]?.roleCode === "ROL7"
+            )
+          }
         />
         <InputForm
           id="email"
@@ -73,14 +85,32 @@ const Personal = () => {
           required
           placeholder="Nhập địa chỉ..."
         />
-        <InputFile
-          id="images"
-          register={register}
-          errors={errors}
-          validate={{ required: "Trường này không được để trống." }}
-          label="Ảnh đại diện"
-          getImages={getImages}
-        />
+        <div className="flex flex-col gap-3">
+          <span className="font-medium text-main-800">
+            Ảnh đại diện{" "}
+            <span
+              className="text-xs cursor-pointer hover:underline text-orange-600"
+              onClick={() => setIsChangeAvatar((prev) => !prev)}
+            >
+              {isChangeAvatar ? "Giữ nguyên ✋" : "Thay đổi ✍️"}
+            </span>
+          </span>
+          {isChangeAvatar ? (
+            <InputFile
+              id="avatar"
+              register={register}
+              errors={errors}
+              getImages={getImages}
+            />
+          ) : (
+            <img
+              src={avatar || "/user.svg"}
+              alt=""
+              className="w-28 h-28 object-cover rounded-full"
+            />
+          )}
+        </div>
+        <Button onClick={handleSubmit(onSubmit)}>Cập nhật</Button>
       </form>
     </div>
   );

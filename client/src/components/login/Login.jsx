@@ -88,9 +88,13 @@ const Login = () => {
   };
 
   const handleRegister = async (data) => {
-    const { confirmPassword, ...registerData } = data; // Loại bỏ confirmPassword
-    const response = await apiRegister(registerData); // Gửi dữ liệu đã loại bỏ confirmPassword lên server
+    const { roleCode, confirmPassword, ...payload } = data;
 
+    if (roleCode !== "ROL7") {
+      payload.roleCode = roleCode;
+    }
+
+    const response = await apiRegister(payload);
     if (response.success) {
       Swal.fire({
         icon: "success",
