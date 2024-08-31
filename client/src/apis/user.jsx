@@ -11,3 +11,9 @@ export const apiGetRoles = () =>
     url: "/user/roles",
     method: "get",
   });
+export const apiUpdateProfile = (data) =>
+  axios({
+    url: "/user/profile",
+    method: "put",
+    data,
+  });

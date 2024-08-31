@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { apiUpdateProfile } from "~/apis/user";
 import { Button, InputFile, InputForm, Title } from "~/components";
 import { useUserStore } from "~/store/useUserStore";
 
 const Personal = () => {
-  const { current } = useUserStore();
+  const { current, getCurrent } = useUserStore();
   const [isChangeAvatar, setIsChangeAvatar] = useState(false);
   const {
     register,
@@ -32,12 +34,21 @@ const Personal = () => {
   const getImages = (images) => {
     if (images && images.length > 0) clearErrors("images");
     setValue(
-      "images",
+      "avatar",
       images?.map((el) => el.path)
     );
   };
 
-  const onSubmit = (data) => {};
+  const onSubmit = async (data) => {
+    const { avatar, ...payload } = data;
+    if (Array.isArray(avatar)) payload.avatar = avatar;
+    const response = await apiUpdateProfile(payload);
+    if (response.success) {
+      toast.success(response.mes);
+      getCurrent();
+      setIsChangeAvatar(false);
+    } else toast.error(response.mes);
+  };
 
   return (
     <div className="h-full px-8">
