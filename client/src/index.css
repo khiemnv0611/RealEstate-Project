@@ -12,3 +12,11 @@ body {
 .otp-item {
   width: 3em !important;
 }
+
+.custom-dots li div {
+  @apply w-4 h-4 bg-white rounded-full mt-5;
+}
+
+.custom-dots li.slick-active div {
+  @apply bg-main-600;
+}

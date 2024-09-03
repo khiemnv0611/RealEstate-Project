@@ -3,6 +3,7 @@ import {
   Home,
   OurAgents,
   Properties,
+  PropertyDetail,
   PublicLayout,
 } from "~/pages/public";
 import path from "./path";
@@ -39,6 +40,10 @@ const routes = [
           {
             path: path.PROPERTIES,
             element: <Properties />,
+          },
+          {
+            path: path.PROPERTY_DETAIL__ID,
+            element: <PropertyDetail />,
           },
         ],
       },

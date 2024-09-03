@@ -3,14 +3,14 @@ const db = require("../models");
 const { Sequelize, Op } = require("sequelize");
 
 module.exports = {
-  createNewProperty: asyncHandler(async (req, res) => {
-    const response = await db.User.create;
-    return res.json({
-      success: Boolean(response),
-      mes: response ? "Got." : "Cannot get user.",
-      currentUser: response,
-    });
-  }),
+  // createNewProperty: asyncHandler(async (req, res) => {
+  //   const response = await db.User.create;
+  //   return res.json({
+  //     success: Boolean(response),
+  //     mes: response ? "Got." : "Cannot get user.",
+  //     currentUser: response,
+  //   });
+  // }),
   getProperties: asyncHandler(async (req, res) => {
     const { limit, page, fields, name, sort, address, city, price, ...query } =
       req.query;
@@ -114,6 +114,33 @@ module.exports = {
       properties: response
         ? { ...response, limit: +limit, page: +page ? +page : 1 }
         : null,
+    });
+  }),
+  getOneById: asyncHandler(async (req, res) => {
+    const { propertyId } = req.params;
+    const response = await db.Property.findByPk(propertyId, {
+      include: [
+        {
+          model: db.PropertyType,
+          as: "rPropertyType",
+          attributes: ["name", "image"],
+        },
+        {
+          model: db.User,
+          as: "rPostedBy",
+          attributes: ["name", "phone", "avatar"],
+        },
+        {
+          model: db.User,
+          as: "rOwner",
+          attributes: ["name", "phone", "avatar"],
+        },
+      ],
+    });
+    return res.json({
+      success: !!response,
+      mes: response ? "Got." : "Cannot get property.",
+      data: response,
     });
   }),
 };

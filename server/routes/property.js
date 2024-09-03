@@ -9,5 +9,6 @@ const { verifyToken, isAdmin } = require("../middlewares/verifyToken");
 //router.use(rateLimiter);
 
 // Get
+router.get("/one/:propertyId", ctrls.getOneById);
 router.get("/", ctrls.getProperties);
 module.exports = router;

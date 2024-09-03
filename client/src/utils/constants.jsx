@@ -24,11 +24,6 @@ export const navigations = [
     path: `/${path.PROPERTIES}`,
     text: "DỰ ÁN",
   },
-  {
-    id: 5,
-    path: `/${path.SEARCH}`,
-    text: "TÌM KIẾM",
-  },
 ];
 
 export const adminSidebar = [

@@ -5,7 +5,7 @@ const path = {
   ABOUT_US: "about-us",
   OUR_AGENTS: "our-agents",
   PROPERTIES: "properties",
-  SEARCH: "search",
+  PROPERTY_DETAIL__ID: "properties/:id",
 
   // ADMIN
   ADMIN_LAYOUT: "admin",

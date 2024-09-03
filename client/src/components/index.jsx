@@ -18,3 +18,5 @@ export { default as Search } from "./searchs/Search";
 export { default as SelectPrice } from "./searchs/SelectPrice";
 export { default as SearchItem } from "./searchs/SearchItem";
 export { default as PropertyCard } from "./properties/PropertyCard";
+export { default as Images } from "./properties/Images";
+export { default as ImageDetail } from "./properties/ImageDetail";
