@@ -29,7 +29,7 @@ const ImageDetail = ({ images = [], onClose }) => {
       <div className="h-10 w-full flex items-center justify-end text-white p-10">
         <IoClose onClick={onClose} className="cursor-pointer" size={40} />
       </div>
-      <Slider {...settings} className="w-full max-w-lg">
+      <Slider {...settings} className="w-full max-w-4xl">
         {images.map((image, index) => (
           <div key={index}>
             <img
@@ -40,7 +40,7 @@ const ImageDetail = ({ images = [], onClose }) => {
           </div>
         ))}
       </Slider>
-      <div className="text-white text-2xl font-bold pb-4">
+      <div className="text-white text-2xl font-bold p-4">
         {currentSlide + 1}/{images.length}
       </div>
     </div>
