@@ -9,8 +9,7 @@ import { toast } from "react-toastify";
 import { useAppStore } from "~/store/useAppStore";
 import { useUserStore } from "~/store/useUserStore";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import auth from "~/utils/firebaseConfig";
-import { twMerge } from "tailwind-merge";
+import { auth } from "~/utils/firebaseConfig";
 
 const Login = () => {
   const [variant, setVariant] = useState("LOGIN");
@@ -222,6 +221,14 @@ const Login = () => {
             : variant === "LOGIN"
             ? "Đăng nhập"
             : "Đăng ký"}
+        </Button>
+        <Button className="bg-white text-black border">
+          <img
+            src="/google.svg"
+            alt="google logo"
+            className="w-5 h-5 mr-3 object-cover"
+          />
+          <span>Đăng nhập với Google</span>
         </Button>
         <span className="cursor-pointer text-main-500 hover:underline font-bold w-full text-center">
           Quên mật khẩu?
