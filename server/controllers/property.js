@@ -105,6 +105,11 @@ module.exports = {
           as: "rOwner",
           attributes: ["avatar", "phone", "name", "email"],
         },
+        {
+          model: db.PropertyType,
+          as: "rPropertyType",
+          attributes: ["name", "id"],
+        },
       ],
     });
 
@@ -123,7 +128,7 @@ module.exports = {
         {
           model: db.PropertyType,
           as: "rPropertyType",
-          attributes: ["name", "image"],
+          attributes: ["name", "id"],
         },
         {
           model: db.User,

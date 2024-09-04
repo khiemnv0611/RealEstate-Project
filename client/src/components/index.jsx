@@ -20,5 +20,7 @@ export { default as SearchItem } from "./searchs/SearchItem";
 export { default as PropertyCard } from "./properties/PropertyCard";
 export { default as Images } from "./properties/Images";
 export { default as ImageDetail } from "./properties/ImageDetail";
+export { default as RelatedPost } from "./properties/RelatedPost";
+export { default as PropertyItem } from "./properties/PropertyItem";
 export { default as BoxInfo } from "./users/BoxInfo";
 export { default as Map } from "./maps/Map";

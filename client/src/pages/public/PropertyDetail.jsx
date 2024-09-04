@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { apiGetDetailProperty } from "~/apis/properties";
-import { BoxInfo, BreadCrumb, Images, Map } from "~/components";
+import { apiGetDetailProperty, apiGetProperties } from "~/apis/properties";
+import { BoxInfo, BreadCrumb, Images, Map, RelatedPost } from "~/components";
 import { GrLocation } from "react-icons/gr";
 import DOMPurify from "dompurify";
 import { formatMoney } from "~/utils/fn";
@@ -20,6 +20,11 @@ const InfoCell = ({ title, value, unit = "" }) => {
 const PropertyDetail = () => {
   const { id } = useParams();
   const [propertyDetail, setPropertyDetail] = useState();
+  const [relatedProperties, setRelatedProperties] = useState({
+    propertyType: null,
+    listingTypes: null,
+  });
+
   useEffect(() => {
     const fetchDetailProperty = async () => {
       const response = await apiGetDetailProperty(id);
@@ -30,6 +35,44 @@ const PropertyDetail = () => {
 
     fetchDetailProperty();
   }, [id]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
+  useEffect(() => {
+    const fetchRelatedPost = async () => {
+      const [propertyType, listingTypes] = await Promise.all([
+        apiGetProperties({
+          propertyTypeId: propertyDetail.propertyTypeId,
+          limit: 5,
+          fields: "name,id,featuredImage,price,listingType,isAvailable",
+        }),
+        apiGetProperties({
+          listingType: propertyDetail.listingType,
+          limit: 5,
+          fields: "name,id,featuredImage,price,listingType,isAvailable",
+        }),
+      ]);
+
+      if (propertyType.success)
+        setRelatedProperties((prev) => ({
+          ...prev,
+          propertyType: propertyType.properties,
+        }));
+      if (listingTypes.success)
+        setRelatedProperties((prev) => ({
+          ...prev,
+          listingTypes: listingTypes.properties,
+        }));
+
+      console.log(propertyType, listingTypes);
+    };
+
+    if (propertyDetail) {
+      fetchRelatedPost();
+    }
+  }, [propertyDetail]);
   return (
     <div className="w-full pb-[500px]">
       <div className="relative w-full">
@@ -130,8 +173,8 @@ const PropertyDetail = () => {
                   </tbody>
                 </table>
               </div>
-              <div>
-                <Map address={propertyDetail.address} />
+              <div className="w-full h-[600px] bg-gray-100 rounded-md">
+                {/* <Map address={propertyDetail.address} /> */}
               </div>
             </div>
             <div className="col-span-3 flex flex-col gap-6">
@@ -144,6 +187,14 @@ const PropertyDetail = () => {
                 role="Chủ sở hữu"
                 roleStyle="text-red-600"
                 data={propertyDetail.rOwner}
+              />
+              <RelatedPost
+                title="Các dự án liên quan"
+                data={relatedProperties.propertyType?.rows}
+              />
+              <RelatedPost
+                title={`Các dự án cần ${propertyDetail.listingType}`}
+                data={relatedProperties.listingTypes?.rows}
               />
             </div>
           </div>

@@ -38,7 +38,7 @@ const Map = ({ address = "", zoom = 12 }) => {
   }, [address]);
 
   return (
-    <div className="w-full h-[600px]">
+    <div>
       {center && center.length > 0 && (
         <MapContainer center={center} zoom={zoom} className="w-full h-full z-0">
           <TileLayer url={url} attribution={attribution} />
