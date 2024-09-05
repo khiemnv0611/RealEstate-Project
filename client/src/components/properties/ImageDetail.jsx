@@ -29,7 +29,7 @@ const ImageDetail = ({ images = [], onClose }) => {
       <div className="h-10 w-full flex items-center justify-end text-white p-10">
         <IoClose onClick={onClose} className="cursor-pointer" size={40} />
       </div>
-      <Slider {...settings} className="w-full max-w-4xl">
+      <Slider {...settings} className="w-full max-w-2xl">
         {images.map((image, index) => (
           <div key={index}>
             <img

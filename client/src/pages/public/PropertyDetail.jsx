@@ -65,8 +65,6 @@ const PropertyDetail = () => {
           ...prev,
           listingTypes: listingTypes.properties,
         }));
-
-      console.log(propertyType, listingTypes);
     };
 
     if (propertyDetail) {
@@ -74,7 +72,7 @@ const PropertyDetail = () => {
     }
   }, [propertyDetail]);
   return (
-    <div className="w-full pb-[500px]">
+    <div className="w-full">
       <div className="relative w-full">
         <img
           src="/properties_banner.png"
@@ -173,8 +171,8 @@ const PropertyDetail = () => {
                   </tbody>
                 </table>
               </div>
-              <div className="w-full h-[600px] bg-gray-100 rounded-md">
-                {/* <Map address={propertyDetail.address} /> */}
+              <div className="w-full h-[300px] rounded-md">
+                <Map address={propertyDetail.address} />
               </div>
             </div>
             <div className="col-span-3 flex flex-col gap-6">
