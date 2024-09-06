@@ -171,9 +171,7 @@ const PropertyDetail = () => {
                   </tbody>
                 </table>
               </div>
-              <div className="w-full h-[300px] rounded-md">
-                <Map address={propertyDetail.address} />
-              </div>
+              <div>{/* <Map address={propertyDetail.address} /> */}</div>
             </div>
             <div className="col-span-3 flex flex-col gap-6">
               <BoxInfo
