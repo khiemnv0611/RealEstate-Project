@@ -2,6 +2,7 @@ import path from "./path";
 import { RiDashboardLine } from "react-icons/ri";
 import { FaProjectDiagram } from "react-icons/fa";
 import { FaHouseChimneyUser } from "react-icons/fa6";
+import { FaRegHeart } from "react-icons/fa6";
 
 export const navigations = [
   {
@@ -60,6 +61,23 @@ export const userSidebar = [
     name: "Thông tin cá nhân",
     path: `/${path.USER_LAYOUT}/${path.PERSONAL}`,
     icon: <FaHouseChimneyUser size={25} />,
+    type: "SINGLE",
+  },
+];
+
+export const ownerSidebar = [
+  {
+    id: 10,
+    name: "Quản lý dự án",
+    path: `/${path.OWNER_LAYOUT}/${path.OWNER_DASHBOARD}`,
+    icon: <RiDashboardLine size={25} />,
+    type: "SINGLE",
+  },
+  {
+    id: 11,
+    name: "Các dự án yêu thích",
+    path: `/${path.OWNER_LAYOUT}/${path.OWNER_WISHLIST}`,
+    icon: <FaRegHeart size={25} />,
     type: "SINGLE",
   },
 ];

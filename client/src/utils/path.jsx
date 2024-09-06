@@ -24,6 +24,7 @@ const path = {
   // OWNER
   OWNER_LAYOUT: "owner",
   OWNER_DASHBOARD: "dashboard",
+  OWNER_WISHLIST: "wishlist",
 };
 
 export default path;

@@ -15,6 +15,7 @@ import {
   ManagePropertyType,
 } from "~/pages/admin";
 import { Personal, UserLayout } from "~/pages/user";
+import { OwnerLayout, WishList } from "~/pages/owner";
 
 const routes = [
   {
@@ -72,6 +73,20 @@ const routes = [
           {
             path: path.PERSONAL,
             element: <Personal />,
+          },
+        ],
+      },
+      {
+        path: path.OWNER_LAYOUT,
+        element: <OwnerLayout />,
+        children: [
+          {
+            path: path.OWNER_DASHBOARD,
+            element: <Dashboard />,
+          },
+          {
+            path: path.OWNER_WISHLIST,
+            element: <WishList />,
           },
         ],
       },

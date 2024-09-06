@@ -1,12 +1,12 @@
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { userSidebar } from "~/utils/constants";
+import { ownerSidebar } from "~/utils/constants";
 import { FaCaretRight, FaCaretDown } from "react-icons/fa6";
 import { TiArrowForwardOutline } from "react-icons/ti";
 import { useUserStore } from "~/store/useUserStore";
 
-const UserSidebar = () => {
+const OwnerSidebar = () => {
   const [activeTabs, setActiveTabs] = useState([]);
   const { current } = useUserStore();
   const handleActiveTabs = (tabId) => {
@@ -29,8 +29,8 @@ const UserSidebar = () => {
           {current?.userRoles?.map((el) => el.roleName.value)?.join(" / ")}
         </span>
       </div>
-      <div className="mt-6 mx-3 flex flex-col gap-0">
-        {userSidebar.map((el) => (
+      <div className="mt-6 mx-3 flex flex-col gap-0 h-full">
+        {ownerSidebar.map((el) => (
           <Fragment key={el.id}>
             {el.type === "SINGLE" && (
               <NavLink
@@ -100,4 +100,4 @@ const UserSidebar = () => {
   );
 };
 
-export default UserSidebar;
+export default OwnerSidebar;

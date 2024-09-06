@@ -74,19 +74,19 @@ const AdminSidebar = () => {
                 )}
               </>
             )}
-            <Link
-              className={clsx(
-                "flex items-center gap-4 px-4 py-3 hover:bg-white hover:text-main-700 rounded-2xl"
-              )}
-              to={"/"}
-            >
-              <span>
-                <TiArrowForwardOutline size={25} />
-              </span>
-              <span className="select-none">Quay lại Trang Chủ</span>
-            </Link>
           </Fragment>
         ))}
+        <Link
+          className={clsx(
+            "flex items-center gap-4 px-4 py-3 hover:bg-white hover:text-main-700 rounded-2xl"
+          )}
+          to={"/"}
+        >
+          <span>
+            <TiArrowForwardOutline size={25} />
+          </span>
+          <span className="select-none">Quay lại Trang Chủ</span>
+        </Link>
       </div>
     </div>
   );
