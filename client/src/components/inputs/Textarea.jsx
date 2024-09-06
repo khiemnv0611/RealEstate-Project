@@ -12,6 +12,7 @@ const Textarea = ({
   errors = {},
   inputClassname,
   validate,
+  required,
   placeholder,
 }) => {
   return (
@@ -23,6 +24,11 @@ const Textarea = ({
       {label && (
         <label className="font-medium text-main-800" htmlFor={id}>
           {label}
+          {required && (
+            <sup>
+              (<span className="text-red-500">*</span>)
+            </sup>
+          )}
         </label>
       )}
       <textarea

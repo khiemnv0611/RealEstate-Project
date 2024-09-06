@@ -1,5 +1,6 @@
 import {
   AboutUs,
+  AddPost,
   Home,
   OurAgents,
   Properties,
@@ -45,6 +46,10 @@ const routes = [
           {
             path: path.PROPERTY_DETAIL__ID,
             element: <PropertyDetail />,
+          },
+          {
+            path: path.ADD_POST,
+            element: <AddPost />,
           },
         ],
       },

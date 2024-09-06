@@ -66,6 +66,7 @@ const CreatePropertyType = () => {
           errors={errors}
           validate={{ required: "Trường này không được để trống" }}
           label="Tên loại dự án"
+          required
         />
         <Textarea
           id="description"

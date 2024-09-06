@@ -34,7 +34,7 @@ export default {
         "main-900": "#0F1320",
       },
       width: {
-        main: "1319px",
+        main: "1100px",
       },
     },
   },

@@ -72,7 +72,7 @@ const Navigation = ({ location, navigate }) => {
               )
             )}
           >
-            Thêm danh sách
+            Đăng tin
           </Button>
         )}
       </div>

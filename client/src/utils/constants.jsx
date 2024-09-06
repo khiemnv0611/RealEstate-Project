@@ -31,7 +31,7 @@ export const adminSidebar = [
   {
     id: 10,
     name: "Bảng điều khiển",
-    path: `/${path.ADMIN_LAYOUT}/${path.DASHBOARD}`,
+    path: `/${path.ADMIN_LAYOUT}/${path.ADMIN_DASHBOARD}`,
     icon: <RiDashboardLine size={25} />,
     type: "SINGLE",
   },
