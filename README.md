@@ -1,5 +1,5 @@
 # Hướng dẫn cài đặt soure RealEstate-Project
-Source sẽ có 2 phần: server và client. Để chạy được source ở localhost thì ta trước tiên cần thiết lập các môi trường cần thiết cũng như lấy các API key.
+Source sẽ có 2 phần: `server` và `client`. Để chạy được source ở localhost thì ta trước tiên cần thiết lập các môi trường cần thiết cũng như lấy các API key.
 ## 1. Chuẩn bị môi trường:
 - Trước tiên cần đảm bảo máy tính có cài Nodejs bằng cách mở terminal (quyền admin) và gõ lệnh `node -v` hoặc node `--version`. Nếu terminal hiện thị số version thì oke.
 - Tiếp theo kiểm tra đã có npm chưa, tương tự ở terminal gõ lệnh `npm -v`.
