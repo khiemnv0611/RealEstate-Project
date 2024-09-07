@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   BreadCrumb,
+  Button,
   InputFile,
   InputForm,
   InputSelect,
   Textarea,
 } from "~/components";
+import { cityDistricts } from "../../utils/constants";
 
 const AddPost = () => {
   const {
@@ -29,6 +31,26 @@ const AddPost = () => {
 
   const [resetKey, setResetKey] = useState(Date.now()); // Sử dụng thời gian hiện tại làm key duy nhất
 
+  const [cities, setCities] = useState(Object.keys(cityDistricts));
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+
+  useEffect(() => {
+    if (selectedCity) {
+      setDistricts(Object.keys(cityDistricts[selectedCity]) || []);
+      setSelectedDistrict(""); // Reset quận khi thành phố thay đổi
+      setWards([]); // Reset phường khi thành phố thay đổi
+    }
+  }, [selectedCity]);
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      setWards(cityDistricts[selectedCity][selectedDistrict] || []);
+    }
+  }, [selectedDistrict, selectedCity]);
+
   return (
     <div className="w-full">
       <div className="relative w-full">
@@ -44,8 +66,8 @@ const AddPost = () => {
           </div>
         </div>
       </div>
-      <div className="w-main mx-auto p-16">
-        <form className="space-y-4">
+      <div className="w-main mx-auto px-10">
+        <form className="space-y-6 my-10">
           <InputForm
             id="name"
             register={register}
@@ -74,42 +96,75 @@ const AddPost = () => {
             required
           />
           <div className="grid grid-cols-3">
-            <InputForm
-              id="ward"
-              register={register}
-              validate={{ required: "Trường này không được để trống" }}
-              errors={errors}
-              label="Phường / Xã"
-              placeholder="Nhập phường / xã..."
-              inputClassname="w-4/5"
-              required
-            />
-            <InputForm
-              id="district"
-              register={register}
-              validate={{ required: "Trường này không được để trống" }}
-              errors={errors}
-              label="Quận / Huyện"
-              placeholder="Nhập quận / huyện..."
-              required
-              inputClassname="w-4/5"
-            />
-            <InputSelect
-              register={register}
-              id="city"
-              errors={errors}
-              placeholder="Chọn thành phố"
-              label="Thành phố"
-              inputClassname="w-4/5"
-              required
-            />
+            <div className="flex items-center justify-around">
+              <label>
+                <span className="font-medium text-main-800">Thành phố</span>
+                <sup>
+                  (<span className="text-red-500">*</span>)
+                </sup>
+              </label>
+              <select
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+                className="h-[38px] text-sm"
+              >
+                <option value="">-- Chọn thành phố / tỉnh --</option>
+                {cities.map((city, index) => (
+                  <option key={index} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center justify-around">
+              <label>
+                <span className="font-medium text-main-800">Quận</span>
+                <sup>
+                  (<span className="text-red-500">*</span>)
+                </sup>
+              </label>
+              <select
+                value={selectedDistrict}
+                onChange={(e) => setSelectedDistrict(e.target.value)}
+                disabled={!selectedCity} // Disable nếu không có thành phố nào được chọn
+                className="h-[38px] text-sm"
+              >
+                <option value="">-- Chọn quận / huyện --</option>
+                {districts.map((district, index) => (
+                  <option key={index} value={district}>
+                    {district}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center justify-around">
+              <label>
+                <span className="font-medium text-main-800">Phường</span>
+                <sup>
+                  (<span className="text-red-500">*</span>)
+                </sup>
+              </label>
+              <select
+                disabled={!selectedDistrict} // Disable nếu không có quận/huyện nào được chọn
+                className="h-[38px] text-sm"
+              >
+                <option value="">-- Chọn phường / xã --</option>
+                {wards.map((ward, index) => (
+                  <option key={index} value={ward}>
+                    {ward}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <InputSelect
             register={register}
             id="listingType"
             errors={errors}
-            placeholder="Chọn loại giao dịch"
-            label="Loại giao dịch "
+            placeholder="-- Chọn loại giao dịch --"
+            label="Loại giao dịch"
             options={[
               { label: "Bán", code: "" },
               { label: "Cho thuê", code: "" },
@@ -126,27 +181,70 @@ const AddPost = () => {
             required
           />
           <InputFile
-            id="images"
+            id="featuredImage"
             register={register}
             errors={errors}
             validate={{ required: "Trường này không được để trống." }}
-            label="Hình ảnh"
+            label="Ảnh tổng quát dự án"
             getImages={getImages}
             required
             resetKey={resetKey} // Truyền thuộc tính resetKey
           />
           <InputFile
-            id="featureImage"
+            id="images"
             register={register}
             errors={errors}
             validate={{ required: "Trường này không được để trống." }}
-            label="Nội thất"
+            label="Những ảnh chi tiết"
             getImages={getImages}
             required
             resetKey={resetKey} // Truyền thuộc tính resetKey
+            multiple
           />
-          <div></div>
+          <div className="grid grid-cols-4">
+            <InputForm
+              id="bedRoom"
+              register={register}
+              validate={{ required: "Trường này không được để trống" }}
+              errors={errors}
+              label="Số phòng ngủ"
+              placeholder="Nhập số phòng ngủ..."
+              required
+              inputClassname="w-4/5"
+            />
+            <InputForm
+              id="bathRoom"
+              register={register}
+              validate={{ required: "Trường này không được để trống" }}
+              errors={errors}
+              label="Số phòng tắm"
+              placeholder="Nhập số phòng tắm..."
+              required
+              inputClassname="w-4/5"
+            />
+            <InputForm
+              id="propertySize"
+              register={register}
+              validate={{ required: "Trường này không được để trống" }}
+              errors={errors}
+              label="Diện tích"
+              placeholder="Nhập diện tích..."
+              required
+              inputClassname="w-4/5"
+            />
+            <InputForm
+              id="yearBuilt"
+              register={register}
+              validate={{ required: "Trường này không được để trống" }}
+              errors={errors}
+              label="Năm xây dựng"
+              placeholder="Nhập năm xây dựng..."
+              required
+              inputClassname="w-4/5"
+            />
+          </div>
         </form>
+        <Button className="mx-auto">Đăng</Button>
       </div>
     </div>
   );

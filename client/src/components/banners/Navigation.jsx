@@ -71,6 +71,7 @@ const Navigation = ({ location, navigate }) => {
                   "bg-transparent border-main-100 border"
               )
             )}
+            onClick={() => navigate("/add-post")}
           >
             Đăng tin
           </Button>
