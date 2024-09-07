@@ -30,6 +30,7 @@ const { raw } = require("express");
 //   });
 // });
 
+// USER CONTROLLER
 module.exports = {
   getCurrent: asyncHandler(async (req, res) => {
     const { uid } = req.user;
@@ -74,21 +75,35 @@ module.exports = {
     const updateData = new Object();
     const { uid } = req.user;
 
-    if (phone) {
+    console.log(req.body)
+
+    if (email) {
       const userRoles = await db.User_Role.findAll({
         where: { userId: uid },
         raw: true,
       });
-      if (userRoles.length === 1 && userRoles[0].roleCode === "ROL7")
-        updateData.phone = phone;
+      if (userRoles.length === 1 && userRoles[0].roleCode === "ROL7") {
+        updateData.email = email;
+      }
     }
 
     if (avatar && avatar.length > 0) updateData.avatar = avatar[0];
     if (name) updateData.name = name;
     if (address) updateData.address = address;
-    if (email) updateData.email = email;
+    if (phone) updateData.phone = phone;
+
+    console.log(updateData)
+
+    // CHECK
+    // try {
+    //   const response = await db.User.update(updateData, { where: { id: uid } });
+
+    // } catch(e) {
+    //   console.log(e)
+    // }
 
     const response = await db.User.update(updateData, { where: { id: uid } });
+
     return res.json({
       success: response[0] > 0,
       mes:

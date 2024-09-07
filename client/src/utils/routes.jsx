@@ -15,6 +15,8 @@ import {
   ManagePropertyType,
 } from "~/pages/admin";
 import { Personal, UserLayout } from "~/pages/user";
+import AuthCallback from "~/components/login/AuthCallback";
+import AuthFailure from "~/components/login/AuthFailure";
 
 const routes = [
   {
@@ -44,6 +46,14 @@ const routes = [
           {
             path: path.PROPERTY_DETAIL__ID,
             element: <PropertyDetail />,
+          },
+          {
+            path: path.AUTH_CALLBACK,
+            element: <AuthCallback />,
+          },
+          {
+            path: path.AUTH_FAILURE,
+            element: <AuthFailure />,
           },
         ],
       },

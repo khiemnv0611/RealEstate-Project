@@ -6,6 +6,8 @@ const path = {
   OUR_AGENTS: "our-agents",
   PROPERTIES: "properties",
   PROPERTY_DETAIL__ID: "properties/:id",
+  AUTH_CALLBACK: "auth/callback",
+  AUTH_FAILURE: "auth/failure",
 
   // ADMIN
   ADMIN_LAYOUT: "admin",

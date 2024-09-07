@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require('express-session');
 require("dotenv").config();
 const cors = require("cors");
 const dbconn = require("./config/dbconn");
@@ -18,6 +19,14 @@ app.use(
     origin: process.env.CLIENT_URL,
   })
 );
+
+app.use(session({
+  secret: process.env.JWT_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 initRoutes(app);

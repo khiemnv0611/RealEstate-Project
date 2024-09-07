@@ -13,11 +13,11 @@ const register = asyncHandler(async (req, res) => {
   // client api/user/:id => req.params
 
   // DTO = Data Transfer Object
-  const { phone, password, name } = req.body;
+  const { email, password, name, phone } = req.body;
   //Handle logic
   const response = await db.User.findOrCreate({
-    where: { phone },
-    defaults: { phone, password, name },
+    where: { email },
+    defaults: { email, password, name, phone },
   });
 
   const userId = response[0]?.id;
@@ -39,10 +39,10 @@ const register = asyncHandler(async (req, res) => {
 
 //Đăng nhập
 const signIn = asyncHandler(async (req, res, next) => {
-  const { phone, password } = req.body;
+  const { email, password } = req.body;
   //Handle logic
   const user = await db.User.findOne({
-    where: { phone },
+    where: { email },
   });
   if (!user)
     return throwErrorWithStatus(
@@ -69,7 +69,21 @@ const signIn = asyncHandler(async (req, res, next) => {
   });
 });
 
+// Đăng nhập bằng Google
+const signInWithGoogle = asyncHandler(async (req, res, next) => {
+  const token = jwt.sign(
+    { uid: req.user.id, roleCode: req.user.roleCode },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  console.log("This was call from signInWithGoogle")
+
+  res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}`)
+});
+
 module.exports = {
   register,
   signIn,
+  signInWithGoogle,
 };

@@ -2,7 +2,7 @@ const router = require("express").Router();
 const ctrls = require("../controllers/user");
 const Joi = require("joi");
 const validateDto = require("../middlewares/validation");
-const { stringReq, array, string } = require("../middlewares/joiSchema");
+const { stringReq, array, string, numberReq } = require("../middlewares/joiSchema");
 const { verifyToken } = require("../middlewares/verifyToken");
 
 router.get("/current", verifyToken, ctrls.getCurrent);
@@ -16,7 +16,7 @@ router.put(
       address: stringReq,
       email: stringReq,
       avatar: array,
-      phone: string,
+      phone: stringReq,
     })
   ),
   ctrls.updateProfile

@@ -143,11 +143,11 @@ const Login = () => {
       </div>
       <form className="flex flex-col gap-2 w-full px-4">
         <InputForm
-          label="Số điện thoại"
+          label="Email"
           register={register}
           inputClassname="rounded-md"
-          id="phone"
-          placeholder="Nhập số điện thoại ..."
+          id="email"
+          placeholder="Nhập vào email ..."
           validate={{
             required: "Trường này không được để trống",
             // pattern: {
@@ -192,6 +192,17 @@ const Login = () => {
               validate={{ required: "Trường này không được để trống" }}
               errors={errors}
             />
+            <InputForm
+              label="Số điện thoại"
+              register={register}
+              inputClassname="rounded-md"
+              id="phone"
+              placeholder="Nhập vào số điện thoại ..."
+              validate={{
+                required: "Trường này không được để trống",
+              }}
+              errors={errors}
+            />
             <InputRadio
               label="Loại tài khoản"
               register={register}
@@ -219,7 +230,12 @@ const Login = () => {
             ? "Đăng nhập"
             : "Đăng ký"}
         </Button>
-        <Button className="bg-white text-black border border-main-700 py-2">
+        <Button
+          onClick={() => {
+            window.location.href = "http://localhost:5000/api/auth/google";
+          }}
+          className="bg-white text-black border border-main-700 py-2"
+        >
           <img
             src="/google.svg"
             alt="google logo"
@@ -227,6 +243,7 @@ const Login = () => {
           />
           <span>Đăng nhập với Google</span>
         </Button>
+
         <span className="cursor-pointer text-main-500 hover:underline font-bold w-full text-center">
           Quên mật khẩu?
         </span>

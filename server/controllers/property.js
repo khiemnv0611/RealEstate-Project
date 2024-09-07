@@ -3,14 +3,13 @@ const db = require("../models");
 const { Sequelize, Op } = require("sequelize");
 
 module.exports = {
-  // createNewProperty: asyncHandler(async (req, res) => {
-  //   const response = await db.User.create;
-  //   return res.json({
-  //     success: Boolean(response),
-  //     mes: response ? "Got." : "Cannot get user.",
-  //     currentUser: response,
-  //   });
-  // }),
+  // CREATE NEW PROPERTY
+  createNewProperty: asyncHandler(async (req, res) => {
+    const {  } = req.body;
+    return res.json({
+      
+    });
+  }),
   getProperties: asyncHandler(async (req, res) => {
     const { limit, page, fields, name, sort, address, city, price, ...query } =
       req.query;
