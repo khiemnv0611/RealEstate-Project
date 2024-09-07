@@ -11,6 +11,7 @@ const breadcrumbRoutes = [
   { path: "/", breadcrumb: "Trang chủ" },
   { path: "/properties", breadcrumb: "Dự án" },
   { path: "/properties/:id", breadcrumb: DynamicBreakCrumb },
+  { path: "/add-post", breadcrumb: "Đăng tin" },
 ];
 
 const BreadCrumb = () => {
@@ -33,7 +34,9 @@ const BreadCrumb = () => {
           >
             {breadcrumb}
           </span>
-          <span className="px-3">{idx < breadcrumbs.length - 1 && "/"}</span>
+          <span>
+            {idx < breadcrumbs.length - 1 && `\u00A0\u00A0/\u00A0\u00A0`}
+          </span>
         </NavLink>
       ))}
     </div>

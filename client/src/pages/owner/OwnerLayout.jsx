@@ -1,23 +1,27 @@
 import React, { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { AdminSidebar } from "~/components";
+import { Login, OwnerSideBar } from "~/components";
+import { useAppStore } from "~/store/useAppStore";
 import { useUserStore } from "~/store/useUserStore";
 
-const AdminLayout = () => {
+const OwnerLayout = () => {
   const { current } = useUserStore();
+  const { setModal } = useAppStore();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!current || !current.userRoles.some((el) => el.roleCode === "ROL1")) {
+    if (!current || !current.userRoles.some((el) => el.roleCode === "ROL7")) {
       Swal.fire({
         icon: "info",
         title: "Oops!",
-        text: "Bạn không có quyền truy cập trang này!",
+        text: "Bạn chưa đăng nhập!",
+        showCancelButton: true,
         showConfirmButton: true,
-        confirmButtonText: "Về Trang chủ",
+        cancelButtonText: "Về Trang chủ",
+        confirmButtonText: "Đi đến Đăng nhập",
       }).then((response) => {
-        if (response.isConfirmed) navigate("/");
+        if (response.isConfirmed) setModal(true, <Login />);
         if (response.isDismissed) navigate("/");
       });
     }
@@ -26,17 +30,17 @@ const AdminLayout = () => {
   return (
     <>
       {current?.userRoles?.some((el) => el.roleCode === "ROL7") && (
-        <main className="w-full grid grid-cols-12 min-h-screen max-h-screen overflow-auto">
+        <div className="w-full grid grid-cols-11 min-h-screen max-h-screen overflow-auto">
           <div className="col-span-2">
-            <AdminSidebar />
+            <OwnerSideBar />
           </div>
-          <div className="col-span-10 px-8">
+          <div className="col-span-9 px-8">
             <Outlet />
           </div>
-        </main>
+        </div>
       )}
     </>
   );
 };
 
-export default AdminLayout;
+export default OwnerLayout;

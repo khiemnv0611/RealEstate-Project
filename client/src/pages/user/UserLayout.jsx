@@ -30,14 +30,14 @@ const UserLayout = () => {
   return (
     <>
       {current?.userRoles?.some((el) => el.roleCode === "ROL7") && (
-        <div className="w-full grid grid-cols-12 min-h-screen max-h-screen overflow-auto">
+        <main className="w-full grid grid-cols-12 min-h-screen max-h-screen overflow-auto">
           <div className="col-span-2">
             <UserSidebar />
           </div>
-          <div className="col-span-10">
+          <div className="col-span-10 px-8">
             <Outlet />
           </div>
-        </div>
+        </main>
       )}
     </>
   );

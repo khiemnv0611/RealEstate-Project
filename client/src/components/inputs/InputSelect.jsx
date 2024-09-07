@@ -14,6 +14,7 @@ const InputSelect = ({
   validate,
   placeholder,
   options = [],
+  required,
 }) => {
   return (
     <div
@@ -24,6 +25,11 @@ const InputSelect = ({
       {label && (
         <label className="font-medium text-main-800" htmlFor={id}>
           {label}
+          {required && (
+            <sup>
+              (<span className="text-red-500">*</span>)
+            </sup>
+          )}
         </label>
       )}
       <select

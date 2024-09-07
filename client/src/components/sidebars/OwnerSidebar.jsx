@@ -1,12 +1,12 @@
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { userSidebar } from "~/utils/constants";
+import { ownerSidebar } from "~/utils/constants";
 import { FaCaretRight, FaCaretDown } from "react-icons/fa6";
 import { TiArrowForwardOutline } from "react-icons/ti";
 import { useUserStore } from "~/store/useUserStore";
 
-const UserSidebar = () => {
+const OwnerSidebar = () => {
   const [activeTabs, setActiveTabs] = useState([]);
   const { current } = useUserStore();
   const handleActiveTabs = (tabId) => {
@@ -17,20 +17,12 @@ const UserSidebar = () => {
 
   return (
     <div className="h-full w-full bg-main-700 text-white">
-      <div className="w-full p-4 flex flex-col justify-center items-center gap-2">
-        <img
-          src={current?.avatar || "/user.svg"}
-          alt="logo"
-          className="w-28 h-28 object-cover rounded-full"
-        />
-        <span className="text-orange-500 font-bold">{current?.name}</span>
-        {/* <span>{current?.phone}</span> */}
-        <span>
-          {current?.userRoles?.map((el) => el.roleName.value)?.join(" / ")}
-        </span>
+      <div className="w-full p-10 flex items-center justify-center">
+        <img src="/logo_white.png" alt="logo" />
       </div>
-      <div className="mt-6 mx-3 flex flex-col gap-0">
-        {userSidebar.map((el) => (
+
+      <div className="mx-3 flex flex-col gap-0 h-full">
+        {ownerSidebar.map((el) => (
           <Fragment key={el.id}>
             {el.type === "SINGLE" && (
               <NavLink
@@ -100,4 +92,4 @@ const UserSidebar = () => {
   );
 };
 
-export default UserSidebar;
+export default OwnerSidebar;

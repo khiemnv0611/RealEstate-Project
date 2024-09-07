@@ -57,7 +57,7 @@ const Properties = () => {
           </div>
         </div>
       </div>
-      <div className="w-main mx-auto my-20">
+      <div className="w-main mx-auto my-16">
         <div className="my-4 flex justify-between items-center">
           <div className="flex items-center justify-center gap-2">
             <span

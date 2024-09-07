@@ -65,7 +65,7 @@ const Topheader = ({ location }) => {
           <div
             ref={optionBox}
             onClick={() => setIsShowOptions(true)}
-            className="flex items-center relative gap-4 pl-8 hover:bg-overlay-30 p-2 rounded-md border-l border-main-400 cursor-pointer"
+            className="flex items-center relative gap-4 pl-8 hover:bg-overlay-30 p-2 border-l rounded-tr-2xl border-main-400 cursor-pointer"
           >
             <div className="flex flex-col gap-2">
               <span className="font-semibold">{current?.name}</span>

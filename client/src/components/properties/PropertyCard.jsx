@@ -1,14 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { formatMoney } from "~/utils/fn";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { IoBedOutline } from "react-icons/io5";
 import { PiBathtubDuotone } from "react-icons/pi";
 import { SlSizeFullscreen } from "react-icons/sl";
-import { FaEye, FaRegHeart } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import path from "~/utils/path";
 
 const PropertyCard = ({ properties }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const handleFavoriteToggle = () => {
+    setIsFavorite((prevFavorite) => {
+      const newFavorite = !prevFavorite;
+      if (newFavorite) {
+        alert("Đã lưu vào danh sách yêu thích");
+      } else {
+        alert("Đã xóa khỏi danh sách yêu thích");
+      }
+      return newFavorite;
+    });
+  };
+
   return (
     <div className="border rounded-md">
       <img
@@ -24,10 +39,21 @@ const PropertyCard = ({ properties }) => {
         >
           {properties?.name}
         </Link>
-        <span className="flex items-center gap-2 font-bold text-main-500">
-          <FcMoneyTransfer size={18} />
-          {`${formatMoney(properties?.price)}`}
-          <span>VND</span>
+        <span className="flex items-center justify-between font-bold ">
+          <div className="flex items-center gap-2 text-main-500">
+            <FcMoneyTransfer size={18} />
+            {`${formatMoney(properties?.price)}`}
+            <span>VND</span>
+          </div>
+          <div>
+            <FaHeart
+              className={`cursor-pointer ${
+                isFavorite ? "text-red-500" : "text-gray-300"
+              } hover:text-red-500`}
+              size={22}
+              onClick={handleFavoriteToggle}
+            />
+          </div>
         </span>
         <div className="flex justify-between items-center font-semibold">
           <div className="flex gap-4">
@@ -64,14 +90,9 @@ const PropertyCard = ({ properties }) => {
               Môi giới
             </span>
           </div>
-          <div className="flex justify-center items-center gap-2">
-            <span className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md">
-              <FaEye />
-            </span>
-            <span className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md">
-              <FaRegHeart />
-            </span>
-          </div>
+          <span className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md">
+            <FaEye />
+          </span>
         </div>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
@@ -89,14 +110,9 @@ const PropertyCard = ({ properties }) => {
               Chủ sở hữu
             </span>
           </div>
-          <div className="flex justify-center items-center gap-2">
-            <span className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md">
-              <FaEye />
-            </span>
-            <span className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md">
-              <FaRegHeart />
-            </span>
-          </div>
+          <span className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md">
+            <FaEye />
+          </span>
         </div>
       </div>
     </div>

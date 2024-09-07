@@ -15,6 +15,7 @@ const InputFile = ({
   multiple,
   getImages,
   errors,
+  required,
   resetKey, // Thay đổi thuộc tính này
 }) => {
   const { register, watch, setValue } = useForm();
@@ -79,7 +80,16 @@ const InputFile = ({
         clsx("flex flex-col gap-2 w-full", containerClassname)
       )}
     >
-      {label && <span className="font-medium text-main-800">{label}</span>}
+      {label && (
+        <label className="font-medium text-main-800" htmlFor={id}>
+          {label}
+          {required && (
+            <sup>
+              (<span className="text-red-500">*</span>)
+            </sup>
+          )}
+        </label>
+      )}
       <input
         type="file"
         id={id}

@@ -39,6 +39,17 @@ const Personal = () => {
     );
   };
 
+  const [initialAvatar, setInitialAvatar] = useState(current.avatar);
+
+  const handleToggleChangeAvatar = () => {
+    setIsChangeAvatar((prev) => !prev);
+
+    // Khi người dùng chọn giữ nguyên, khôi phục lại ảnh đại diện ban đầu
+    if (isChangeAvatar) {
+      setInitialAvatar(current.avatar);
+    }
+  };
+
   const onSubmit = async (data) => {
     const { avatar, ...payload } = data;
     if (Array.isArray(avatar)) payload.avatar = avatar;
@@ -51,9 +62,13 @@ const Personal = () => {
   };
 
   return (
-    <div className="h-full px-8">
-      <Title title="THÔNG TIN CÁ NHÂN"></Title>
-      <form className="p-4 max-w-[600px] space-y-4">
+    <div>
+      <Title title="THÔNG TIN CÁ NHÂN">
+        <Button className="font-bold" onClick={handleSubmit(onSubmit)}>
+          Cập nhật
+        </Button>
+      </Title>
+      <form className="p-4 max-w-[900px] space-y-4 mx-auto">
         <InputForm
           id="name"
           register={register}
@@ -107,7 +122,8 @@ const Personal = () => {
             Ảnh đại diện{" "}
             <span
               className="text-xs cursor-pointer hover:underline text-orange-600"
-              onClick={() => setIsChangeAvatar((prev) => !prev)}
+              // onClick={() => setIsChangeAvatar((prev) => !prev)}
+              onClick={handleToggleChangeAvatar}
             >
               {isChangeAvatar ? "Giữ nguyên ✋" : "Thay đổi ✍️"}
             </span>
@@ -121,13 +137,12 @@ const Personal = () => {
             />
           ) : (
             <img
-              src={avatar || "/user.svg"}
+              src={current.avatar || "/user.svg"}
               alt=""
               className="w-28 h-28 object-cover rounded-full"
             />
           )}
         </div>
-        <Button onClick={handleSubmit(onSubmit)}>Cập nhật</Button>
       </form>
     </div>
   );

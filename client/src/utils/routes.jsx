@@ -1,5 +1,6 @@
 import {
   AboutUs,
+  AddPost,
   Home,
   OurAgents,
   Properties,
@@ -11,10 +12,11 @@ import App from "~/App";
 import {
   AdminLayout,
   CreatePropertyType,
-  Dashboard,
+  AdminDashboard,
   ManagePropertyType,
 } from "~/pages/admin";
 import { Personal, UserLayout } from "~/pages/user";
+import { OwnerLayout, WishList, OwnerDashboard } from "~/pages/owner";
 import AuthCallback from "~/components/login/AuthCallback";
 import AuthFailure from "~/components/login/AuthFailure";
 
@@ -48,6 +50,10 @@ const routes = [
             element: <PropertyDetail />,
           },
           {
+            path: path.ADD_POST,
+            element: <AddPost />,
+          },
+          {
             path: path.AUTH_CALLBACK,
             element: <AuthCallback />,
           },
@@ -63,7 +69,7 @@ const routes = [
         children: [
           {
             path: path.ADMIN_DASHBOARD,
-            element: <Dashboard />,
+            element: <AdminDashboard />,
           },
           {
             path: path.CREATE_PROPERTY_TYPE,
@@ -82,6 +88,20 @@ const routes = [
           {
             path: path.PERSONAL,
             element: <Personal />,
+          },
+        ],
+      },
+      {
+        path: path.OWNER_LAYOUT,
+        element: <OwnerLayout />,
+        children: [
+          {
+            path: path.OWNER_DASHBOARD,
+            element: <OwnerDashboard />,
+          },
+          {
+            path: path.OWNER_WISHLIST,
+            element: <WishList />,
           },
         ],
       },

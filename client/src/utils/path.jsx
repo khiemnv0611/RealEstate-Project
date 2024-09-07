@@ -6,9 +6,9 @@ const path = {
   OUR_AGENTS: "our-agents",
   PROPERTIES: "properties",
   PROPERTY_DETAIL__ID: "properties/:id",
+  ADD_POST: "add-post",
   AUTH_CALLBACK: "auth/callback",
   AUTH_FAILURE: "auth/failure",
-
   // ADMIN
   ADMIN_LAYOUT: "admin",
   ADMIN_DASHBOARD: "dashboard",
@@ -26,6 +26,7 @@ const path = {
   // OWNER
   OWNER_LAYOUT: "owner",
   OWNER_DASHBOARD: "dashboard",
+  OWNER_WISHLIST: "wishlist",
 };
 
 export default path;
