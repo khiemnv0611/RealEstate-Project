@@ -18,6 +18,7 @@ const path = {
   // USER
   USER_LAYOUT: "user",
   PERSONAL: "personal",
+  WISHLIST: "wishlist",
 
   // AGENT
   AGENT_LAYOUT: "agent",
@@ -26,7 +27,6 @@ const path = {
   // OWNER
   OWNER_LAYOUT: "owner",
   OWNER_DASHBOARD: "dashboard",
-  OWNER_WISHLIST: "wishlist",
 };
 
 export default path;
