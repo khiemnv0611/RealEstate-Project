@@ -12,11 +12,11 @@ import App from "~/App";
 import {
   AdminLayout,
   CreatePropertyType,
-  Dashboard,
+  AdminDashboard,
   ManagePropertyType,
 } from "~/pages/admin";
 import { Personal, UserLayout } from "~/pages/user";
-import { OwnerLayout, WishList } from "~/pages/owner";
+import { OwnerLayout, WishList, OwnerDashboard } from "~/pages/owner";
 
 const routes = [
   {
@@ -59,7 +59,7 @@ const routes = [
         children: [
           {
             path: path.ADMIN_DASHBOARD,
-            element: <Dashboard />,
+            element: <AdminDashboard />,
           },
           {
             path: path.CREATE_PROPERTY_TYPE,
@@ -87,7 +87,7 @@ const routes = [
         children: [
           {
             path: path.OWNER_DASHBOARD,
-            element: <Dashboard />,
+            element: <OwnerDashboard />,
           },
           {
             path: path.OWNER_WISHLIST,

@@ -17,19 +17,11 @@ const OwnerSidebar = () => {
 
   return (
     <div className="h-full w-full bg-main-700 text-white">
-      <div className="w-full p-4 flex flex-col justify-center items-center gap-2">
-        <img
-          src={current?.avatar || "/user.svg"}
-          alt="logo"
-          className="w-28 h-28 object-cover rounded-full"
-        />
-        <span className="text-orange-500 font-bold">{current?.name}</span>
-        {/* <span>{current?.phone}</span> */}
-        <span>
-          {current?.userRoles?.map((el) => el.roleName.value)?.join(" / ")}
-        </span>
+      <div className="w-full p-10 flex items-center justify-center">
+        <img src="/logo_white.png" alt="logo" />
       </div>
-      <div className="mt-6 mx-3 flex flex-col gap-0 h-full">
+
+      <div className="mx-3 flex flex-col gap-0 h-full">
         {ownerSidebar.map((el) => (
           <Fragment key={el.id}>
             {el.type === "SINGLE" && (

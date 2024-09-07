@@ -62,13 +62,13 @@ const Personal = () => {
   };
 
   return (
-    <div className="h-full px-8">
+    <div>
       <Title title="THÔNG TIN CÁ NHÂN">
         <Button className="font-bold" onClick={handleSubmit(onSubmit)}>
           Cập nhật
         </Button>
       </Title>
-      <form className="p-4 max-w-[600px] space-y-4">
+      <form className="p-4 max-w-[900px] space-y-4 mx-auto">
         <InputForm
           id="name"
           register={register}

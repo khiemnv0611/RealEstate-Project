@@ -30,11 +30,11 @@ const OwnerLayout = () => {
   return (
     <>
       {current?.userRoles?.some((el) => el.roleCode === "ROL7") && (
-        <div className="w-full grid grid-cols-12 min-h-screen max-h-screen overflow-auto">
+        <div className="w-full grid grid-cols-11 min-h-screen max-h-screen overflow-auto">
           <div className="col-span-2">
             <OwnerSideBar />
           </div>
-          <div className="col-span-10">
+          <div className="col-span-9 px-8">
             <Outlet />
           </div>
         </div>
