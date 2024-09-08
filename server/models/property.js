@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
           return rawValue ? JSON.parse(rawValue) : [];
         },
         set(arrayImages) {
-          return this.setDataValue("image", JSON.stringify(arrayImages));
+          return this.setDataValue("images", JSON.stringify(arrayImages));
         },
       },
       featuredImage: DataTypes.STRING,

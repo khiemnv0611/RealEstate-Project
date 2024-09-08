@@ -1,14 +1,85 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../models");
-const { Sequelize, Op } = require("sequelize");
+const { Sequelize, Op, DATE } = require("sequelize");
 
 module.exports = {
   // CREATE NEW PROPERTY
   createNewProperty: asyncHandler(async (req, res) => {
-    const {  } = req.body;
-    return res.json({
+    console.log("Request Body:", req.body);
+
+    const { uid } = req.user;
+    const {
+      name, description, address, city, listingType, price, propertyTypeId, images, featuredImage,
+      bedRoom, bathRoom, propertySize, yearBuilt
+    } = req.body;
+
+    if (!name || !description || !address || !city || !listingType || !price || !propertyTypeId) {
+      return res.status(400).json({
+        success: false,
+        mes: "Please provide all required fields."
+      });
+    }
+
+    // Check if propertyTypeId exists
+    const propertyType = await db.PropertyType.findByPk(propertyTypeId);
+    if (!propertyType) {
+      return res.status(404).json({
+        success: false,
+        mes: "Property type does not exist."
+      });
+    }
+
+    if (images && !Array.isArray(images)) {
+      return res.status(400).json({
+        success: false,
+        mes: "Images must be an array."
+      });
+    }
+
+    try {
+      const status = 'Chờ duyệt';
+      const isAvailable = true;
+      const imageArray = Array.isArray(images) ? images : [];
+      const imagesString = JSON.stringify(imageArray);
+
+      console.log("TEST: ", typeof images)
+      console.log(imagesString)
       
-    });
+      // Create the property
+      const newProperty = await db.Property.create({
+        name: name,
+        description: description,
+        address: address,
+        city: city,
+        listingType: listingType,
+        price: price,
+        propertyTypeId: propertyTypeId,
+        status: status,
+        isAvailable: isAvailable,
+        featuredImage: featuredImage,
+        images: imagesString,
+        bedRoom: bedRoom,
+        bathRoom: bathRoom,
+        propertySize: propertySize,
+        yearBuilt: yearBuilt,
+        owner: uid,
+        postedBy: uid,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      return res.status(201).json({
+        success: true,
+        mes: "Property created successfully.",
+        property: newProperty
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        mes: "An error occurred while creating the property.",
+        error: error.message
+      });
+    }
   }),
   getProperties: asyncHandler(async (req, res) => {
     const { limit, page, fields, name, sort, address, city, price, ...query } =
