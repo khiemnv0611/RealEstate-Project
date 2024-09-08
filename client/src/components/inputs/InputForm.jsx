@@ -15,6 +15,8 @@ const InputForm = ({
   placeholder,
   required,
   readOnly,
+  value, // Thêm props value để nhận giá trị
+  onChange, // Thêm props onChange để nhận sự kiện thay đổi
 }) => {
   return (
     <div
@@ -35,6 +37,8 @@ const InputForm = ({
       <input
         type={type}
         id={id}
+        value={value}
+        onChange={onChange}
         className={twMerge(
           clsx(
             style,

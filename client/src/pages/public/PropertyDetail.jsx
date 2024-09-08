@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiGetDetailProperty, apiGetProperties } from "~/apis/properties";
-import { BoxInfo, BreadCrumb, Images, Map, RelatedPost } from "~/components";
+import {
+  BoxInfo,
+  BreadCrumb,
+  Images,
+  InputForm,
+  InputText,
+  Map,
+  RelatedPost,
+} from "~/components";
 import { GrLocation } from "react-icons/gr";
 import DOMPurify from "dompurify";
 import { formatMoney } from "~/utils/fn";
 import moment from "moment";
+import { useForm } from "react-hook-form";
+import EmojiPicker from "emoji-picker-react";
+import { FaRegSmile } from "react-icons/fa";
+import { IoSend } from "react-icons/io5";
 
 const InfoCell = ({ title, value, unit = "" }) => {
   return (
@@ -18,12 +30,29 @@ const InfoCell = ({ title, value, unit = "" }) => {
 };
 
 const PropertyDetail = () => {
+  const {
+    register,
+    formState: { errors },
+    value,
+    onChange,
+  } = useForm();
   const { id } = useParams();
   const [propertyDetail, setPropertyDetail] = useState();
   const [relatedProperties, setRelatedProperties] = useState({
     propertyType: null,
     listingTypes: null,
   });
+
+  const [inputValue, setInputValue] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  // Hàm xử lý khi chọn emoji
+  const handleEmojiSelect = (emojiData, event) => {
+    setInputValue((prevInputValue) => prevInputValue + emojiData.emoji);
+  };
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value); // Cập nhật state khi người dùng gõ
+  };
 
   useEffect(() => {
     const fetchDetailProperty = async () => {
@@ -91,7 +120,7 @@ const PropertyDetail = () => {
           {propertyDetail.images && <Images images={propertyDetail.images} />}
           <div className="my-8 grid grid-cols-10 gap-4">
             <div className="col-span-7 flex flex-col gap-6">
-              <h1 className="font-bold text-2xl line-clamp-2">
+              <h1 className="font-bold text-3xl line-clamp-2">
                 {propertyDetail.name}
               </h1>
               <span className="flex items-center">
@@ -103,7 +132,7 @@ const PropertyDetail = () => {
                   __html: DOMPurify.sanitize(propertyDetail.description),
                 }}
               ></div>
-              <div>
+              <div className="flex flex-col gap-2">
                 <h2 className="font-bold text-lg text-main-600">
                   Thông tin chi tiết
                 </h2>
@@ -171,7 +200,49 @@ const PropertyDetail = () => {
                   </tbody>
                 </table>
               </div>
-              <div>{/* <Map address={propertyDetail.address} /> */}</div>
+              <div className="flex flex-col gap-2">
+                <span className="font-bold text-lg text-main-600">Vị trí</span>
+                <div className="bg-gray-300 h-[600px] w-full">
+                  {/* <Map address={propertyDetail.address} /> */}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="font-bold text-lg text-main-600">
+                  Bình luận
+                </span>
+                {/* <InputText
+                  id="comment"
+                  register={register}
+                  errors={errors}
+                  setValue={setValue}
+                  validate={{ required: "Trường này không được để trống" }}
+                  label="Bình luận"
+                /> */}
+                <div className="relative flex justify-between bg-gray-200 rounded-3xl p-3">
+                  <InputForm
+                    id="comment"
+                    register={register}
+                    errors={errors}
+                    placeholder="Viết bình luận..."
+                    inputClassname="bg-transparent border-none text-black text-base focus:outline-none focus:ring-0 focus:border-transparent"
+                    value={inputValue} // Gán giá trị từ state
+                    //onChange={(e) => setInputValue(e.target.value)} // Cập nhật khi người dùng gõ
+                    onChange={handleInputChange}
+                  />
+                  <div className="flex gap-4 items-center text-gray-500">
+                    <FaRegSmile
+                      size={22}
+                      onClick={() => setShowEmojiPicker((prev) => !prev)}
+                    />
+                    <IoSend size={22} />
+                  </div>
+                  {showEmojiPicker && (
+                    <div className="absolute bottom-20 right-2">
+                      <EmojiPicker onEmojiClick={handleEmojiSelect} />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="col-span-3 flex flex-col gap-6">
               <BoxInfo
