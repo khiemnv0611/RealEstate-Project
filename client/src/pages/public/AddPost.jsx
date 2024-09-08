@@ -9,6 +9,8 @@ import {
   Textarea,
 } from "~/components";
 import { cityDistricts } from "../../utils/constants";
+import { usePropertiesStore } from "~/store/usePropertiesStore";
+import SelectLib from "../../components/inputs/SelectLib";
 
 const AddPost = () => {
   const {
@@ -20,6 +22,8 @@ const AddPost = () => {
     reset,
     watch,
   } = useForm();
+
+  const { propertyTypes } = usePropertiesStore();
 
   const getImages = (images) => {
     if (images && images.length > 0) clearErrors("images");
@@ -94,6 +98,17 @@ const AddPost = () => {
             label="Địa chỉ"
             placeholder="Nhập số nhà, tên đường..."
             required
+          />
+          <SelectLib
+            id="propertyType"
+            register={register}
+            errors={errors}
+            // containerClassname={direction === "vertical" ? "w-full" : "w-[15em]"}
+            // inputClassname="rounded-md border border-gray-300"
+            label="Loại hình dự án"
+            placeholder="Chọn loại hình dự án"
+            options={propertyTypes?.map((el) => ({ ...el, label: el.name }))}
+            onChange={(val) => setValue("propertyType", val)}
           />
           <div className="grid grid-cols-3">
             <div className="flex items-center justify-around">

@@ -12,3 +12,10 @@ export const apiGetDetailProperty = (id) =>
     url: "/properties/one/" + id,
     method: "get",
   });
+
+export const apiCreateProperty = (data) =>
+  axios({
+    url: "/properties/",
+    method: "post",
+    data,
+  });
