@@ -63,6 +63,13 @@ export const userSidebar = [
     icon: <FaHouseChimneyUser size={25} />,
     type: "SINGLE",
   },
+  {
+    id: 11,
+    name: "Các dự án yêu thích",
+    path: `/${path.USER_LAYOUT}/${path.WISHLIST}`,
+    icon: <FaRegHeart size={25} />,
+    type: "SINGLE",
+  },
 ];
 
 export const ownerSidebar = [
@@ -71,13 +78,6 @@ export const ownerSidebar = [
     name: "Quản lý dự án",
     path: `/${path.OWNER_LAYOUT}/${path.OWNER_DASHBOARD}`,
     icon: <RiDashboardLine size={25} />,
-    type: "SINGLE",
-  },
-  {
-    id: 11,
-    name: "Các dự án yêu thích",
-    path: `/${path.OWNER_LAYOUT}/${path.OWNER_WISHLIST}`,
-    icon: <FaRegHeart size={25} />,
     type: "SINGLE",
   },
 ];
