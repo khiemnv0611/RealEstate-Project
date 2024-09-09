@@ -228,5 +228,70 @@ module.exports = {
         error: error.message,
       });
     }  
-  })
+  }),
+  commentToProperty: asyncHandler(async (req, res) => {
+    const { uid } = req.user;
+    const { message } = req.data;
+
+    try {
+      const submission = db.Submission.create({
+        userId: uid,
+        propertyId: req.params.id,
+        message: message,
+      })
+
+      if (submission) {
+        return res.status(200).json({
+          success: true,
+          message: "Comment submitted successfully.",
+          submission: submission
+        })
+      }
+      else {
+        return res.status(500).json({
+          success: false,
+          message: "Error occurred"
+        })
+      }
+    } catch(error) {
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while submiting.",
+        error: error.message,
+      })
+    }
+  }),
+  replyComment: asyncHandler(async (req, res) => {
+    const { uid } = req.user;
+    const { message, propertyId } = req.data;
+
+    try {
+      const comment = db.Comment.create({
+        userId: uid,
+        propertyId: propertyId,
+        parentComment: req.params.id,
+        text: message
+      })
+
+      if (comment) {
+        return res.status(200).json({
+          success: true,
+          message: "Comment submitted successfully.",
+          submission: comment
+        })
+      }
+      else {
+        return res.status(500).json({
+          success: false,
+          message: "Error occurred"
+        })
+      }
+    } catch(error) {
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while submiting.",
+        error: error.message,
+      })
+    }
+  }),
 };

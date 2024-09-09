@@ -13,6 +13,8 @@ router.get("/wishlist/", verifyToken, ctrls.getWishListByUser)
 
 // POST
 router.post("/wish/:id", verifyToken, ctrls.addPropertyToWish)
+router.post("/comment/:id", verifyToken, validateDto(Joi.object({message: stringReq})), ctrls.commentToProperty)
+router.post("/comment/reply/:id", verifyToken, validateDto(Joi.object({message: stringReq, propertyId: numberReq})), ctrls.replyComment)
 
 // PUT
 router.put(
