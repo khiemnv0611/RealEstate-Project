@@ -8,9 +8,10 @@ const { verifyToken, isAdmin } = require("../middlewares/verifyToken");
 
 //router.use(rateLimiter);
 
-// Get
+// GET
 router.get("/one/:propertyId", ctrls.getOneById);
 router.get("/", ctrls.getProperties);
+router.get("/ownerproperties", verifyToken, ctrls.getPropertiesByUserId)
 
 // POST
 router.post(
@@ -35,5 +36,8 @@ router.post(
     ), 
     ctrls.createNewProperty
 );
+
+// DELETE
+router.delete("/:id", verifyToken, ctrls.deletePropertyById)
 
 module.exports = router;

@@ -244,4 +244,91 @@ module.exports = {
       data: response,
     });
   }),
+  deletePropertyById: asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { uid } = req.user;
+    console.log(id)
+    const property = await db.Property.findByPk(id, {
+      include: [
+        {
+          model: db.PropertyType,
+          as: "rPropertyType",
+          attributes: ["name", "id"],
+        },
+        {
+          model: db.User,
+          as: "rPostedBy",
+          attributes: ["name", "phone", "avatar"],
+        },
+        {
+          model: db.User,
+          as: "rOwner",
+          attributes: ["name", "phone", "avatar"],
+        },
+      ],
+    });
+
+    console.log(property)
+
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        mes: "Property not found.",
+      });
+    }
+
+    if (property.owner != uid) {
+      return res.status(403).json({
+        success: false,
+        mes: "You don't own this property.",
+      });
+    }
+
+    await property.destroy();
+
+    return res.status(200).json({
+      success: true,
+      mes: "Delete property successfully.",
+    });
+  }),
+  getPropertiesByUserId: asyncHandler(async (req, res) => {
+    const { uid } = req.user;
+
+    try {
+      const response = await db.Property.findAndCountAll({
+        where: {
+          owner: uid,
+        },
+        include: [
+          {
+            model: db.PropertyType,
+            as: "rPropertyType",
+            attributes: ["name", "id"],
+          },
+          {
+            model: db.User,
+            as: "rPostedBy",
+            attributes: ["name", "phone", "avatar"],
+          },
+          {
+            model: db.User,
+            as: "rOwner",
+            attributes: ["name", "phone", "avatar"],
+          },
+        ],
+      });
+  
+      return res.json({
+        success: !!response,
+        mes: response.rows.length ? "Got properties." : "No properties found.",
+        properties: response,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        mes: "An error occurred while retrieving the properties.",
+        error: error.message,
+      });
+    }
+  })
 };

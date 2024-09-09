@@ -5,8 +5,16 @@ const validateDto = require("../middlewares/validation");
 const { stringReq, array, string, numberReq } = require("../middlewares/joiSchema");
 const { verifyToken } = require("../middlewares/verifyToken");
 
+// GET
 router.get("/current", verifyToken, ctrls.getCurrent);
 router.get("/roles", ctrls.getRoles);
+router.get("/wish/:id", verifyToken, ctrls.checkIsPropertyInWishList)
+router.get("/wishlist/", verifyToken, ctrls.getWishListByUser)
+
+// POST
+router.post("/wish/:id", verifyToken, ctrls.addPropertyToWish)
+
+// PUT
 router.put(
   "/profile",
   verifyToken,

@@ -17,3 +17,21 @@ export const apiUpdateProfile = (data) =>
     method: "put",
     data,
   });
+
+export const addPropertyToWishList = (id) =>
+  axios({
+    url: "/user/wish/" + id,
+    method: "post",
+  })
+
+export const isPropertyInWishList = (id) =>
+  axios({
+    url: "/user/wish/" + id,
+    method: "get",
+  })
+
+export const getWishListByCurrentUser = () =>
+  axios({
+    url: "/user/wishlist",
+    method: "get",
+  })

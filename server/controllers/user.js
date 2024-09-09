@@ -110,4 +110,123 @@ module.exports = {
         response[0] > 0 ? "Cập nhật thành công." : "Cập nhật không thành công.",
     });
   }),
+  addPropertyToWish: asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { uid } = req.user;
+
+    try {
+      const existingWish = await db.WishList.findOne({
+        where: { uid: uid, propertyId: id },
+      });
+  
+      if (existingWish) {
+        await existingWish.destroy();
+        return res.status(200).json({
+          success: true,
+          message: "Property removed from wishlist successfully!",
+        });
+      }
+  
+      const wish = await db.WishList.create({
+        uid: uid,
+        propertyId: id,
+      });
+  
+      return res.status(201).json({
+        success: true,
+        message: "Property added to wishlist successfully!",
+        data: wish,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while processing your request.",
+        error: error.message,
+      });
+    }
+  }),
+  checkIsPropertyInWishList: asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { uid } = req.user;
+
+    try {
+      const isInWishList = await db.WishList.findOne({
+        where: {
+          propertyId: id,
+          uid: uid
+        }
+      });
+  
+      if (isInWishList) {
+        return res.status(200).json({
+          success: true,
+          isInWishList: true
+        });
+      } else {
+        return res.status(200).json({
+          success: true,
+          isInWishList: false
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Có lỗi xảy ra khi kiểm tra danh sách yêu thích",
+        error: error.message
+      });
+    }
+  }),
+  getWishListByUser: asyncHandler(async (req, res) => {
+    const { uid } = req.user;
+
+    try {
+      const wishlistEntries = await db.WishList.findAll({
+        where: { uid: uid },
+        attributes: ["propertyId"],
+      });
+  
+      if (wishlistEntries.length > 0) {
+        const propertyDetails = [];
+  
+        for (let entry of wishlistEntries) {
+          const property = await db.Property.findByPk(entry.propertyId, {
+            attributes: { exclude: [] },
+            include: [
+              {
+                model: db.User,
+                as: "rPostedBy",
+                attributes: ["name", "phone", "avatar"],
+              },
+              {
+                model: db.User,
+                as: "rOwner",
+                attributes: ["name", "phone", "avatar"],
+              },
+            ],
+          });
+  
+          if (property) {
+            propertyDetails.push(property);
+          }
+        }
+  
+        return res.status(200).json({
+          success: true,
+          wishlist: propertyDetails,
+        });
+      } else {
+        return res.status(200).json({
+          success: true,
+          message: "No properties found in wishlist.",
+          wishlist: [],
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while fetching the wishlist.",
+        error: error.message,
+      });
+    }  
+  })
 };

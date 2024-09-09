@@ -19,3 +19,15 @@ export const apiCreateProperty = (data) =>
     method: "post",
     data,
   });
+
+export const apiGetPropertiesByOwner = () => 
+  axios({
+    url: "/properties/ownerproperties/",
+    method: "get",
+  });
+
+export const apiDeleteProperty = (id) =>
+  axios({
+    url: "/properties/" + id,
+    method: "delete",
+  })

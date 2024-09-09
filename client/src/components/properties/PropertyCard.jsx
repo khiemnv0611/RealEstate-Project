@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { formatMoney } from "~/utils/fn";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { IoBedOutline } from "react-icons/io5";
@@ -8,20 +8,37 @@ import { FaEye } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import path from "~/utils/path";
+import { addPropertyToWishList, isPropertyInWishList } from "~/apis/user";
 
 const PropertyCard = ({ properties }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const handleFavoriteToggle = () => {
-    setIsFavorite((prevFavorite) => {
-      const newFavorite = !prevFavorite;
-      if (newFavorite) {
-        alert("Đã lưu vào danh sách yêu thích");
-      } else {
-        alert("Đã xóa khỏi danh sách yêu thích");
+  useEffect(() => {
+    const checkWishListStatus = async () => {
+      try {
+        const response = await isPropertyInWishList(properties.id);
+        if (response?.isInWishList) {
+          setIsFavorite(true);
+        }
+      } catch (error) {
+        console.error("Error checking wishlist status:", error);
       }
-      return newFavorite;
-    });
+    };
+    checkWishListStatus();
+  }, [properties.id]);
+
+  const handleFavoriteToggle = async () => {
+    try {
+      const response = await addPropertyToWishList(properties.id);
+      setIsFavorite((prevFavorite) => {
+        const newFavorite = !prevFavorite;
+        
+        return newFavorite;
+      });
+    } catch (error) {
+      console.error("Error while updating wishlist", error);
+      alert("Có lỗi xảy ra khi thêm/xóa khỏi danh sách yêu thích");
+    }
   };
 
   return (
@@ -63,7 +80,7 @@ const PropertyCard = ({ properties }) => {
             </span>
             <span className="flex items-center gap-2 text-gray-500">
               <PiBathtubDuotone size={22} />
-              <span>{properties?.bedRoom}</span>
+              <span>{properties?.bathRoom}</span>
             </span>
           </div>
           <span className="flex items-center gap-3 text-gray-500">
