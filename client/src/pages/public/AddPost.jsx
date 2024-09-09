@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   BreadCrumb,
   Button,
@@ -11,6 +13,8 @@ import {
 import { cityDistricts } from "../../utils/constants";
 import { usePropertiesStore } from "~/store/usePropertiesStore";
 import SelectLib from "../../components/inputs/SelectLib";
+import { apiCreateProperty } from "~/apis/properties";
+import path from "~/utils/path";
 
 const AddPost = () => {
   const {
@@ -24,11 +28,20 @@ const AddPost = () => {
   } = useForm();
 
   const { propertyTypes } = usePropertiesStore();
+  const navigate = useNavigate();
 
   const getImages = (images) => {
     if (images && images.length > 0) clearErrors("images");
     setValue(
-      "avatar",
+      "images",
+      images?.map((el) => el.path)
+    );
+  };
+
+  const getFeaturedImage = (images) => {
+    if (images && images.length > 0) clearErrors("images");
+    setValue(
+      "featuredImage",
       images?.map((el) => el.path)
     );
   };
@@ -40,6 +53,7 @@ const AddPost = () => {
   const [wards, setWards] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedWard, setSelectedWard] = useState("");
 
   useEffect(() => {
     if (selectedCity) {
@@ -54,6 +68,61 @@ const AddPost = () => {
       setWards(cityDistricts[selectedCity][selectedDistrict] || []);
     }
   }, [selectedDistrict, selectedCity]);
+
+  const onSubmit = async (data) => {
+    const { 
+      name,
+      description,
+      address,
+      listingType,
+      price,
+      propertyType,
+      images,
+      featuredImage,
+      bedRoom,
+      bathRoom,
+      propertySize,
+      yearBuilt
+    } = data;
+
+    const fullAddress = address.trim() + ", " + selectedDistrict.trim() + ", " + selectedWard.trim()
+    const city = selectedCity.trim()
+
+    console.log(data)
+    console.log("Full address: " + fullAddress)
+    console.log("City: " + city)
+
+    const resdata = {
+      name: name,
+      description,
+      address: fullAddress,
+      city,
+      listingType,
+      price,
+      propertyTypeId: propertyType,
+      images,
+      featuredImage: featuredImage[0],
+      bedRoom,
+      bathRoom,
+      propertySize,
+      yearBuilt
+    }
+
+    // if (Array.isArray(images)) payload.avatar = avatar;
+    // const response = await apiUpdateProfile(payload);
+    // if (response.success) {
+    //   toast.success(response.mes);
+    //   getCurrent();
+    //   setIsChangeAvatar(false);
+    // } else toast.error(response.mes);
+
+    const res = await apiCreateProperty(resdata)
+    if (res.success) {
+      toast.success(res.mes);
+      navigate(`/${path.PROPERTIES}/${res.property.id}`)
+    }
+    else toast.error(res.mes);
+  };
 
   return (
     <div className="w-full">
@@ -90,15 +159,6 @@ const AddPost = () => {
             placeholder="Nhập mô tả..."
             required
           />
-          <InputForm
-            id="address"
-            register={register}
-            validate={{ required: "Trường này không được để trống" }}
-            errors={errors}
-            label="Địa chỉ"
-            placeholder="Nhập số nhà, tên đường..."
-            required
-          />
           <SelectLib
             id="propertyType"
             register={register}
@@ -108,7 +168,16 @@ const AddPost = () => {
             label="Loại hình dự án"
             placeholder="Chọn loại hình dự án"
             options={propertyTypes?.map((el) => ({ ...el, label: el.name }))}
-            onChange={(val) => setValue("propertyType", val)}
+            onChange={(val) => setValue("propertyType", val.id)}
+          />
+          <InputForm
+            id="address"
+            register={register}
+            validate={{ required: "Trường này không được để trống" }}
+            errors={errors}
+            label="Địa chỉ"
+            placeholder="Nhập số nhà, tên đường..."
+            required
           />
           <div className="grid grid-cols-3">
             <div className="flex items-center justify-around">
@@ -162,6 +231,8 @@ const AddPost = () => {
                 </sup>
               </label>
               <select
+                value={selectedWard}
+                onChange={(e) => setSelectedWard(e.target.value)}
                 disabled={!selectedDistrict} // Disable nếu không có quận/huyện nào được chọn
                 className="h-[38px] text-sm"
               >
@@ -181,8 +252,8 @@ const AddPost = () => {
             placeholder="-- Chọn loại giao dịch --"
             label="Loại giao dịch"
             options={[
-              { label: "Bán", code: "" },
-              { label: "Cho thuê", code: "" },
+              { label: "Bán", code: "Bán" },
+              { label: "Cho thuê", code: "Cho thuê" },
             ]}
             required
           />
@@ -201,7 +272,7 @@ const AddPost = () => {
             errors={errors}
             validate={{ required: "Trường này không được để trống." }}
             label="Ảnh tổng quát dự án"
-            getImages={getImages}
+            getImages={getFeaturedImage}
             required
             resetKey={resetKey} // Truyền thuộc tính resetKey
           />
@@ -259,7 +330,7 @@ const AddPost = () => {
             />
           </div>
         </form>
-        <Button className="mx-auto">Đăng</Button>
+        <Button className="mx-auto" onClick={handleSubmit(onSubmit)}>Đăng</Button>
       </div>
     </div>
   );
