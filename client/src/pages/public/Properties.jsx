@@ -18,6 +18,7 @@ import { useAppStore } from "~/store/useAppStore";
 const Properties = () => {
   const [properties, setProperties] = useState();
   const [mode, setMode] = useState("ALL");
+  const [filteredProperties, setFilteredProperties] = useState([]);
   const [searchParams] = useSearchParams();
   const {
     register,
@@ -41,6 +42,19 @@ const Properties = () => {
 
     fetchProperties(params);
   }, [searchParams, sort]);
+
+  // useEffect(() => {
+  //   const filterByStatus = () => {
+  //     const filtered = properties.filter((property) => {
+  //       if (mode === "ALL") return property.listingType === "Tất cả";
+  //       if (mode === "RENT") return property.listingType === "Cho thuê";
+  //       if (mode === "SALE") return property.listingType === "Bán";
+  //       return true;
+  //     });
+  //     setFilteredProperties(filtered);
+  //   };
+  //   filterByStatus();
+  // }, [mode, properties]);
 
   return (
     <div className="w-full">

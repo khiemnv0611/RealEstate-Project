@@ -85,13 +85,27 @@ module.exports = {
       });
 
       if (uid) {
-        const roleCode = ["ROL3"];
-        const roleCodeBulk = roleCode.map((role) => ({
-          userId: uid,
-          roleCode: role,
-        }));
-        const updateRole = await db.User_Role.bulkCreate(roleCodeBulk);
-        if (!updateRole) await db.User.destroy({ where: { id: uid } });
+        const roleCode = "ROL3";
+
+        const existingRole = await db.User_Role.findOne({
+          where: {
+            userId: uid,
+            roleCode: roleCode,
+          },
+        });
+
+        if (!existingRole) {
+          const roleCodeBulk = {
+            userId: uid,
+            roleCode: roleCode,
+          };
+
+          const updateRole = await db.User_Role.create(roleCodeBulk);
+
+          if (!updateRole) {
+            await db.User.destroy({ where: { id: uid } });
+          }
+        }
       }
 
       return res.status(201).json({
@@ -247,7 +261,7 @@ module.exports = {
   deletePropertyById: asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { uid } = req.user;
-    console.log(id)
+    console.log(id);
     const property = await db.Property.findByPk(id, {
       include: [
         {
@@ -268,7 +282,7 @@ module.exports = {
       ],
     });
 
-    console.log(property)
+    console.log(property);
 
     if (!property) {
       return res.status(404).json({
@@ -317,7 +331,7 @@ module.exports = {
           },
         ],
       });
-  
+
       return res.json({
         success: !!response,
         mes: response.rows.length ? "Got properties." : "No properties found.",
@@ -330,5 +344,5 @@ module.exports = {
         error: error.message,
       });
     }
-  })
+  }),
 };

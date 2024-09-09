@@ -8,15 +8,15 @@ const InputForm = ({
   label,
   id,
   type = "text",
-  register,
+  register = () => {},
   errors = {},
   inputClassname,
   validate,
   placeholder,
   required,
   readOnly,
-  value, // Thêm props value để nhận giá trị
-  onChange, // Thêm props onChange để nhận sự kiện thay đổi
+  value,
+  onChange,
 }) => {
   return (
     <div

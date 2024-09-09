@@ -9,6 +9,7 @@ import { FaHeart } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import path from "~/utils/path";
 import { addPropertyToWishList, isPropertyInWishList } from "~/apis/user";
+import { toast } from "react-toastify";
 
 const PropertyCard = ({ properties }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -32,12 +33,18 @@ const PropertyCard = ({ properties }) => {
       const response = await addPropertyToWishList(properties.id);
       setIsFavorite((prevFavorite) => {
         const newFavorite = !prevFavorite;
-        
+
+        if (newFavorite) {
+          toast.success("Đã thêm vào danh sách yêu thích.");
+        } else {
+          toast.info("Đã xóa khỏi danh sách yêu thích.");
+        }
+
         return newFavorite;
       });
     } catch (error) {
       console.error("Error while updating wishlist", error);
-      alert("Có lỗi xảy ra khi thêm/xóa khỏi danh sách yêu thích");
+      toast.error("Có lỗi xảy ra khi thêm/xóa khỏi danh sách yêu thích.");
     }
   };
 

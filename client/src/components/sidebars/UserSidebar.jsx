@@ -16,7 +16,7 @@ const UserSidebar = () => {
   };
 
   return (
-    <div className="h-full w-full bg-main-700 text-white">
+    <div className="min-h-full w-full bg-main-700 text-white">
       <div className="w-full p-4 flex flex-col justify-center items-center gap-2">
         <img
           src={current?.avatar || "/user.svg"}

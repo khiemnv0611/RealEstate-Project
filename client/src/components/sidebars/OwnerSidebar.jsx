@@ -16,7 +16,7 @@ const OwnerSidebar = () => {
   };
 
   return (
-    <div className="h-full w-full bg-main-700 text-white">
+    <div className="min-h-full w-full bg-main-700 text-white">
       <div className="w-full p-10 flex items-center justify-center">
         <img src="/logo_white.png" alt="logo" />
       </div>

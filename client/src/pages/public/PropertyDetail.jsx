@@ -46,12 +46,14 @@ const PropertyDetail = () => {
   const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  // Hàm xử lý khi chọn emoji
-  const handleEmojiSelect = (emojiData, event) => {
-    setInputValue((prevInputValue) => prevInputValue + emojiData.emoji);
-  };
+  // const handleEmojiSelect = (emojiData, event) => {
+  //   setInputValue((prevInputValue) => prevInputValue + emojiData.emoji);
+  // };
   const handleInputChange = (e) => {
     setInputValue(e.target.value); // Cập nhật state khi người dùng gõ
+  };
+  const handleEmojiSelect = (emojiObject) => {
+    setInputValue((prevValue) => prevValue + emojiObject.emoji);
   };
 
   useEffect(() => {
@@ -210,31 +212,24 @@ const PropertyDetail = () => {
                 <span className="font-bold text-lg text-main-600">
                   Bình luận
                 </span>
-                {/* <InputText
-                  id="comment"
-                  register={register}
-                  errors={errors}
-                  setValue={setValue}
-                  validate={{ required: "Trường này không được để trống" }}
-                  label="Bình luận"
-                /> */}
                 <div className="relative flex justify-between bg-gray-200 rounded-3xl p-3">
                   <InputForm
                     id="comment"
-                    register={register}
                     errors={errors}
                     placeholder="Viết bình luận..."
                     inputClassname="bg-transparent border-none text-black text-base focus:outline-none focus:ring-0 focus:border-transparent"
                     value={inputValue} // Gán giá trị từ state
-                    //onChange={(e) => setInputValue(e.target.value)} // Cập nhật khi người dùng gõ
-                    onChange={handleInputChange}
+                    onChange={handleInputChange} // Đảm bảo onChange cập nhật giá trị
                   />
                   <div className="flex gap-4 items-center text-gray-500">
                     <FaRegSmile
                       size={22}
                       onClick={() => setShowEmojiPicker((prev) => !prev)}
+                      className="cursor-pointer"
                     />
-                    <IoSend size={22} />
+                    <div className="cursor-pointer hover:bg-gray-300 hover:text-blue-400 rounded-full p-2">
+                      <IoSend size={22} />
+                    </div>
                   </div>
                   {showEmojiPicker && (
                     <div className="absolute bottom-20 right-2">
