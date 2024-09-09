@@ -40,10 +40,7 @@ module.exports = {
       const status = 'Chờ duyệt';
       const isAvailable = true;
       const imageArray = Array.isArray(images) ? images : [];
-      const imagesString = JSON.stringify(imageArray);
-
       console.log("TEST: ", typeof images)
-      console.log(imagesString)
       
       // Create the property
       const newProperty = await db.Property.create({
@@ -57,7 +54,7 @@ module.exports = {
         status: status,
         isAvailable: isAvailable,
         featuredImage: featuredImage,
-        images: imagesString,
+        images: imageArray,
         bedRoom: bedRoom,
         bathRoom: bathRoom,
         propertySize: propertySize,
@@ -67,6 +64,13 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       });
+
+      if (uid) {
+        const roleCode = ["ROL3"];
+        const roleCodeBulk = roleCode.map((role) => ({ userId: uid, roleCode: role }));
+        const updateRole = await db.User_Role.bulkCreate(roleCodeBulk);
+        if (!updateRole) await db.User.destroy({ where: { id: uid } });
+      }
 
       return res.status(201).json({
         success: true,
