@@ -2,24 +2,24 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("PropertyFeatures", {
+    await queryInterface.createTable("WishLists", {
       id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
-        autoIncrement: true,
+      },
+      uid: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Users",
+          key: "id",
+        },
       },
       propertyId: {
         type: Sequelize.INTEGER,
         references: {
           model: "Properties",
-          key: "id",
-        },
-      },
-      featureId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Features",
           key: "id",
         },
       },
@@ -34,6 +34,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("PropertyFeatures");
+    await queryInterface.dropTable("WishLists");
   },
 };
