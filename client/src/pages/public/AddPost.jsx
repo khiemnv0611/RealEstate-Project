@@ -15,6 +15,7 @@ import { usePropertiesStore } from "~/store/usePropertiesStore";
 import SelectLib from "../../components/inputs/SelectLib";
 import { apiCreateProperty } from "~/apis/properties";
 import path from "~/utils/path";
+import Swal from "sweetalert2";
 
 const AddPost = () => {
   const {
@@ -70,7 +71,7 @@ const AddPost = () => {
   }, [selectedDistrict, selectedCity]);
 
   const onSubmit = async (data) => {
-    const { 
+    const {
       name,
       description,
       address,
@@ -82,15 +83,20 @@ const AddPost = () => {
       bedRoom,
       bathRoom,
       propertySize,
-      yearBuilt
+      yearBuilt,
     } = data;
 
-    const fullAddress = address.trim() + ", " + selectedDistrict.trim() + ", " + selectedWard.trim()
-    const city = selectedCity.trim()
+    const fullAddress =
+      address.trim() +
+      ", " +
+      selectedWard.trim() +
+      ", " +
+      selectedDistrict.trim();
+    const city = selectedCity.trim();
 
-    console.log(data)
-    console.log("Full address: " + fullAddress)
-    console.log("City: " + city)
+    console.log(data);
+    console.log("Full address: " + fullAddress);
+    console.log("City: " + city);
 
     const resdata = {
       name: name,
@@ -105,23 +111,23 @@ const AddPost = () => {
       bedRoom,
       bathRoom,
       propertySize,
-      yearBuilt
-    }
+      yearBuilt,
+    };
 
-    // if (Array.isArray(images)) payload.avatar = avatar;
-    // const response = await apiUpdateProfile(payload);
-    // if (response.success) {
-    //   toast.success(response.mes);
-    //   getCurrent();
-    //   setIsChangeAvatar(false);
-    // } else toast.error(response.mes);
-
-    const res = await apiCreateProperty(resdata)
+    const res = await apiCreateProperty(resdata);
     if (res.success) {
-      toast.success(res.mes);
-      navigate(`/${path.PROPERTIES}/${res.property.id}`)
-    }
-    else toast.error(res.mes);
+      Swal.fire({
+        icon: "success",
+        title: "Chúc mừng!",
+        text: res.mes,
+        showConfirmButton: true,
+        confirmButtonText: "Quản lý tin đăng",
+      }).then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          navigate(`/${path.OWNER_LAYOUT}/${path.OWNER_DASHBOARD}`);
+        }
+      });
+    } else toast.error(res.mes);
   };
 
   return (
@@ -163,10 +169,8 @@ const AddPost = () => {
             id="propertyType"
             register={register}
             errors={errors}
-            // containerClassname={direction === "vertical" ? "w-full" : "w-[15em]"}
-            // inputClassname="rounded-md border border-gray-300"
             label="Loại hình dự án"
-            placeholder="Chọn loại hình dự án"
+            placeholder="-- Chọn loại hình dự án --"
             options={propertyTypes?.map((el) => ({ ...el, label: el.name }))}
             onChange={(val) => setValue("propertyType", val.id)}
           />
@@ -330,7 +334,9 @@ const AddPost = () => {
             />
           </div>
         </form>
-        <Button className="mx-auto" onClick={handleSubmit(onSubmit)}>Đăng</Button>
+        <Button className="mx-auto" onClick={handleSubmit(onSubmit)}>
+          Đăng
+        </Button>
       </div>
     </div>
   );

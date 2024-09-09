@@ -9,14 +9,33 @@ module.exports = {
 
     const { uid } = req.user;
     const {
-      name, description, address, city, listingType, price, propertyTypeId, images, featuredImage,
-      bedRoom, bathRoom, propertySize, yearBuilt
+      name,
+      description,
+      address,
+      city,
+      listingType,
+      price,
+      propertyTypeId,
+      images,
+      featuredImage,
+      bedRoom,
+      bathRoom,
+      propertySize,
+      yearBuilt,
     } = req.body;
 
-    if (!name || !description || !address || !city || !listingType || !price || !propertyTypeId) {
+    if (
+      !name ||
+      !description ||
+      !address ||
+      !city ||
+      !listingType ||
+      !price ||
+      !propertyTypeId
+    ) {
       return res.status(400).json({
         success: false,
-        mes: "Please provide all required fields."
+        mes: "Please provide all required fields.",
       });
     }
 
@@ -25,23 +44,23 @@ module.exports = {
     if (!propertyType) {
       return res.status(404).json({
         success: false,
-        mes: "Property type does not exist."
+        mes: "Property type does not exist.",
       });
     }
 
     if (images && !Array.isArray(images)) {
       return res.status(400).json({
         success: false,
-        mes: "Images must be an array."
+        mes: "Images must be an array.",
       });
     }
 
     try {
-      const status = 'Chờ duyệt';
+      const status = "Chờ duyệt";
       const isAvailable = true;
       const imageArray = Array.isArray(images) ? images : [];
-      console.log("TEST: ", typeof images)
-      
+      console.log("TEST: ", typeof images);
+
       // Create the property
       const newProperty = await db.Property.create({
         name: name,
@@ -62,26 +81,29 @@ module.exports = {
         owner: uid,
         postedBy: uid,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
 
       if (uid) {
         const roleCode = ["ROL3"];
-        const roleCodeBulk = roleCode.map((role) => ({ userId: uid, roleCode: role }));
+        const roleCodeBulk = roleCode.map((role) => ({
+          userId: uid,
+          roleCode: role,
+        }));
         const updateRole = await db.User_Role.bulkCreate(roleCodeBulk);
         if (!updateRole) await db.User.destroy({ where: { id: uid } });
       }
 
       return res.status(201).json({
         success: true,
-        mes: "Property created successfully.",
-        property: newProperty
+        mes: "Bài đăng đã được tạo thành công, vui lòng chờ quản trị viên phê duyệt trước khi hiển thị.",
+        property: newProperty,
       });
     } catch (error) {
       return res.status(500).json({
         success: false,
         mes: "An error occurred while creating the property.",
-        error: error.message
+        error: error.message,
       });
     }
   }),
