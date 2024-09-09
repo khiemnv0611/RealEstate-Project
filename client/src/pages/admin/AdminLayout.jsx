@@ -30,7 +30,7 @@ const AdminLayout = () => {
           <div className="col-span-2">
             <AdminSidebar />
           </div>
-          <div className="col-span-10 px-8">
+          <div className="col-span-10">
             <Outlet />
           </div>
         </main>
