@@ -12,6 +12,7 @@ const { verifyToken, isAdmin } = require("../middlewares/verifyToken");
 router.get("/one/:propertyId", ctrls.getOneById);
 router.get("/", ctrls.getProperties);
 router.get("/ownerproperties", verifyToken, ctrls.getPropertiesByUserId)
+router.get("/comments/:propertyId", ctrls.getPropertyComments)
 
 // POST
 router.post(

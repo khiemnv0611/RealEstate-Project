@@ -46,21 +46,12 @@ const Properties = () => {
     if (params.price) params.price = searchParams.getAll("price");
     if (sort) params.sort = sort;
 
-    fetchProperties(params);
-  }, [searchParams, sort]);
+    if (mode && mode !== "ALL") {
+      params.listingType = mode === "RENT" ? "Cho thuê" : "Bán";
+    }
 
-  // useEffect(() => {
-  //   const filterByStatus = () => {
-  //     const filtered = properties.filter((property) => {
-  //       if (mode === "ALL") return property.listingType === "Tất cả";
-  //       if (mode === "RENT") return property.listingType === "Cho thuê";
-  //       if (mode === "SALE") return property.listingType === "Bán";
-  //       return true;
-  //     });
-  //     setFilteredProperties(filtered);
-  //   };
-  //   filterByStatus();
-  // }, [mode, properties]);
+    fetchProperties(params);
+  }, [searchParams, sort, mode]);
 
   return (
     <div className="w-full">
@@ -112,39 +103,39 @@ const Properties = () => {
             </Button>
           </div>
           <div className="flex items-center gap-4">
-            <Button
-              onClick={() => setMode("ALL")}
-              className={twMerge(
-                clsx(
-                  "whitespace-nowrap bg-transparent border-none text-gray-900",
-                  mode == "ALL" && "font-bold"
-                )
-              )}
-            >
-              Tất cả
-            </Button>
-            <Button
-              onClick={() => setMode("RENT")}
-              className={twMerge(
-                clsx(
-                  "whitespace-nowrap bg-transparent border-none text-gray-900",
-                  mode == "RENT" && "font-bold"
-                )
-              )}
-            >
-              Cho Thuê
-            </Button>
-            <Button
-              onClick={() => setMode("SALE")}
-              className={twMerge(
-                clsx(
-                  "whitespace-nowrap bg-transparent border-none text-gray-900",
-                  mode == "SALE" && "font-bold"
-                )
-              )}
-            >
-              Bán
-            </Button>
+          <Button
+            onClick={() => setMode("ALL")}
+            className={twMerge(
+              clsx(
+                "whitespace-nowrap bg-transparent border-none text-gray-900",
+                mode == "ALL" && "font-bold"
+              )
+            )}
+          >
+            Tất cả
+          </Button>
+          <Button
+            onClick={() => setMode("RENT")}
+            className={twMerge(
+              clsx(
+                "whitespace-nowrap bg-transparent border-none text-gray-900",
+                mode == "RENT" && "font-bold"
+              )
+            )}
+          >
+            Cho Thuê
+          </Button>
+          <Button
+            onClick={() => setMode("SALE")}
+            className={twMerge(
+              clsx(
+                "whitespace-nowrap bg-transparent border-none text-gray-900",
+                mode == "SALE" && "font-bold"
+              )
+            )}
+          >
+            Bán
+          </Button>
           </div>
         </div>
         <div className="w-full grid grid-cols-3 gap-4">

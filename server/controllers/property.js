@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../models");
-const { Sequelize, Op, DATE } = require("sequelize");
+const { Sequelize, Op, DATE, where } = require("sequelize");
 
 module.exports = {
   // CREATE NEW PROPERTY
@@ -122,7 +122,7 @@ module.exports = {
     }
   }),
   getProperties: asyncHandler(async (req, res) => {
-    const { limit, page, fields, name, sort, address, city, price, ...query } =
+    const { limit, page, fields, name, sort, address, city, price, listingType, ...query } =
       req.query;
     const options = {};
 
@@ -140,6 +140,11 @@ module.exports = {
           query.price = { [Op[operator]]: number };
         }
       }
+    }
+
+    // Lọc theo loại "Bán", "Cho thuê" hoặc cả hai
+    if (listingType && listingType !== 'ALL') {
+      query.listingType = listingType;
     }
 
     // Giới hạn trường
@@ -345,4 +350,82 @@ module.exports = {
       });
     }
   }),
+  getPropertyComments: asyncHandler(async (req, res) => {
+    const { propertyId } = req.params;
+
+    try {
+      const submissions = await db.Submission.findAll({
+        where: { propertyId: propertyId }
+      });
+  
+      if (!submissions || submissions.length === 0) {
+        return res.json({
+          success: false,
+          mes: "No comments found for this property."
+        });
+      }
+
+      const uids = submissions.map((submission) => submission.uid);
+
+      const users = await db.User.findAll({
+        where: {
+          id: uids
+        },
+        attributes: ["id", "name", "avatar"]
+      });
+
+      const userMap = users.reduce((acc, user) => {
+        acc[user.id] = user;
+        return acc;
+      }, {});
+      
+      const commentsWithReplies = await Promise.all(
+        submissions.map(async (submission) => {
+          const replyComments = await db.Comment.findAll({
+            where: { parentComment: submission.id }
+          });
+  
+          const replyUids = replyComments.map((reply) => reply.uid);
+  
+          const replyUsers = await db.User.findAll({
+            where: {
+              id: replyUids
+            },
+            attributes: ["id", "name", "avatar"]
+          });
+  
+          const replyUserMap = replyUsers.reduce((acc, user) => {
+            acc[user.id] = user;
+            return acc;
+          }, {});
+  
+          const repliesWithUsers = replyComments.map((reply) => ({
+            ...reply.toJSON(),
+            rCommentedBy: replyUserMap[reply.uid] || null
+          }));
+  
+          return {
+            ...submission.toJSON(),
+            rCommentedBy: userMap[submission.uid] || null,
+            replies: repliesWithUsers
+          };
+        })
+      );
+
+      return res.json({
+        success: true,
+        mes: "Got comments for the property.",
+        data: {
+          count: submissions.length,
+          rows: commentsWithReplies,
+        },
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        mes: "An error occurred while retrieving the properties.",
+        error: error.message,
+      });
+    }
+  })
 };

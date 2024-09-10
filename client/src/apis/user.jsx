@@ -35,3 +35,17 @@ export const getWishListByCurrentUser = () =>
     url: "/user/wishlist",
     method: "get",
   })
+
+export const apiComment = (id, data) =>
+  axios({
+    url: "/user/comment/" + id,
+    method: "post",
+    data
+  })
+
+export const apiReplyComment = (id, data) =>
+  axios({
+    url: "/user/comment/reply/" + id,
+    method: "post",
+    data
+  })

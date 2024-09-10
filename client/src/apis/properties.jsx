@@ -31,3 +31,9 @@ export const apiDeleteProperty = (id) =>
     url: "/properties/" + id,
     method: "delete",
   })
+
+export const apiGetComments = (id) =>
+  axios({
+    url: "/properties/comments/" + id,
+    method: "get",
+  });

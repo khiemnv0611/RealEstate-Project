@@ -231,11 +231,11 @@ module.exports = {
   }),
   commentToProperty: asyncHandler(async (req, res) => {
     const { uid } = req.user;
-    const { message } = req.data;
+    const { message } = req.body;
 
     try {
       const submission = db.Submission.create({
-        userId: uid,
+        uid: uid,
         propertyId: req.params.id,
         message: message,
       })
@@ -263,11 +263,11 @@ module.exports = {
   }),
   replyComment: asyncHandler(async (req, res) => {
     const { uid } = req.user;
-    const { message, propertyId } = req.data;
+    const { message, propertyId } = req.body;
 
     try {
       const comment = db.Comment.create({
-        userId: uid,
+        uid: uid,
         propertyId: propertyId,
         parentComment: req.params.id,
         text: message
