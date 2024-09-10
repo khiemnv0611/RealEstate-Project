@@ -18,6 +18,12 @@ import path from "~/utils/path";
 import Swal from "sweetalert2";
 
 const AddPost = () => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setIsImageLoaded(true);
+  };
+
   const {
     register,
     formState: { errors, isDirty },
@@ -137,13 +143,16 @@ const AddPost = () => {
           src="/properties_banner.png"
           alt=""
           className="w-full object-contain"
+          onLoad={handleImageLoad}
         />
-        <div className="absolute inset-0 text-white flex flex-col justify-center items-center">
-          <h1 className="text-[48px] font-medium">Đăng Tin</h1>
-          <div>
-            <BreadCrumb />
+        {isImageLoaded && (
+          <div className="absolute inset-0 text-white flex flex-col justify-center items-center">
+            <h1 className="text-[48px] font-medium">Đăng tin</h1>
+            <div>
+              <BreadCrumb />
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="w-main mx-auto px-10">
         <form className="space-y-6 my-10">

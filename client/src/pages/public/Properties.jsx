@@ -16,6 +16,12 @@ import { CiBoxList } from "react-icons/ci";
 import { useAppStore } from "~/store/useAppStore";
 
 const Properties = () => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setIsImageLoaded(true);
+  };
+
   const [properties, setProperties] = useState();
   const [mode, setMode] = useState("ALL");
   const [filteredProperties, setFilteredProperties] = useState([]);
@@ -63,13 +69,16 @@ const Properties = () => {
           src="/properties_banner.png"
           alt=""
           className="w-full object-contain"
+          onLoad={handleImageLoad}
         />
-        <div className="absolute inset-0 text-white flex flex-col justify-center items-center">
-          <h1 className="text-[48px] font-medium">Dự Án</h1>
-          <div>
-            <BreadCrumb />
+        {isImageLoaded && (
+          <div className="absolute inset-0 text-white flex flex-col justify-center items-center">
+            <h1 className="text-[48px] font-medium">Dự Án</h1>
+            <div>
+              <BreadCrumb />
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="w-main mx-auto my-16">
         <div className="my-4 flex justify-between items-center">
