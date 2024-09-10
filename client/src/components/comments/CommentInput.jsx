@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { InputForm } from "..";
 import { FaRegSmile } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
@@ -10,23 +10,15 @@ import { toast } from "react-toastify";
 const CommentInput = ({ propertyId }) => {
   // const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiPickerRef = useRef(null);
 
   const {
     register,
     formState: { errors },
     setValue,
     getValues,
-    watch,
-    value,
-    onChange,
     handleSubmit
   } = useForm();
-
-  // const handleInputChange = (e) => {
-  //   setInputValue(e.target.value);
-  // };
-
-  useEffect
 
   const handleEmojiSelect = (emojiObject) => {
     const currentValue = getValues("message") || "";
@@ -43,6 +35,20 @@ const CommentInput = ({ propertyId }) => {
     } else toast.error(res.mes);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+        setShowEmojiPicker(false); // Ẩn EmojiPicker khi nhấn ngoài nó
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="relative flex justify-between bg-gray-200 rounded-3xl p-1 w-full">
       <InputForm
@@ -50,8 +56,6 @@ const CommentInput = ({ propertyId }) => {
         errors={errors}
         placeholder="Viết bình luận..."
         inputClassname="bg-transparent border-none text-black text-base focus:outline-none focus:ring-0 focus:border-transparent"
-        // value={inputValue}
-        // onChange={handleInputChange}
         register={register}
       />
       <div className="flex gap-4 items-center text-gray-500">
@@ -72,7 +76,7 @@ const CommentInput = ({ propertyId }) => {
         </div>
       </div>
       {showEmojiPicker && (
-        <div className="absolute bottom-20 right-2">
+        <div ref={emojiPickerRef} className="absolute bottom-20 right-2">
           <EmojiPicker onEmojiClick={handleEmojiSelect} />
         </div>
       )}

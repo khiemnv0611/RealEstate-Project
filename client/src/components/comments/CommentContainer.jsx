@@ -1,12 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { CommentInput } from "..";
+import React, { useEffect, useRef, useState } from "react";
+import { CommentInput, InputForm } from "..";
 import { useUserStore } from "~/store/useUserStore";
 import { apiGetComments } from "~/apis/properties";
+import { useForm } from "react-hook-form";
+import { FaRegSmile } from "react-icons/fa";
+import { IoSend } from "react-icons/io5";
+import { apiReplyComment } from "~/apis/user";
+import EmojiPicker from "emoji-picker-react";
+import { toast } from "react-toastify";
 
 const CommentContainer = ({ propertyId }) => {
   const { current, getCurrent } = useUserStore();
-
   const [comments, setComments] = useState();
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [activeReply, setActiveReply] = useState(null);
+  const emojiPickerRef = useRef(null);
+
+  const {
+    register,
+    formState: { errors },
+    setValue,
+    getValues,
+    handleSubmit
+  } = useForm();
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -15,6 +31,35 @@ const CommentContainer = ({ propertyId }) => {
     };
 
     fetchComments();
+  }, []);
+
+  const handleEmojiSelect = (emojiObject) => {
+    const currentValue = getValues("message") || "";
+    setValue("message", currentValue + emojiObject.emoji, { shouldValidate: true });
+  };
+
+  const onSubmit = async (data) => {
+    const { message } = data;
+
+    const res = await apiReplyComment(activeReply, { message, propertyId });
+
+    if (res.success) {
+      toast.success("Trả lời bình luận thành công!")
+    } else toast.error(res.mes);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+        setShowEmojiPicker(false); // Ẩn EmojiPicker khi nhấn ngoài nó
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   return (
@@ -36,7 +81,12 @@ const CommentContainer = ({ propertyId }) => {
                 </div>
                 <div className="flex gap-4">
                   <span>{new Date(comment.createdAt).toLocaleString()}</span>
-                  <span>Phản hồi</span>
+                  <span
+                    className="cursor-pointer"
+                    onClick={() => setActiveReply(comment.id)}
+                  >
+                    Phản hồi
+                  </span>
                 </div>
               </div>
             </div>
@@ -61,45 +111,43 @@ const CommentContainer = ({ propertyId }) => {
               </div>
             ))}
 
+            {/* Reply comment section */}
+            {activeReply === comment.id && (
+              <div className="flex justify-between bg-gray-200 rounded-3xl ml-16 mr-3">
+                <InputForm
+                  id="message"
+                  errors={errors}
+                  placeholder="Viết bình luận..."
+                  inputClassname="bg-transparent border-none text-black text-base focus:outline-none focus:ring-0 focus:border-transparent"
+                  register={register}
+                />
+                <div className="flex gap-4 items-center text-gray-500">
+                  <FaRegSmile
+                    size={22}
+                    onClick={() => setShowEmojiPicker((prev) => !prev)}
+                    className="cursor-pointer"
+                  />
+                  <div
+                    className={`cursor-pointer hover:bg-gray-300 rounded-full p-1.5 ${
+                      getValues("message") ? "text-blue-400" : "text-gray-500"
+                    }`}
+                  >
+                    <IoSend
+                      onClick={handleSubmit(onSubmit)}
+                      size={22} 
+                    />
+                  </div>
+                </div>
+                {showEmojiPicker && (
+                  <div ref={emojiPickerRef} className="absolute bottom-20 right-2">
+                    <EmojiPicker onEmojiClick={handleEmojiSelect} />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         ))}
 
-
-        {/* <div className="flex p-3 gap-3">
-          <img
-            src=""
-            alt=""
-            className="w-10 h-10 object-cover bg-gray-500 rounded-full"
-          />
-          <div className="flex flex-col">
-            <div className="bg-gray-200 w-fit rounded-3xl p-3 flex flex-col gap-2 h-fit">
-              <span className="font-bold">rUser.name</span>
-              <span>content content content content content</span>
-            </div>
-            <div className="flex gap-4">
-              <span>comment.createdAt</span>
-              <span>Phản hồi</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex p-3 pl-16 gap-3">
-          <img
-            src=""
-            alt=""
-            className="w-10 h-10 object-cover bg-gray-500 rounded-full"
-          />
-          <div className="flex flex-col">
-            <div className="bg-gray-200 w-fit rounded-3xl p-3 flex flex-col gap-2 h-fit">
-              <span className="font-bold">rUser.name</span>
-              <span>content content content content content</span>
-            </div>
-            <div className="flex gap-4">
-              <span>comment.createdAt</span>
-              <span>Phản hồi</span>
-            </div>
-          </div>
-        </div> */}
       </div>
       <div className="sticky bottom-0 flex p-3 gap-3">
         <img
