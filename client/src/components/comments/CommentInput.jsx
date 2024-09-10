@@ -8,21 +8,26 @@ import { apiComment } from "~/apis/user";
 import { toast } from "react-toastify";
 
 const CommentInput = ({ propertyId }) => {
-  // const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiPickerRef = useRef(null);
+  const isEmojiTogglerClicked = useRef(false); // Cờ để kiểm tra sự kiện click vào FaRegSmile
 
   const {
     register,
     formState: { errors },
     setValue,
+    watch,
+    handleSubmit,
     getValues,
-    handleSubmit
   } = useForm();
+
+  const messageValue = watch("message", "");
 
   const handleEmojiSelect = (emojiObject) => {
     const currentValue = getValues("message") || "";
-    setValue("message", currentValue + emojiObject.emoji, { shouldValidate: true });
+    setValue("message", currentValue + emojiObject.emoji, {
+      shouldValidate: true,
+    });
   };
 
   const onSubmit = async (data) => {
@@ -31,14 +36,25 @@ const CommentInput = ({ propertyId }) => {
     const res = await apiComment(propertyId, { message });
 
     if (res.success) {
-      toast.success("Bình luận thành công!")
+      toast.success("Bình luận thành công!");
+      setValue("message", ""); // Clear input after success
     } else toast.error(res.mes);
   };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
-        setShowEmojiPicker(false); // Ẩn EmojiPicker khi nhấn ngoài nó
+      // Nếu người dùng vừa click vào FaRegSmile, thì bỏ qua click ngoài
+      if (isEmojiTogglerClicked.current) {
+        isEmojiTogglerClicked.current = false;
+        return;
+      }
+
+      // Ẩn EmojiPicker khi nhấn ngoài nó
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target)
+      ) {
+        setShowEmojiPicker(false);
       }
     };
 
@@ -50,7 +66,7 @@ const CommentInput = ({ propertyId }) => {
   }, []);
 
   return (
-    <div className="relative flex justify-between bg-gray-200 rounded-3xl p-1 w-full">
+    <div className="relative flex justify-between bg-gray-200 rounded-3xl p-1">
       <InputForm
         id="message"
         errors={errors}
@@ -61,22 +77,23 @@ const CommentInput = ({ propertyId }) => {
       <div className="flex gap-4 items-center text-gray-500">
         <FaRegSmile
           size={22}
-          onClick={() => setShowEmojiPicker((prev) => !prev)}
+          onClick={(e) => {
+            e.stopPropagation(); // Ngăn sự kiện click ngoài EmojiPicker
+            isEmojiTogglerClicked.current = true; // Đánh dấu rằng FaRegSmile đã được click
+            setShowEmojiPicker((prev) => !prev);
+          }}
           className="cursor-pointer"
         />
         <div
-          className={`cursor-pointer hover:bg-gray-300 rounded-full p-1.5 ${
-            getValues("message") ? "text-blue-400" : "text-gray-500"
+          className={`cursor-pointer hover:text-blue-400 hover:bg-gray-300 rounded-full p-1.5 ${
+            messageValue ? "text-blue-400" : "text-gray-500"
           }`}
         >
-          <IoSend 
-            onClick={handleSubmit(onSubmit)}
-            size={22} 
-          />
+          <IoSend onClick={handleSubmit(onSubmit)} size={22} />
         </div>
       </div>
       {showEmojiPicker && (
-        <div ref={emojiPickerRef} className="absolute bottom-20 right-2">
+        <div ref={emojiPickerRef} className="absolute bottom-14 right-2">
           <EmojiPicker onEmojiClick={handleEmojiSelect} />
         </div>
       )}
