@@ -25,3 +25,5 @@ export { default as RelatedPost } from "./properties/RelatedPost";
 export { default as PropertyItem } from "./properties/PropertyItem";
 export { default as BoxInfo } from "./users/BoxInfo";
 export { default as Map } from "./maps/Map";
+export { default as CommentInput } from "./comments/CommentInput";
+export { default as CommentContainer } from "./comments/CommentContainer";

@@ -4,6 +4,8 @@ import { apiGetDetailProperty, apiGetProperties } from "~/apis/properties";
 import {
   BoxInfo,
   BreadCrumb,
+  CommentContainer,
+  CommentInput,
   Images,
   InputForm,
   InputText,
@@ -14,10 +16,6 @@ import { GrLocation } from "react-icons/gr";
 import DOMPurify from "dompurify";
 import { formatMoney } from "~/utils/fn";
 import moment from "moment";
-import { useForm } from "react-hook-form";
-import EmojiPicker from "emoji-picker-react";
-import { FaRegSmile } from "react-icons/fa";
-import { IoSend } from "react-icons/io5";
 
 const InfoCell = ({ title, value, unit = "" }) => {
   return (
@@ -30,31 +28,12 @@ const InfoCell = ({ title, value, unit = "" }) => {
 };
 
 const PropertyDetail = () => {
-  const {
-    register,
-    formState: { errors },
-    value,
-    onChange,
-  } = useForm();
   const { id } = useParams();
   const [propertyDetail, setPropertyDetail] = useState();
   const [relatedProperties, setRelatedProperties] = useState({
     propertyType: null,
     listingTypes: null,
   });
-
-  const [inputValue, setInputValue] = useState("");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
-  // const handleEmojiSelect = (emojiData, event) => {
-  //   setInputValue((prevInputValue) => prevInputValue + emojiData.emoji);
-  // };
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value); // Cập nhật state khi người dùng gõ
-  };
-  const handleEmojiSelect = (emojiObject) => {
-    setInputValue((prevValue) => prevValue + emojiObject.emoji);
-  };
 
   useEffect(() => {
     const fetchDetailProperty = async () => {
@@ -212,31 +191,7 @@ const PropertyDetail = () => {
                 <span className="font-bold text-lg text-main-600">
                   Bình luận
                 </span>
-                <div className="relative flex justify-between bg-gray-200 rounded-3xl p-3">
-                  <InputForm
-                    id="comment"
-                    errors={errors}
-                    placeholder="Viết bình luận..."
-                    inputClassname="bg-transparent border-none text-black text-base focus:outline-none focus:ring-0 focus:border-transparent"
-                    value={inputValue} // Gán giá trị từ state
-                    onChange={handleInputChange} // Đảm bảo onChange cập nhật giá trị
-                  />
-                  <div className="flex gap-4 items-center text-gray-500">
-                    <FaRegSmile
-                      size={22}
-                      onClick={() => setShowEmojiPicker((prev) => !prev)}
-                      className="cursor-pointer"
-                    />
-                    <div className="cursor-pointer hover:bg-gray-300 hover:text-blue-400 rounded-full p-2">
-                      <IoSend size={22} />
-                    </div>
-                  </div>
-                  {showEmojiPicker && (
-                    <div className="absolute bottom-20 right-2">
-                      <EmojiPicker onEmojiClick={handleEmojiSelect} />
-                    </div>
-                  )}
-                </div>
+                <CommentContainer />
               </div>
             </div>
             <div className="col-span-3 flex flex-col gap-6">

@@ -162,7 +162,7 @@ const Dashboard = () => {
                 className={twMerge(
                   "px-3 py-1 text-sm rounded-3xl font-semibold flex items-center justify-center max-w-fit self-end",
                   clsx({
-                    "bg-blue-500": property.status === "Chờ duyệt",
+                    "bg-blue-400": property.status === "Chờ duyệt",
                     "bg-green-600": property.status === "Đã duyệt",
                     "bg-red-600": property.status === "Bị hủy",
                     "bg-main-100": ![
