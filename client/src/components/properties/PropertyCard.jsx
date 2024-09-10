@@ -10,8 +10,13 @@ import { Link } from "react-router-dom";
 import path from "~/utils/path";
 import { addPropertyToWishList, isPropertyInWishList } from "~/apis/user";
 import { toast } from "react-toastify";
+import { useUserStore } from "~/store/useUserStore";
+import { useAppStore } from "~/store/useAppStore";
+import { BoxInfo } from "..";
 
 const PropertyCard = ({ properties }) => {
+  const { current } = useUserStore();
+  const { setModal } = useAppStore();
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
@@ -69,15 +74,17 @@ const PropertyCard = ({ properties }) => {
             {`${formatMoney(properties?.price)}`}
             <span>VND</span>
           </div>
-          <div>
-            <FaHeart
-              className={`cursor-pointer ${
-                isFavorite ? "text-red-500" : "text-gray-300"
-              } hover:text-red-500`}
-              size={22}
-              onClick={handleFavoriteToggle}
-            />
-          </div>
+          {current && ( // Kiểm tra current, nếu có thì mới render div này
+            <div>
+              <FaHeart
+                className={`cursor-pointer ${
+                  isFavorite ? "text-red-500" : "text-gray-300"
+                } hover:text-red-500`}
+                size={22}
+                onClick={handleFavoriteToggle}
+              />
+            </div>
+          )}
         </span>
         <div className="flex justify-between items-center font-semibold">
           <div className="flex gap-4">
@@ -114,7 +121,10 @@ const PropertyCard = ({ properties }) => {
               Môi giới
             </span>
           </div>
-          <span className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md">
+          <span
+            // onClick={() => setModal(true, <BoxInfo />)}
+            className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md cursor-pointer"
+          >
             <FaEye />
           </span>
         </div>
@@ -134,7 +144,10 @@ const PropertyCard = ({ properties }) => {
               Chủ sở hữu
             </span>
           </div>
-          <span className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md">
+          <span
+            // onClick={() => setModal(true, <BoxInfo />)}
+            className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-md cursor-pointer"
+          >
             <FaEye />
           </span>
         </div>

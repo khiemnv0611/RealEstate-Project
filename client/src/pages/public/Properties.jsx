@@ -24,7 +24,7 @@ const Properties = () => {
 
   const [properties, setProperties] = useState();
   const [mode, setMode] = useState("ALL");
-  const [filteredProperties, setFilteredProperties] = useState([]);
+  // const [filteredProperties, setFilteredProperties] = useState([]);
   const [searchParams] = useSearchParams();
   const {
     register,

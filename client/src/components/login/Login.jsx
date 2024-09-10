@@ -148,13 +148,7 @@ const Login = () => {
           inputClassname="rounded-md"
           id="email"
           placeholder="Nhập vào email ..."
-          validate={{
-            required: "Trường này không được để trống",
-            // pattern: {
-            //   value: /(0[1|3|5|7|9])+([0-9]{8})\b/,
-            //   message: "Số điện thoại không hợp lệ.",
-            // },
-          }}
+          validate={{ required: "Trường này không được để trống" }}
           errors={errors}
         />
         <InputForm

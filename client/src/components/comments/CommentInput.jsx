@@ -37,7 +37,11 @@ const CommentInput = () => {
           onClick={() => setShowEmojiPicker((prev) => !prev)}
           className="cursor-pointer"
         />
-        <div className="cursor-pointer hover:bg-gray-300 hover:text-blue-400 rounded-full p-1.5">
+        <div
+          className={`cursor-pointer hover:bg-gray-300 rounded-full p-1.5 ${
+            inputValue ? "text-blue-400" : "text-gray-500"
+          }`}
+        >
           <IoSend size={22} />
         </div>
       </div>

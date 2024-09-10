@@ -16,6 +16,7 @@ import { GrLocation } from "react-icons/gr";
 import DOMPurify from "dompurify";
 import { formatMoney } from "~/utils/fn";
 import moment from "moment";
+import { useUserStore } from "~/store/useUserStore";
 
 const InfoCell = ({ title, value, unit = "" }) => {
   return (
@@ -28,6 +29,7 @@ const InfoCell = ({ title, value, unit = "" }) => {
 };
 
 const PropertyDetail = () => {
+  const { current } = useUserStore();
   const { id } = useParams();
   const [propertyDetail, setPropertyDetail] = useState();
   const [relatedProperties, setRelatedProperties] = useState({
@@ -191,7 +193,13 @@ const PropertyDetail = () => {
                 <span className="font-bold text-lg text-main-600">
                   Bình luận
                 </span>
-                <CommentContainer />
+                {current ? (
+                  <CommentContainer />
+                ) : (
+                  <p className="text-red-500">
+                    Bạn cần đăng nhập để sử dụng tính năng này!!!
+                  </p>
+                )}
               </div>
             </div>
             <div className="col-span-3 flex flex-col gap-6">

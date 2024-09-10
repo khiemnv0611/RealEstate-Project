@@ -52,7 +52,6 @@ const WishList = () => {
         <div className="p-8">
           <div className="border border-main-700 rounded-md p-4 flex gap-4 items-center relative">
             <IoClose
-              title="Bỏ lưu"
               className="absolute top-2 right-2 h-10 w-10 text-gray-600 cursor-pointer rounded-md p-2 hover:bg-gray-200 "
               onClick={() => handleFavoriteToggle(property.id)}
             />

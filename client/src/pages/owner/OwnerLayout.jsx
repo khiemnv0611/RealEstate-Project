@@ -11,7 +11,7 @@ const OwnerLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!current || !current.userRoles.some((el) => el.roleCode === "ROL7")) {
+    if (!current || !current.userRoles.some((el) => el.roleCode === "ROL3")) {
       Swal.fire({
         icon: "info",
         title: "Oops!",

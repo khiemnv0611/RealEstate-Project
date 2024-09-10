@@ -19,12 +19,29 @@ const BoxInfo = ({ data, containerClassName, role, roleStyle }) => {
       />
       <h1 className="font-bold text-main-700">{data.name}</h1>
       <span className={clsx("italic", roleStyle)}>{role}</span>
-      <a
+      {/* <a
         className="px-6 py-2 bg-main-600 text-white rounded-md font-semibold"
-        href={`tel: ${data.phone}`}
+        href={data.phone ? `tel:${data.phone}` : `mailto:${data.email}`}
       >
-        {data.phone}
-      </a>
+        {data.phone ? data.phone : data.email}
+      </a> */}
+      {data.phone && (
+        <a
+          className="px-6 py-2 bg-main-600 text-white rounded-md font-semibold mr-4"
+          href={`tel:${data.phone}`}
+        >
+          {data.phone}
+        </a>
+      )}
+
+      {data.email && (
+        <a
+          className="px-6 py-2 bg-orange-500 text-white rounded-md font-semibold"
+          href={`mailto:${data.email}`}
+        >
+          {data.email}
+        </a>
+      )}
     </div>
   );
 };

@@ -243,12 +243,12 @@ module.exports = {
         {
           model: db.User,
           as: "rPostedBy",
-          attributes: ["name", "phone", "avatar"],
+          attributes: ["name", "phone", "avatar", "email"],
         },
         {
           model: db.User,
           as: "rOwner",
-          attributes: ["name", "phone", "avatar"],
+          attributes: ["name", "phone", "avatar", "email"],
         },
       ],
     });
