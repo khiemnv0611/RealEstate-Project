@@ -7,13 +7,40 @@ import { twMerge } from "tailwind-merge";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
 import SelectLib from "~/components/inputs/SelectLib";
+import { RiCheckboxIndeterminateFill } from "react-icons/ri";
+import { FaCheck } from "react-icons/fa6";
 
 const Dashboard = () => {
-  const [selectedRow, setSelectedRow] = useState(null);
+  // State để theo dõi các hàng được chọn
+  const [selectedRows, setSelectedRows] = useState([]);
+  // State để theo dõi trạng thái của checkbox "Chọn tất cả"
+  const [selectAll, setSelectAll] = useState(false);
 
-  // Function to handle row click
-  const handleRowClick = (index) => {
-    setSelectedRow(index); // Save the index of the selected row
+  // Hàm xử lý khi checkbox "Chọn tất cả" được thay đổi
+  const handleSelectAllChange = (event) => {
+    const isChecked = event.target.checked;
+    setSelectAll(isChecked);
+    if (isChecked) {
+      // Chọn tất cả các hàng
+      setSelectedRows([...Array(5).keys()]);
+    } else {
+      // Bỏ chọn tất cả các hàng
+      setSelectedRows([]);
+    }
+  };
+
+  // Hàm xử lý khi checkbox trong bảng được chọn hoặc bỏ chọn
+  const handleCheckboxChange = (index) => {
+    setSelectedRows((prevSelectedRows) => {
+      // Kiểm tra xem chỉ số hàng hiện tại đã được chọn chưa
+      if (prevSelectedRows.includes(index)) {
+        // Nếu đã chọn, loại bỏ chỉ số này khỏi danh sách đã chọn
+        return prevSelectedRows.filter((rowIndex) => rowIndex !== index);
+      } else {
+        // Nếu chưa chọn, thêm chỉ số này vào danh sách đã chọn
+        return [...prevSelectedRows, index];
+      }
+    });
   };
 
   const [mode, setMode] = useState("ALL");
@@ -135,6 +162,25 @@ const Dashboard = () => {
           </div>
           <div className="flex justify-between items-center">
             <div className="flex gap-4 items-center">
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={handleSelectAllChange}
+                className="form-checkbox"
+              />
+              <span>Chọn tất cả</span>
+              {selectAll && (
+                <div className="flex gap-1">
+                  <span className="px-2 border border-gray-400 bg-green-400 hover:underline cursor-pointer flex items-center">
+                    Duyệt tất cả
+                  </span>
+                  <span className="px-2 py-1 border border-gray-400 bg-red-400 hover:underline cursor-pointer flex items-center">
+                    Từ chối tất cả
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="flex gap-4 items-center">
               <InputForm
                 id="search-postedBy"
                 register={register}
@@ -187,15 +233,14 @@ const Dashboard = () => {
                 inputClassname="w-fit rounded-md"
               />
             </div>
-            <div className="flex gap-4 items-center">
-              <Button>Duyệt</Button>
-              <Button className="bg-red-500">Hủy</Button>
-            </div>
           </div>
-          <div className="overflow-x-auto overflow-y-auto my-6">
+          <div className="relative overflow-x-auto overflow-y-auto my-6">
             <table className="min-w-full border-collapse">
-              <thead className="border border-b-4">
+              <thead className="border-b-2 border-black">
                 <tr>
+                  <th className="whitespace-nowrap px-10 py-2 border">
+                    <RiCheckboxIndeterminateFill size={20} />
+                  </th>
                   <th className="whitespace-nowrap px-10 py-2 border">
                     Thời gian
                   </th>
@@ -239,29 +284,36 @@ const Dashboard = () => {
                   <th className="whitespace-nowrap px-10 py-2 border">
                     Năm xây dựng
                   </th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody className="bg-white">
                 {[...Array(5)].map((_, index) => (
                   <tr
                     key={index}
-                    onClick={() => handleRowClick(index)}
                     className={twMerge(
-                      clsx("cursor-pointer", {
-                        "bg-blue-300": selectedRow === index,
-                        "bg-white": selectedRow !== index,
-                      })
+                      clsx(
+                        "border-b border-gray-200",
+                        selectedRows.includes(index) && "bg-blue-200"
+                      )
                     )}
                   >
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.includes(index)}
+                        onChange={() => handleCheckboxChange(index)}
+                      />
+                    </td>
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       time
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       <div className="w-fit px-2 mx-auto rounded-3xl bg-orange-500">
                         status
                       </div>
                     </td>
-                    <td className="px-6 py-6 whitespace-nowrap border">
+                    <td className="relative p-6 whitespace-nowrap border-b">
                       <div className="flex items-center gap-3">
                         <img
                           src=""
@@ -275,43 +327,53 @@ const Dashboard = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       Bán/Cho thuê
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       Loại hình dự án
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       Property.name
                     </td>
-                    <td className="px-6 py-6 text-center border max-w-xs break-words overflow-hidden">
+                    <td className="relative p-6 text-center border-b max-w-xs break-words overflow-hidden">
                       <div className="line-clamp-2">
                         qưuoehqưebnvdịhpbnfndsvbbưeiugoqiwneqebqưhjvqưiebiqưeqưyeigquưegbưhdvqưkjdb
                       </div>
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       123456 Nguyễn Thi Minh Khai, Phường Đa Kao, Quận 1
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       Thành phố Hồ Chí Minh
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       featuredImage
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       ArrayImage
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       number phòng
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       number phòng
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       number m<span className="align-super text-xs">2</span>
                     </td>
-                    <td className="px-6 py-6 text-center whitespace-nowrap border">
+                    <td className="relative p-6 text-center whitespace-nowrap border-b">
                       Data 8
+                    </td>
+                    <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
+                      <div className="flex gap-1">
+                        <span className="px-2 border border-gray-400 bg-green-400 hover:underline cursor-pointer flex items-center">
+                          Duyệt
+                        </span>
+                        <span className="px-2 py-1 border border-gray-400 bg-red-400 hover:underline cursor-pointer flex items-center">
+                          Từ chối
+                        </span>
+                      </div>
                     </td>
                   </tr>
                 ))}
