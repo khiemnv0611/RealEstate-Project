@@ -288,57 +288,41 @@ const Dashboard = () => {
                 />
               </div>
             </div>
-            <div className="relative overflow-x-auto overflow-y-auto max-h-64 my-6">
-              <table className="min-w-full table-auto border-collapse">
-                <thead className="sticky top-0 border-b-2 border-black">
+            <div className="relative overflow-x-auto overflow-y-auto my-6 max-h-[600px]">
+              <table className="min-w-full">
+                <thead className="sticky top-0 bg-gray-200 z-20">
                   <tr>
-                    <th className="whitespace-nowrap px-10 py-2 border">
+                    <th className="whitespace-nowrap px-10 py-3">
                       <RiCheckboxIndeterminateFill size={20} />
                     </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">STT</th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
-                      Thời gian
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
-                      Trạng thái
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
-                      Người đăng
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
+                    <th className="whitespace-nowrap px-10 py-3">STT</th>
+                    <th className="whitespace-nowrap px-10 py-3">Thời gian</th>
+                    <th className="whitespace-nowrap px-10 py-3">Trạng thái</th>
+                    <th className="whitespace-nowrap px-10 py-3">Người đăng</th>
+                    <th className="whitespace-nowrap px-10 py-3">
                       Loại giao dịch
                     </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
+                    <th className="whitespace-nowrap px-10 py-3">
                       Loại hình dự án
                     </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
-                      Tiêu đề
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
-                      Mô tả
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
-                      Địa chỉ
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
-                      Thành phố
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
+                    <th className="whitespace-nowrap px-10 py-3">Tiêu đề</th>
+                    <th className="whitespace-nowrap px-10 py-3">Mô tả</th>
+                    <th className="whitespace-nowrap px-10 py-3">Địa chỉ</th>
+                    <th className="whitespace-nowrap px-10 py-3">Thành phố</th>
+                    <th className="whitespace-nowrap px-10 py-3">
                       Hình tổng quát
                     </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
+                    <th className="whitespace-nowrap px-10 py-3">
                       Toàn bộ hình ảnh
                     </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
+                    <th className="whitespace-nowrap px-10 py-3">
                       Số phòng ngủ
                     </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
+                    <th className="whitespace-nowrap px-10 py-3">
                       Số phòng tắm
                     </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
-                      Diện tích
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-2 border">
+                    <th className="whitespace-nowrap px-10 py-3">Diện tích</th>
+                    <th className="whitespace-nowrap px-10 py-3">
                       Năm xây dựng
                     </th>
                     <th></th>
