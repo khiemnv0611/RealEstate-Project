@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { apiComment } from "~/apis/user";
 import { toast } from "react-toastify";
 
-const CommentInput = ({ propertyId }) => {
+const CommentInput = ({ propertyId, onCommentSuccess }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiPickerRef = useRef(null);
   const isEmojiTogglerClicked = useRef(false); // Cờ để kiểm tra sự kiện click vào FaRegSmile
@@ -38,6 +38,8 @@ const CommentInput = ({ propertyId }) => {
     if (res.success) {
       toast.success("Bình luận thành công!");
       setValue("message", ""); // Clear input after success
+
+      onCommentSuccess();
     } else toast.error(res.mes);
   };
 

@@ -28,14 +28,22 @@ const CommentContainer = ({ propertyId }) => {
 
   const messageValue = watch("message", "");
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      const response = await apiGetComments(propertyId);
-      if (response.success) setComments(response.data.rows);
-    };
+  const fetchComments = async () => {
+    const response = await apiGetComments(propertyId);
+    if (response.success) {
+      setComments(response.data.rows);
+      this.forceUpdate();
+    } 
+  };
 
+  useEffect(() => {
     fetchComments();
   }, []);
+
+  // Callback and refresh
+  const handleCommentSuccess = () => {
+    fetchComments();
+  };
 
   const handleEmojiSelect = (emojiObject) => {
     const currentValue = getValues("message") || "";
@@ -52,6 +60,8 @@ const CommentContainer = ({ propertyId }) => {
     if (res.success) {
       toast.success("Trả lời bình luận thành công!");
       setValue("message", ""); // Clear input after success
+
+      fetchComments();
     } else toast.error(res.mes);
   };
 
@@ -186,7 +196,7 @@ const CommentContainer = ({ propertyId }) => {
           className="w-10 h-10 object-cover bg-gray-500 rounded-full"
         />
         <div className="w-full">
-          <CommentInput propertyId={propertyId} />
+          <CommentInput propertyId={propertyId} onCommentSuccess={handleCommentSuccess} />
         </div>
       </div>
     </div>

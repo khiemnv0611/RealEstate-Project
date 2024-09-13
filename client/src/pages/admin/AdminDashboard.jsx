@@ -8,6 +8,8 @@ import clsx from "clsx";
 import { useForm } from "react-hook-form";
 import SelectLib from "~/components/inputs/SelectLib";
 import { RiCheckboxIndeterminateFill } from "react-icons/ri";
+import { apiGetProperties } from "~/apis/properties";
+import { useSearchParams } from "react-router-dom";
 
 const Dashboard = () => {
   const totalRows = 10;
@@ -68,18 +70,39 @@ const Dashboard = () => {
       checkboxRef.current.click();
     }
   };
-
-  const [activeTab, setActiveTab] = useState("POSTS");
-  const [mode, setMode] = useState("ALL");
-  const [properties, setProperties] = useState([]);
-  const [filteredProperties, setFilteredProperties] = useState([]);
-
+  
   const {
     register,
     formState: { errors },
     watch,
     containerClassname,
   } = useForm();
+
+  const [activeTab, setActiveTab] = useState("POSTS");
+  const [mode, setMode] = useState("ALL");
+  const [properties, setProperties] = useState([]);
+  const [filteredProperties, setFilteredProperties] = useState([]);
+  const [searchParams] = useSearchParams();
+  const sort = watch("sort");
+  
+  useEffect(() => {
+    const fetchProperties = async (params) => {
+      const response = await apiGetProperties({
+        limit: 9,
+        ...params,
+      });
+      if (response.success) setProperties(response.properties);
+    };
+    const params = Object.fromEntries([...searchParams]);
+    if (params.price) params.price = searchParams.getAll("price");
+    if (sort) params.sort = sort;
+
+    if (mode && mode !== "ALL") {
+      params.listingType = mode === "RENT" ? "Cho thuê" : "Bán";
+    }
+
+    fetchProperties(params);
+  }, [searchParams, sort, mode]);
 
   useEffect(() => {
     const filterByStatus = () => {
@@ -329,85 +352,85 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white">
-                  {[...Array(totalRows)].map((_, index) => (
+                  {properties?.rows?.map((property) => (
                     <tr
-                      key={index}
+                      key={property.id}
                       className={twMerge(
                         clsx(
                           "border-b border-gray-200",
-                          selectedRows.includes(index) && "bg-blue-200"
+                          selectedRows.includes(property.id) && "bg-blue-200"
                         )
                       )}
                     >
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
                         <input
                           type="checkbox"
-                          checked={selectedRows.includes(index)}
-                          onChange={() => handleCheckboxChange(index)}
+                          checked={selectedRows.includes(property.id)}
+                          onChange={() => handleCheckboxChange(property.id)}
                         />
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        property.id
+                        {property.id}
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        time
+                        {property.createdAt}
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
                         <div className="w-fit px-2 mx-auto rounded-3xl bg-orange-500">
-                          status
+                          {property.status}
                         </div>
                       </td>
                       <td className="relative p-6 whitespace-nowrap border-b">
                         <div className="flex items-center gap-3">
                           <img
-                            src=""
-                            alt=""
+                            src={property.rOwner.avatar}
+                            alt={property.rOwner.name}
                             className="w-14 h-14 object-cover bg-gray-500 rounded-full"
                           />
                           <div className="flex flex-col">
-                            <span className="font-bold">Tên người đăng</span>
-                            <span>ROL</span>
-                            <span>Số điện thoại/Email</span>
+                            <span className="font-bold">{property.rOwner.name}</span>
+                            <span>{property.rOwner.roles}</span>
+                            <span>{property.rOwner.email}</span>
                           </div>
                         </div>
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        Bán/Cho thuê
+                        {property.listingType}
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        Loại hình dự án
+                        {property.rPropertyType.name}
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        Property.name
+                        {property.name}
                       </td>
                       <td className="relative p-6 text-center border-b max-w-xs break-words overflow-hidden">
                         <div className="line-clamp-2">
-                          qưuoehqưebnvdịhpbnfndsvbbưeiugoqiwneqebqưhjvqưiebiqưeqưyeigquưegbưhdvqưkjdb
+                          {property.description}
                         </div>
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        123456 Nguyễn Thi Minh Khai, Phường Đa Kao, Quận 1
+                        {property.address}
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        Thành phố Hồ Chí Minh
+                        {property.city}
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        featuredImage
+                        {property.featuredImage}
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        ArrayImage
+                        {property.images}
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        number phòng
+                        {property.bedRoom} phòng
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        number phòng
+                        {property.bathRoom} phòng
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        number m<span className="align-super text-xs">2</span>
+                        {property.propertySize} m<span className="align-super text-xs">2</span>
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        Data 8
+                        {property.yearBuilt}
                       </td>
                       <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
                         <div className="flex gap-1">

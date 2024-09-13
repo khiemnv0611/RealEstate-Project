@@ -219,6 +219,16 @@ module.exports = {
           model: db.User,
           as: "rOwner",
           attributes: ["avatar", "phone", "name", "email"],
+          include: [{
+            model: db.User_Role,
+            as: "roles",
+            attributes: ["roleCode"],
+            include: [{
+              model: db.Role,
+              as: "roleName",
+              attributes: ["code", "value"],
+            }]
+          }]
         },
         {
           model: db.PropertyType,
