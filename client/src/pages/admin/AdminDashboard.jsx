@@ -10,7 +10,7 @@ import SelectLib from "~/components/inputs/SelectLib";
 import { RiCheckboxIndeterminateFill } from "react-icons/ri";
 
 const Dashboard = () => {
-  const totalRows = 5;
+  const totalRows = 10;
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const checkboxRef = useRef(null);
@@ -98,8 +98,8 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="bg-gray-200 w-full min-h-screen px-6 py-8 gap-4">
-        <Title className="ml-2 -mb-4" title="Bảng Điều Khiển" />
+      <div className="bg-gray-200 w-full min-h-screen px-6 gap-4">
+        <Title className="ml-2" title="Bảng Điều Khiển" />
         <div className="flex flex-wrap justify-between items-center">
           <div className="px-6 py-5 flex w-[450px] gap-4 sm:w-1/2 xl:w-1/3">
             <div
@@ -165,7 +165,7 @@ const Dashboard = () => {
         </div>
         {activeTab === "POSTS" && (
           <div className="ml-6 mr-6 gap-6">
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-4 mb-5">
               <Button
                 onClick={() => setMode("ALL")}
                 className={twMerge(
@@ -288,13 +288,14 @@ const Dashboard = () => {
                 />
               </div>
             </div>
-            <div className="relative overflow-x-auto overflow-y-auto my-6">
-              <table className="min-w-full border-collapse">
-                <thead className="border-b-2 border-black">
+            <div className="relative overflow-x-auto overflow-y-auto max-h-64 my-6">
+              <table className="min-w-full table-auto border-collapse">
+                <thead className="sticky top-0 border-b-2 border-black">
                   <tr>
                     <th className="whitespace-nowrap px-10 py-2 border">
                       <RiCheckboxIndeterminateFill size={20} />
                     </th>
+                    <th className="whitespace-nowrap px-10 py-2 border">STT</th>
                     <th className="whitespace-nowrap px-10 py-2 border">
                       Thời gian
                     </th>
@@ -360,6 +361,9 @@ const Dashboard = () => {
                           checked={selectedRows.includes(index)}
                           onChange={() => handleCheckboxChange(index)}
                         />
+                      </td>
+                      <td className="relative p-6 text-center whitespace-nowrap border-b">
+                        property.id
                       </td>
                       <td className="relative p-6 text-center whitespace-nowrap border-b">
                         time
