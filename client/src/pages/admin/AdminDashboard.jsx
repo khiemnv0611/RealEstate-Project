@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { useForm } from "react-hook-form";
 import SelectLib from "~/components/inputs/SelectLib";
 import { RiCheckboxIndeterminateFill } from "react-icons/ri";
+import { MdDeleteOutline } from "react-icons/md";
 import { apiGetProperties } from "~/apis/properties";
 import { useSearchParams } from "react-router-dom";
 
@@ -70,7 +71,267 @@ const Dashboard = () => {
       checkboxRef.current.click();
     }
   };
-  
+
+  const [activeTab, setActiveTab] = useState("POSTS");
+
+  // Dữ liệu bài đăng và tài khoản
+  const postsData = [...Array(totalRows)].map((_, index) => ({
+    id: "property.id",
+    time: "2023-09-12",
+    status: "Chờ duyệt",
+    user: { name: "Nguyễn Văn A", role: "Admin", contact: "0909000000" },
+    listingType: "Bán",
+    projectType: "Chung cư",
+    title: "Căn hộ cao cấp",
+    description:
+      "Mô tả bài đăng qiuwe gho qi uw eb hqưveq ựihb joklf nuiơ ehro uqbư ẹqưb equi wgeqơi uebq jhb ihgvq ơuiu",
+    address: "123 Nguyễn Thị Minh Khai, Quận 1",
+    city: "Hồ Chí Minh",
+    featuredImage: "img.jpg",
+    images: ["img1.jpg", "img2.jpg"],
+    rooms: { bedRooms: 3, bathRooms: 2 },
+    size: 120,
+    yearBuilt: 2015,
+  }));
+
+  const accountsData = [...Array(totalRows)].map((_, index) => ({
+    id: "user.id",
+    username: "user" + (index + 1),
+    email: "user.email",
+    phone: "user.phone",
+    role: "Member",
+    createdAt: "2023-09-12",
+  }));
+
+  const renderTableHead = () => {
+    if (activeTab === "POSTS") {
+      return (
+        <thead className="sticky top-0 bg-gray-200 z-20">
+          <tr>
+            <th className="whitespace-nowrap px-10 py-3">
+              <RiCheckboxIndeterminateFill size={20} />
+            </th>
+            <th className="whitespace-nowrap px-10 py-3">STT</th>
+            <th className="whitespace-nowrap px-10 py-3">Thời gian</th>
+            <th className="whitespace-nowrap px-10 py-3">Trạng thái</th>
+            <th className="whitespace-nowrap px-10 py-3">Người đăng</th>
+            <th className="whitespace-nowrap px-10 py-3">Loại giao dịch</th>
+            <th className="whitespace-nowrap px-10 py-3">Loại hình dự án</th>
+            <th className="whitespace-nowrap px-10 py-3">Tiêu đề</th>
+            <th className="whitespace-nowrap px-10 py-3">Mô tả</th>
+            <th className="whitespace-nowrap px-10 py-3">Địa chỉ</th>
+            <th className="whitespace-nowrap px-10 py-3">Thành phố</th>
+            <th className="whitespace-nowrap px-10 py-3">Hình tổng quát</th>
+            <th className="whitespace-nowrap px-10 py-3">Toàn bộ hình ảnh</th>
+            <th className="whitespace-nowrap px-10 py-3">Số phòng ngủ</th>
+            <th className="whitespace-nowrap px-10 py-3">Số phòng tắm</th>
+            <th className="whitespace-nowrap px-10 py-3">Diện tích</th>
+            <th className="whitespace-nowrap px-10 py-3">Năm xây dựng</th>
+            <th></th>
+          </tr>
+        </thead>
+      );
+    } else if (activeTab === "ACCOUNTS") {
+      return (
+        <thead className="sticky top-0 bg-gray-200 z-20">
+          <tr>
+            <th className="whitespace-nowrap px-10 py-3">
+              <RiCheckboxIndeterminateFill size={20} />
+            </th>
+            <th className="whitespace-nowrap px-10 py-3">STT</th>
+            <th className="whitespace-nowrap px-10 py-3">Tên tài khoản</th>
+            <th className="whitespace-nowrap px-10 py-3">Email</th>
+            <th className="whitespace-nowrap px-10 py-3">Số điện thoại</th>
+            <th className="whitespace-nowrap px-10 py-3">Vai trò</th>
+            <th className="whitespace-nowrap px-10 py-3">Ngày tạo</th>
+            <th className="whitespace-nowrap px-10 py-3"></th>
+          </tr>
+        </thead>
+      );
+    }
+  };
+
+  const renderTableBody = () => {
+    if (activeTab === "POSTS") {
+      return (
+        <tbody className="bg-white">
+          {postsData.map((property, index) => (
+            <tr
+              key={index}
+              className={twMerge(
+                clsx(
+                  "border-b border-gray-200",
+                  selectedRows.includes(index) && "bg-blue-200"
+                )
+              )}
+            >
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                <input
+                  type="checkbox"
+                  checked={selectedRows.includes(index)}
+                  onChange={() => handleCheckboxChange(index)}
+                />
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.id}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.time}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                <div className="w-fit px-2 mx-auto rounded-3xl bg-orange-500">
+                  {property.status}
+                </div>
+              </td>
+              <td className="relative p-6 whitespace-nowrap border-b">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={property.featuredImage}
+                    alt=""
+                    className="w-14 h-14 object-cover bg-gray-500 rounded-full"
+                  />
+                  <div className="flex flex-col">
+                    <span className="font-bold">{property.user.name}</span>
+                    <span>{property.user.role}</span>
+                    <span>{property.user.contact}</span>
+                  </div>
+                </div>
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.listingType}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.projectType}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.title}
+              </td>
+              <td className="relative p-6 text-center border-b min-w-80 break-words overflow-hidden">
+                <div className="line-clamp-2">{property.description}</div>
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.address}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.city}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.featuredImage}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.images.join(", ")}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.rooms.bedRooms}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.rooms.bathRooms}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.size} m<sup>2</sup>
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.yearBuilt}
+              </td>
+              <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
+                <div className="flex gap-1">
+                  <span
+                    className={twMerge(
+                      "px-2 py-1 border border-gray-400 flex items-center",
+                      clsx({
+                        "bg-green-400 hover:underline cursor-pointer":
+                          disabledButtons[index],
+                        " bg-gray-200 cursor-not-allowed":
+                          !disabledButtons[index],
+                      })
+                    )}
+                  >
+                    Duyệt
+                  </span>
+                  <span
+                    className={twMerge(
+                      "px-2 py-1 border border-gray-400 flex items-center",
+                      clsx({
+                        "bg-red-400 hover:underline cursor-pointer":
+                          disabledButtons[index],
+                        " bg-gray-200 cursor-not-allowed":
+                          !disabledButtons[index],
+                      })
+                    )}
+                  >
+                    Từ chối
+                  </span>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      );
+    } else if (activeTab === "ACCOUNTS") {
+      return (
+        <tbody className="bg-white">
+          {accountsData.map((account, index) => (
+            <tr
+              key={index}
+              className={twMerge(
+                clsx(
+                  "border-b border-gray-200",
+                  selectedRows.includes(index) && "bg-blue-200"
+                )
+              )}
+            >
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                <input
+                  type="checkbox"
+                  checked={selectedRows.includes(index)}
+                  onChange={() => handleCheckboxChange(index)}
+                />
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.id}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.username}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.email}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.phone}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.role}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.createdAt}
+              </td>
+              <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
+                <span
+                  className={twMerge(
+                    "p-2 border border-gray-400 flex items-center w-fit",
+                    clsx({
+                      "bg-red-400 cursor-pointer": disabledButtons[index],
+                      " bg-gray-200 cursor-not-allowed":
+                        !disabledButtons[index],
+                    })
+                  )}
+                >
+                  <MdDeleteOutline size={18} />
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      );
+    }
+  };
+
+  const [postMode, setPostMode] = useState("ALL");
+  const [properties, setProperties] = useState([]);
+  const [filteredProperties, setFilteredProperties] = useState([]);
+
+  const [userMode, setUserMode] = useState("CUSTOMER");
+
   const {
     register,
     formState: { errors },
@@ -107,17 +368,17 @@ const Dashboard = () => {
   useEffect(() => {
     const filterByStatus = () => {
       const filtered = properties.filter((property) => {
-        if (mode === "ALL") return property.status === "Tất cả";
-        if (mode === "PENDING") return property.status === "Chờ duyệt";
-        if (mode === "APPROVED") return property.status === "Đã duyệt";
-        if (mode === "CANCELLED") return property.status === "Bị hủy";
+        if (postMode === "ALL") return property.status === "Tất cả";
+        if (postMode === "PENDING") return property.status === "Chờ duyệt";
+        if (postMode === "APPROVED") return property.status === "Đã duyệt";
+        if (postMode === "CANCELLED") return property.status === "Bị hủy";
         return true;
       });
       setFilteredProperties(filtered);
     };
 
     filterByStatus();
-  }, [mode, properties]);
+  }, [postMode, properties]);
 
   return (
     <div>
@@ -186,289 +447,208 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        {activeTab === "POSTS" && (
-          <div className="ml-6 mr-6 gap-6">
-            <div className="flex items-center justify-center gap-4 mb-5">
-              <Button
-                onClick={() => setMode("ALL")}
-                className={twMerge(
-                  clsx(
-                    "whitespace-nowrap bg-transparent border-none text-purple-600",
-                    mode === "ALL" && "font-bold"
-                  )
-                )}
-              >
-                Tất cả
-              </Button>
-              <Button
-                onClick={() => setMode("PENDING")}
-                className={twMerge(
-                  clsx(
-                    "whitespace-nowrap bg-transparent border-none text-main-700",
-                    mode === "PENDING" && "font-bold"
-                  )
-                )}
-              >
-                Chờ duyệt
-              </Button>
-              <Button
-                onClick={() => setMode("APPROVED")}
-                className={twMerge(
-                  clsx(
-                    "whitespace-nowrap bg-transparent border-none text-green-600",
-                    mode === "APPROVED" && "font-bold"
-                  )
-                )}
-              >
-                Đã duyệt
-              </Button>
-              <Button
-                onClick={() => setMode("CANCELLED")}
-                className={twMerge(
-                  clsx(
-                    "whitespace-nowrap bg-transparent border-none text-red-600",
-                    mode === "CANCELLED" && "font-bold"
-                  )
-                )}
-              >
-                Bị hủy
-              </Button>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex gap-4 items-center">
-                <input
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAllChange}
-                  ref={checkboxRef}
-                  className="form-checkbox"
-                />
-                <span onClick={handleSpanClick} className="cursor-pointer">
-                  Chọn tất cả
-                </span>
-                {selectAll && (
-                  <div className="flex gap-1">
-                    <span className="px-2 border border-gray-400 bg-green-400 hover:underline cursor-pointer flex items-center">
-                      Duyệt tất cả
-                    </span>
-                    <span className="px-2 py-1 border border-gray-400 bg-red-400 hover:underline cursor-pointer flex items-center">
-                      Từ chối tất cả
-                    </span>
-                  </div>
-                )}
+
+        <div className="ml-6 mr-6 gap-6">
+          {activeTab === "POSTS" && (
+            <div>
+              <div className="flex items-center justify-center gap-4">
+                <Button
+                  onClick={() => setPostMode("ALL")}
+                  className={twMerge(
+                    clsx(
+                      "whitespace-nowrap bg-transparent border-none text-purple-600",
+                      postMode === "ALL" && "font-bold"
+                    )
+                  )}
+                >
+                  Tất cả
+                </Button>
+                <Button
+                  onClick={() => setPostMode("PENDING")}
+                  className={twMerge(
+                    clsx(
+                      "whitespace-nowrap bg-transparent border-none text-main-700",
+                      postMode === "PENDING" && "font-bold"
+                    )
+                  )}
+                >
+                  Chờ duyệt
+                </Button>
+                <Button
+                  onClick={() => setPostMode("APPROVED")}
+                  className={twMerge(
+                    clsx(
+                      "whitespace-nowrap bg-transparent border-none text-green-600",
+                      postMode === "APPROVED" && "font-bold"
+                    )
+                  )}
+                >
+                  Đã duyệt
+                </Button>
+                <Button
+                  onClick={() => setPostMode("CANCELLED")}
+                  className={twMerge(
+                    clsx(
+                      "whitespace-nowrap bg-transparent border-none text-red-600",
+                      postMode === "CANCELLED" && "font-bold"
+                    )
+                  )}
+                >
+                  Bị hủy
+                </Button>
               </div>
-              <div className="flex gap-4 items-center">
+              <div className="flex justify-between items-center">
+                <div className="flex gap-4 items-center">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={handleSelectAllChange}
+                    ref={checkboxRef}
+                    className="form-checkbox"
+                  />
+                  <span onClick={handleSpanClick} className="cursor-pointer">
+                    Chọn tất cả
+                  </span>
+                  {selectAll && (
+                    <div className="flex gap-1">
+                      <span className="px-2 border border-gray-400 bg-green-400 hover:underline cursor-pointer flex items-center">
+                        Duyệt tất cả
+                      </span>
+                      <span className="px-2 py-1 border border-gray-400 bg-red-400 hover:underline cursor-pointer flex items-center">
+                        Từ chối tất cả
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-4 items-center">
+                  <InputForm
+                    id="search-postedBy"
+                    register={register}
+                    errors={errors}
+                    placeholder="Tìm kiếm tên người đăng"
+                    containerClassname="flex-none w-fit"
+                    inputClassname="rounded-md border border-gray-300"
+                  />
+                  <SelectLib
+                    id="sort-propertyType"
+                    register={register}
+                    errors={errors}
+                    inputClassname="rounded-md border border-gray-300"
+                    placeholder="Loại hình dự án"
+                  />
+                  <InputSelect
+                    register={register}
+                    id="sort-time"
+                    errors={errors}
+                    placeholder="Thời gian"
+                    options={[
+                      { label: "Mới nhất", code: "-createdAt" },
+                      { label: "Cũ hơn", code: "createdAt" },
+                    ]}
+                    containerClassname="flex-none w-fit"
+                    inputClassname="w-fit rounded-md"
+                  />
+                  <InputSelect
+                    register={register}
+                    id="sort-listingType"
+                    errors={errors}
+                    placeholder="Loại giao dịch"
+                    options={[
+                      { label: "Bán", code: "" },
+                      { label: "Cho thuê", code: "" },
+                    ]}
+                    containerClassname="flex-none w-fit"
+                    inputClassname="w-fit rounded-md"
+                  />
+                  <InputSelect
+                    register={register}
+                    id="sort-city"
+                    errors={errors}
+                    placeholder="Thành phố"
+                    // options={[
+                    //   { label: "Bán", code: "" },
+                    //   { label: "Cho thuê", code: "" },
+                    // ]}
+                    containerClassname="flex-none w-fit"
+                    inputClassname="w-fit rounded-md"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+          {activeTab === "ACCOUNTS" && (
+            <div>
+              <div className="flex items-center justify-center gap-4">
+                <Button
+                  onClick={() => setUserMode("CUSTOMER")}
+                  className={twMerge(
+                    clsx(
+                      "whitespace-nowrap bg-transparent border-none text-orange-600",
+                      userMode === "CUSTOMER" && "font-bold"
+                    )
+                  )}
+                >
+                  Khách hàng
+                </Button>
+                <Button
+                  onClick={() => setUserMode("OWNER")}
+                  className={twMerge(
+                    clsx(
+                      "whitespace-nowrap bg-transparent border-none text-purple-600",
+                      userMode === "OWNER" && "font-bold"
+                    )
+                  )}
+                >
+                  Chủ sở hữu
+                </Button>
+                <Button
+                  onClick={() => setUserMode("AGENT")}
+                  className={twMerge(
+                    clsx(
+                      "whitespace-nowrap bg-transparent border-none text-green-600",
+                      userMode === "AGENT" && "font-bold"
+                    )
+                  )}
+                >
+                  Môi giới
+                </Button>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="flex gap-4 items-center">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={handleSelectAllChange}
+                    ref={checkboxRef}
+                    className="form-checkbox"
+                  />
+                  <span onClick={handleSpanClick} className="cursor-pointer">
+                    Chọn tất cả
+                  </span>
+                  {selectAll && (
+                    <span className="p-2 border border-gray-400 bg-white hover:bg-red-400 hover:underline cursor-pointer flex items-center">
+                      <MdDeleteOutline size={18} />
+                    </span>
+                  )}
+                </div>
                 <InputForm
-                  id="search-postedBy"
+                  id="search-user"
                   register={register}
                   errors={errors}
-                  placeholder="Tìm kiếm tên người đăng"
-                  containerClassname="flex-none w-fit"
+                  placeholder="Tìm kiếm tên người dùng, email, sdt..."
+                  containerClassname="flex-none w-80"
                   inputClassname="rounded-md border border-gray-300"
-                />
-                <SelectLib
-                  id="sort-propertyType"
-                  register={register}
-                  errors={errors}
-                  inputClassname="rounded-md border border-gray-300"
-                  placeholder="Loại hình dự án"
-                />
-                <InputSelect
-                  register={register}
-                  id="sort-time"
-                  errors={errors}
-                  placeholder="Thời gian"
-                  options={[
-                    { label: "Mới nhất", code: "-createdAt" },
-                    { label: "Cũ hơn", code: "createdAt" },
-                  ]}
-                  containerClassname="flex-none w-fit"
-                  inputClassname="w-fit rounded-md"
-                />
-                <InputSelect
-                  register={register}
-                  id="sort-listingType"
-                  errors={errors}
-                  placeholder="Loại giao dịch"
-                  options={[
-                    { label: "Bán", code: "" },
-                    { label: "Cho thuê", code: "" },
-                  ]}
-                  containerClassname="flex-none w-fit"
-                  inputClassname="w-fit rounded-md"
-                />
-                <InputSelect
-                  register={register}
-                  id="sort-city"
-                  errors={errors}
-                  placeholder="Thành phố"
-                  // options={[
-                  //   { label: "Bán", code: "" },
-                  //   { label: "Cho thuê", code: "" },
-                  // ]}
-                  containerClassname="flex-none w-fit"
-                  inputClassname="w-fit rounded-md"
                 />
               </div>
             </div>
-            <div className="relative overflow-x-auto overflow-y-auto my-6 max-h-[600px]">
-              <table className="min-w-full">
-                <thead className="sticky top-0 bg-gray-200 z-20">
-                  <tr>
-                    <th className="whitespace-nowrap px-10 py-3">
-                      <RiCheckboxIndeterminateFill size={20} />
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-3">STT</th>
-                    <th className="whitespace-nowrap px-10 py-3">Thời gian</th>
-                    <th className="whitespace-nowrap px-10 py-3">Trạng thái</th>
-                    <th className="whitespace-nowrap px-10 py-3">Người đăng</th>
-                    <th className="whitespace-nowrap px-10 py-3">
-                      Loại giao dịch
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-3">
-                      Loại hình dự án
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-3">Tiêu đề</th>
-                    <th className="whitespace-nowrap px-10 py-3">Mô tả</th>
-                    <th className="whitespace-nowrap px-10 py-3">Địa chỉ</th>
-                    <th className="whitespace-nowrap px-10 py-3">Thành phố</th>
-                    <th className="whitespace-nowrap px-10 py-3">
-                      Hình tổng quát
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-3">
-                      Toàn bộ hình ảnh
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-3">
-                      Số phòng ngủ
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-3">
-                      Số phòng tắm
-                    </th>
-                    <th className="whitespace-nowrap px-10 py-3">Diện tích</th>
-                    <th className="whitespace-nowrap px-10 py-3">
-                      Năm xây dựng
-                    </th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white">
-                  {properties?.rows?.map((property) => (
-                    <tr
-                      key={property.id}
-                      className={twMerge(
-                        clsx(
-                          "border-b border-gray-200",
-                          selectedRows.includes(property.id) && "bg-blue-200"
-                        )
-                      )}
-                    >
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(property.id)}
-                          onChange={() => handleCheckboxChange(property.id)}
-                        />
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.id}
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.createdAt}
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        <div className="w-fit px-2 mx-auto rounded-3xl bg-orange-500">
-                          {property.status}
-                        </div>
-                      </td>
-                      <td className="relative p-6 whitespace-nowrap border-b">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={property.rOwner.avatar}
-                            alt={property.rOwner.name}
-                            className="w-14 h-14 object-cover bg-gray-500 rounded-full"
-                          />
-                          <div className="flex flex-col">
-                            <span className="font-bold">{property.rOwner.name}</span>
-                            <span>{property.rOwner.roles}</span>
-                            <span>{property.rOwner.email}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.listingType}
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.rPropertyType.name}
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.name}
-                      </td>
-                      <td className="relative p-6 text-center border-b max-w-xs break-words overflow-hidden">
-                        <div className="line-clamp-2">
-                          {property.description}
-                        </div>
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.address}
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.city}
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.featuredImage}
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.images}
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.bedRoom} phòng
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.bathRoom} phòng
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.propertySize} m<span className="align-super text-xs">2</span>
-                      </td>
-                      <td className="relative p-6 text-center whitespace-nowrap border-b">
-                        {property.yearBuilt}
-                      </td>
-                      <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
-                        <div className="flex gap-1">
-                          <span
-                            className={twMerge(
-                              "px-2 py-1 border border-gray-400 flex items-center",
-                              clsx({
-                                "bg-green-400 hover:underline cursor-pointer":
-                                  disabledButtons[index],
-                                " bg-gray-400 cursor-not-allowed":
-                                  !disabledButtons[index],
-                              })
-                            )}
-                          >
-                            Duyệt
-                          </span>
-                          <span
-                            className={twMerge(
-                              "px-2 py-1 border border-gray-400 flex items-center",
-                              clsx({
-                                "bg-red-400 hover:underline cursor-pointer":
-                                  disabledButtons[index],
-                                " bg-gray-400 cursor-not-allowed":
-                                  !disabledButtons[index],
-                              })
-                            )}
-                          >
-                            Từ chối
-                          </span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          )}
+          <div className="relative overflow-x-auto overflow-y-auto mt-6 max-h-[620px]">
+            <table className="min-w-full">
+              {renderTableHead()}
+              {renderTableBody()}
+            </table>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
