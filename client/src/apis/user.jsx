@@ -50,3 +50,10 @@ export const apiReplyComment = (id, data) =>
     method: "post",
     data
   })
+
+export const apiGetNotifications = () => {
+  axios({
+    url: "/user/notifications",
+    method: "get"
+  })
+}
