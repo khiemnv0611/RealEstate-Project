@@ -213,12 +213,12 @@ module.exports = {
         {
           model: db.User,
           as: "rPostedBy",
-          attributes: ["avatar", "phone", "name", "email"],
+          attributes: ["id", "avatar", "phone", "name", "email"],
         },
         {
           model: db.User,
           as: "rOwner",
-          attributes: ["avatar", "phone", "name", "email"],
+          attributes: ["id", "avatar", "phone", "name", "email"],
           // include: [{
           //   model: db.User_Role,
           //   as: "roles",

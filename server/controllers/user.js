@@ -114,6 +114,7 @@ module.exports = {
   addPropertyToWish: asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { uid } = req.user;
+    const { owner } = req.body;
 
     try {
       const existingWish = await db.WishList.findOne({
@@ -132,6 +133,27 @@ module.exports = {
         uid: uid,
         propertyId: id,
       });
+
+      if (wish) {
+        if (owner != uid) {
+          const sender = await db.User.findByPk(uid, {
+            attributes: {
+              exclude: ["password"],
+            }
+          });
+  
+          const message = sender.name + " vừa yêu thích bài viết của bạn"
+  
+          const notify = db.Notification.create({
+            message: message,
+            senderId: uid,
+            receiverId: owner,
+            propertyId: req.params.id
+          })
+  
+          console.log(notify)
+        }
+      }
   
       return res.status(201).json({
         success: true,

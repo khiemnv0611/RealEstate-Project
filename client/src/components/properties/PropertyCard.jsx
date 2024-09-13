@@ -35,7 +35,7 @@ const PropertyCard = ({ properties }) => {
 
   const handleFavoriteToggle = async () => {
     try {
-      const response = await addPropertyToWishList(properties.id);
+      const response = await addPropertyToWishList(properties.id, { owner: properties.rOwner.id });
       setIsFavorite((prevFavorite) => {
         const newFavorite = !prevFavorite;
 

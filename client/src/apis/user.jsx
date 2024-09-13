@@ -18,10 +18,11 @@ export const apiUpdateProfile = (data) =>
     data,
   });
 
-export const addPropertyToWishList = (id) =>
+export const addPropertyToWishList = (id, data) =>
   axios({
     url: "/user/wish/" + id,
     method: "post",
+    data
   })
 
 export const isPropertyInWishList = (id) =>

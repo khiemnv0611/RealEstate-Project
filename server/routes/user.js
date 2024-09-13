@@ -12,7 +12,7 @@ router.get("/wish/:id", verifyToken, ctrls.checkIsPropertyInWishList)
 router.get("/wishlist/", verifyToken, ctrls.getWishListByUser)
 
 // POST
-router.post("/wish/:id", verifyToken, ctrls.addPropertyToWish)
+router.post("/wish/:id", validateDto(Joi.object({owner: numberReq})), verifyToken, ctrls.addPropertyToWish)
 router.post("/comment/:id", verifyToken, validateDto(Joi.object({message: stringReq, receiverId: numberReq})), ctrls.commentToProperty)
 router.post("/comment/reply/:id", verifyToken, validateDto(Joi.object({message: stringReq, receiverId: numberReq, propertyId: numberReq})), ctrls.replyComment)
 
