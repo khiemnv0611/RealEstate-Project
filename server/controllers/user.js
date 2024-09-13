@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const db = require("../models");
 const { throwErrorWithStatus } = require("../middlewares/errorHandler");
 const { raw } = require("express");
+const property = require("./property");
 
 // //Lấy user
 // const getCurrent = asyncHandler(async (req, res) => {
@@ -231,7 +232,7 @@ module.exports = {
   }),
   commentToProperty: asyncHandler(async (req, res) => {
     const { uid } = req.user;
-    const { message } = req.body;
+    const { message, receiverId } = req.body;
 
     try {
       const submission = db.Submission.create({
@@ -241,6 +242,25 @@ module.exports = {
       })
 
       if (submission) {
+        if (receiverId != uid) {
+          const sender = await db.User.findByPk(uid, {
+            attributes: {
+              exclude: ["password"],
+            }
+          });
+  
+          const message = sender.name + " vừa bình luận vào bải viết của bạn"
+  
+          const notify = db.Notification.create({
+            message: message,
+            senderId: uid,
+            receiverId: receiverId,
+            propertyId: req.params.id
+          })
+  
+          console.log(notify)
+        }
+
         return res.status(200).json({
           success: true,
           message: "Comment submitted successfully.",
@@ -263,7 +283,7 @@ module.exports = {
   }),
   replyComment: asyncHandler(async (req, res) => {
     const { uid } = req.user;
-    const { message, propertyId } = req.body;
+    const { message, propertyId, receiverId } = req.body;
 
     try {
       const comment = db.Comment.create({
@@ -274,6 +294,25 @@ module.exports = {
       })
 
       if (comment) {
+        if (receiverId != uid) {
+          const sender = await db.User.findByPk(uid, {
+            attributes: {
+              exclude: ["password"],
+            }
+          });
+  
+          const message = sender.name + " vừa trả lời bình luận của bạn"
+  
+          const notify = db.Notification.create({
+            message: message,
+            senderId: uid,
+            receiverId: receiverId,
+            propertyId: req.params.id
+          })
+  
+          console.log(notify)
+        }
+
         return res.status(200).json({
           success: true,
           message: "Comment submitted successfully.",

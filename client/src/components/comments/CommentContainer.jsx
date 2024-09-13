@@ -9,7 +9,7 @@ import { apiReplyComment } from "~/apis/user";
 import EmojiPicker from "emoji-picker-react";
 import { toast } from "react-toastify";
 
-const CommentContainer = ({ propertyId }) => {
+const CommentContainer = ({ propertyId, receiverId }) => {
   const { current, getCurrent } = useUserStore();
   const [comments, setComments] = useState();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -53,9 +53,9 @@ const CommentContainer = ({ propertyId }) => {
   };
 
   const onSubmit = async (data) => {
-    const { message } = data;
+    const { message, receiver } = data;
 
-    const res = await apiReplyComment(activeReply, { message, propertyId });
+    const res = await apiReplyComment(activeReply, { message, propertyId, receiverId: receiver });
 
     if (res.success) {
       toast.success("Trả lời bình luận thành công!");
@@ -157,6 +157,13 @@ const CommentContainer = ({ propertyId }) => {
                     inputClassname="bg-transparent border-none text-black text-base focus:outline-none focus:ring-0 focus:border-transparent"
                     register={register}
                   />
+                  <InputForm
+                    id="receiver"
+                    errors={errors}
+                    value={comment.rCommentedBy?.id}
+                    inputClassname="hidden bg-transparent border-none text-black text-base focus:outline-none focus:ring-0 focus:border-transparent"
+                    register={register}
+                  />
                   <div className="flex gap-4 items-center text-gray-500">
                     <FaRegSmile
                       size={22}
@@ -196,7 +203,7 @@ const CommentContainer = ({ propertyId }) => {
           className="w-10 h-10 object-cover bg-gray-500 rounded-full"
         />
         <div className="w-full">
-          <CommentInput propertyId={propertyId} onCommentSuccess={handleCommentSuccess} />
+          <CommentInput propertyId={propertyId} receiverId={receiverId} onCommentSuccess={handleCommentSuccess} />
         </div>
       </div>
     </div>

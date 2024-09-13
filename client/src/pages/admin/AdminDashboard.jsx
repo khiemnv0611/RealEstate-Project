@@ -339,31 +339,9 @@ const Dashboard = () => {
     containerClassname,
   } = useForm();
 
-  const [activeTab, setActiveTab] = useState("POSTS");
   const [mode, setMode] = useState("ALL");
-  const [properties, setProperties] = useState([]);
-  const [filteredProperties, setFilteredProperties] = useState([]);
   const [searchParams] = useSearchParams();
   const sort = watch("sort");
-  
-  useEffect(() => {
-    const fetchProperties = async (params) => {
-      const response = await apiGetProperties({
-        limit: 9,
-        ...params,
-      });
-      if (response.success) setProperties(response.properties);
-    };
-    const params = Object.fromEntries([...searchParams]);
-    if (params.price) params.price = searchParams.getAll("price");
-    if (sort) params.sort = sort;
-
-    if (mode && mode !== "ALL") {
-      params.listingType = mode === "RENT" ? "Cho thuê" : "Bán";
-    }
-
-    fetchProperties(params);
-  }, [searchParams, sort, mode]);
 
   useEffect(() => {
     const filterByStatus = () => {

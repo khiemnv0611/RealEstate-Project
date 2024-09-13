@@ -194,7 +194,7 @@ const PropertyDetail = () => {
                   Bình luận
                 </span>
                 {current ? (
-                  <CommentContainer propertyId={propertyDetail.id} />
+                  <CommentContainer propertyId={propertyDetail.id} receiverId={propertyDetail.owner} />
                 ) : (
                   <p className="text-red-500">
                     Bạn cần đăng nhập để sử dụng tính năng này!!!
