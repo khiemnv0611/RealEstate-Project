@@ -355,4 +355,24 @@ module.exports = {
       })
     }
   }),
+  getUserNotifications: asyncHandler(async (req, res) => {
+    const { uid } = req.user;
+
+    try {
+      const notifications = await db.Notification.findAll({
+        where: { receiverId: uid }
+      })
+
+      return res.status(200).json({
+        success: true,
+        submission: notifications
+      })
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while fetching.",
+        error: error.message,
+      })
+    }
+  })
 };
