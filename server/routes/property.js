@@ -41,4 +41,12 @@ router.post(
 // DELETE
 router.delete("/:id", verifyToken, ctrls.deletePropertyById)
 
+// PUT
+router.put(
+    "/status/:id",
+    verifyToken,
+    isAdmin,
+    ctrls.updatePropertyStatus
+)
+
 module.exports = router;
