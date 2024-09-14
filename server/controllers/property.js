@@ -2,6 +2,12 @@ const asyncHandler = require("express-async-handler");
 const db = require("../models");
 const { Sequelize, Op, DATE, where } = require("sequelize");
 
+const Status = {
+  ACCEPT: "Đã duyệt",
+  REJECT: "Bị hủy",
+  WAITING: "Chờ duyệt"
+}
+
 module.exports = {
   // CREATE NEW PROPERTY
   createNewProperty: asyncHandler(async (req, res) => {
@@ -434,6 +440,55 @@ module.exports = {
       return res.status(500).json({
         success: false,
         mes: "An error occurred while retrieving the properties.",
+        error: error.message,
+      });
+    }
+  }),
+  updatePropertyStatus: asyncHandler(async (req, res) => {
+    const { propertyId } = req.params;
+    const { status } = req.body;
+    const { uid } = req.user;
+
+    try {
+      const response = await db.Property.update(
+        {
+          status: status
+        },
+        {
+          where: {
+            id: propertyId
+          }
+        }
+      )
+
+      if (response) {
+        const sender = await db.User.findByPk(uid, {
+          attributes: {
+            exclude: ["password"],
+          }
+        });
+
+        const message = status == Status.ACCEPT || status == Status.REJECT ? "Bài đăng của bạn đã được duyệt, nhấn để xem bài đăng" : "Bài đăng của bạn không được xét duyệt";
+
+        const notify = db.Notification.create({
+          message: message,
+          senderId: uid,
+          receiverId: response.owner,
+          propertyId: req.params.id
+        })
+
+        console.log(notify)
+
+        return res.json({
+          success: true,
+          mes: "Update successfully.",
+          data: response
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        mes: "An error occurred while updating the property.",
         error: error.message,
       });
     }
