@@ -257,7 +257,7 @@ module.exports = {
     const { message, receiverId } = req.body;
 
     try {
-      const submission = db.Submission.create({
+      const submission = await db.Submission.create({
         uid: uid,
         propertyId: req.params.id,
         message: message,
@@ -273,7 +273,7 @@ module.exports = {
   
           const message = sender.name + " vừa bình luận vào bải viết của bạn"
   
-          const notify = db.Notification.create({
+          const notify = await db.Notification.create({
             message: message,
             senderId: uid,
             receiverId: receiverId,
@@ -308,7 +308,7 @@ module.exports = {
     const { message, propertyId, receiverId } = req.body;
 
     try {
-      const comment = db.Comment.create({
+      const comment = await db.Comment.create({
         uid: uid,
         propertyId: propertyId,
         parentComment: req.params.id,
@@ -325,11 +325,11 @@ module.exports = {
   
           const message = sender.name + " vừa trả lời bình luận của bạn"
   
-          const notify = db.Notification.create({
+          const notify = await db.Notification.create({
             message: message,
             senderId: uid,
             receiverId: receiverId,
-            propertyId: req.params.id
+            propertyId: propertyId
           })
   
           console.log(notify)
@@ -360,7 +360,10 @@ module.exports = {
 
     try {
       const notifications = await db.Notification.findAll({
-        where: { receiverId: uid }
+        where: { receiverId: uid },
+        order: [
+          ['isRead', 'ASC']
+        ]
       })
 
       return res.status(200).json({
@@ -374,5 +377,41 @@ module.exports = {
         error: error.message,
       })
     }
+  }),
+  updateNotificationStatus: asyncHandler(async (req, res) => {
+    const { uid } = req.user;
+    const { id } = req.params;
+    const { isRead } = req.body;
+
+    try {
+      const notification = await db.Notification.update({
+        isRead: isRead
+        }, {
+          where: { id, receiverId: uid }
+        }
+      );
+
+      const property = await db.Property.findByPk(notification.propertyId);
+
+      if (!property) {
+        return res.status(404).json({
+          success: false,
+          message: "Property not found.",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Notification status updated successfully.",
+        submission: notification,
+        propertyName: property.name
+      })
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while updating.",
+        error: error.message,
+      })
+    }          
   })
 };

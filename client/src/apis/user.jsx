@@ -51,9 +51,15 @@ export const apiReplyComment = (id, data) =>
     data
   })
 
-export const apiGetNotifications = () => {
+export const apiGetNotifications = () =>
   axios({
     url: "/user/notifications",
     method: "get"
   })
-}
+
+export const apiUpdateNotificationStatus = (id, data) =>
+  axios({
+    url: "/user/notification/" + id,
+    method: "put",
+    data
+  })

@@ -6,3 +6,5 @@ exports.number = Joi.number().allow(null, "");
 exports.numberReq = Joi.number().required();
 exports.array = Joi.array().allow(null, "");
 exports.arrayReq = Joi.array().required();
+exports.boolean = Joi.boolean().allow(null);
+exports.booleanReq = Joi.boolean().required();

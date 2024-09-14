@@ -2,7 +2,7 @@ const router = require("express").Router();
 const ctrls = require("../controllers/user");
 const Joi = require("joi");
 const validateDto = require("../middlewares/validation");
-const { stringReq, array, string, numberReq } = require("../middlewares/joiSchema");
+const { stringReq, array, string, numberReq, booleanReq } = require("../middlewares/joiSchema");
 const { verifyToken } = require("../middlewares/verifyToken");
 
 // GET
@@ -18,6 +18,16 @@ router.post("/comment/:id", verifyToken, validateDto(Joi.object({message: string
 router.post("/comment/reply/:id", verifyToken, validateDto(Joi.object({message: stringReq, receiverId: numberReq, propertyId: numberReq})), ctrls.replyComment)
 
 // PUT
+router.put(
+  "/notification/:id",
+  verifyToken,
+  validateDto(
+    Joi.object({
+      isRead: booleanReq
+    })
+  ),
+  ctrls.updateNotificationStatus
+)
 router.put(
   "/profile",
   verifyToken,
