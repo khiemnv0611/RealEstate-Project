@@ -13,6 +13,7 @@ import withRouter from "~/hocs/withRouter";
 import { useUserStore } from "~/store/useUserStore";
 import { showOptions } from "~/utils/constants";
 import { Link } from "react-router-dom";
+import { Notification } from "..";
 
 const Topheader = ({ location }) => {
   const { current, logOut } = useUserStore();
@@ -62,46 +63,49 @@ const Topheader = ({ location }) => {
           </span>
         </div>
         {current && (
-          <div
-            ref={optionBox}
-            onClick={() => setIsShowOptions(true)}
-            className="flex items-center relative gap-4 pl-8 hover:bg-overlay-30 p-2 border-l rounded-tr-2xl border-main-400 cursor-pointer"
-          >
-            <div className="flex flex-col gap-2">
-              <span className="font-semibold">{current?.name}</span>
-              <span>
-                ID: <span>{current?.id}</span>{" "}
-              </span>
-            </div>
-            <img
-              src={current?.avatar || "/user.svg"}
-              alt="avatar"
-              className="w-12 h-12 object-cover rounded-full"
-            />
-            {isShowOptions && (
-              <div className="absolute z-50 right-0 left-0 top-full bg-white text-black rounded-md drop-shadow-sm flex flex-col py-2 border">
-                {showOptions.map((el) => (
-                  <Fragment key={el.id}>
-                    {current?.userRoles?.some(
-                      (role) => role.roleCode === el.code
-                    ) && (
-                      <Link
-                        className="hover:bg-gray-100 px-6 py-2"
-                        to={el.path}
-                      >
-                        {el.name}
-                      </Link>
-                    )}
-                  </Fragment>
-                ))}
-                <span
-                  onClick={() => logOut()}
-                  className="px-6 py-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  Đăng xuất
+          <div className="flex items-center gap-4">
+            <Notification />
+            <div
+              ref={optionBox}
+              onClick={() => setIsShowOptions(true)}
+              className="flex items-center relative gap-4 pl-8 hover:bg-overlay-30 p-2 rounded-tr-2xl cursor-pointer border-l border-main-400"
+            >
+              <div className="flex flex-col gap-2">
+                <span className="font-semibold">{current?.name}</span>
+                <span>
+                  ID: <span>{current?.id}</span>{" "}
                 </span>
               </div>
-            )}
+              <img
+                src={current?.avatar || "/user.svg"}
+                alt="avatar"
+                className="w-12 h-12 object-cover rounded-full"
+              />
+              {isShowOptions && (
+                <div className="absolute z-50 right-0 left-0 top-full bg-white text-black rounded-md drop-shadow-sm flex flex-col py-2 border">
+                  {showOptions.map((el) => (
+                    <Fragment key={el.id}>
+                      {current?.userRoles?.some(
+                        (role) => role.roleCode === el.code
+                      ) && (
+                        <Link
+                          className="hover:bg-gray-100 px-6 py-2"
+                          to={el.path}
+                        >
+                          {el.name}
+                        </Link>
+                      )}
+                    </Fragment>
+                  ))}
+                  <span
+                    onClick={() => logOut()}
+                    className="px-6 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    Đăng xuất
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

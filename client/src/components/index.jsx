@@ -4,6 +4,7 @@ export { default as Button } from "./commons/Button";
 export { default as Modal } from "./commons/Modal";
 export { default as Title } from "./commons/Title";
 export { default as BreadCrumb } from "./commons/BreadCrumb";
+export { default as Notification } from "./commons/Notification";
 export { default as Login } from "./login/Login";
 export { default as InputForm } from "./inputs/InputForm";
 export { default as InputRadio } from "./inputs/InputRadio";
