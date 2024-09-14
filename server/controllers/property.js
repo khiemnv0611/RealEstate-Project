@@ -492,5 +492,47 @@ module.exports = {
         error: error.message,
       });
     }
-  })
+  }),
+  updatePropertiesStatus: asyncHandler(async (req, res) => {
+    const { propertyIds, status } = req.body;
+    const { uid } = req.user;
+  
+    try {
+      // Duyệt qua từng property trong mảng propertyIds
+      for (const propertyId of propertyIds) {
+        const property = await db.Property.findByPk(propertyId);
+  
+        if (property) {
+          await property.update({
+            status: status
+          });
+  
+          const message = status == Status.ACCEPT || status == Status.REJECT ? "Bài đăng của bạn đã được duyệt, nhấn để xem bài đăng" : "Bài đăng của bạn không được xét duyệt";
+
+          const notify = db.Notification.create({
+            message: message,
+            senderId: uid,
+            receiverId: property.owner,
+            propertyId: propertyId
+          })
+
+          console.log(notify)
+        } else {
+          console.log(`Không tìm thấy property với ID: ${propertyId}`);
+        }
+      }
+  
+      return res.json({
+        success: true,
+        message: "Cập nhật trạng thái thành công cho các property.",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Đã xảy ra lỗi khi cập nhật trạng thái các property.",
+        error: error.message,
+      });
+    }
+  }),
+
 };

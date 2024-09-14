@@ -48,5 +48,17 @@ router.put(
     isAdmin,
     ctrls.updatePropertyStatus
 )
+router.put(
+    "/status/",
+    verifyToken,
+    isAdmin,
+    validateDto(
+        Joi.object({
+            status: stringReq,
+            propertyIds: Joi.array().items(Joi.number())
+        })
+    ),
+    ctrls.updatePropertiesStatus
+)
 
 module.exports = router;
