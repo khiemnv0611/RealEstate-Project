@@ -59,14 +59,20 @@ const Notification = () => {
       >
         {/* <Typography sx={{ p: 2 }}>Thông báo của bạn!</Typography> */}
         <List sx={{ width: "300px" }}>
-          {notifications.map((notification) => (
-            <ListItem key={notification.id}>
-              <ListItemText
-                primary={notification.message}
-                secondary={notification.time}
-              />
+          {notifications.length > 0 ? (
+            notifications.map((notification) => (
+              <ListItem key={notification.id}>
+                <ListItemText
+                  primary={notification.message}
+                  secondary={notification.time}
+                />
+              </ListItem>
+            ))
+          ) : (
+            <ListItem>
+              <ListItemText primary="Không có thông báo nào gần đây." />
             </ListItem>
-          ))}
+          )}
         </List>
       </Popover>
     </div>
