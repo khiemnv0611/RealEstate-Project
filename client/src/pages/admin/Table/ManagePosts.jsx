@@ -36,30 +36,26 @@ const ManagePosts = () => {
     setSelectedRows((prevSelectedRows) => {
       let updatedSelectedRows;
       if (prevSelectedRows.includes(index)) {
-        // Nếu hàng đã được chọn, bỏ chọn hàng đó và bật lại button
         updatedSelectedRows = prevSelectedRows.filter(
           (rowIndex) => rowIndex !== index
         );
         setDisabledButtons((prevDisabledButtons) => {
           const updatedDisabledButtons = [...prevDisabledButtons];
-          updatedDisabledButtons[index] = false; // Bật lại button
+          updatedDisabledButtons[index] = false;
           return updatedDisabledButtons;
         });
       } else {
-        // Nếu hàng chưa được chọn, chọn hàng và vô hiệu hóa button
         updatedSelectedRows = [...prevSelectedRows, index];
         setDisabledButtons((prevDisabledButtons) => {
           const updatedDisabledButtons = [...prevDisabledButtons];
-          updatedDisabledButtons[index] = true; // Vô hiệu hóa button
+          updatedDisabledButtons[index] = true;
           return updatedDisabledButtons;
         });
       }
 
-      // Nếu chưa chọn tất cả checkbox, bỏ chọn checkbox "Chọn tất cả"
       if (updatedSelectedRows.length < totalRows) {
         setSelectAll(false);
       } else {
-        // Nếu đã chọn tất cả checkbox, tự động check lại "Chọn tất cả"
         setSelectAll(true);
       }
 
@@ -316,13 +312,13 @@ const ManagePosts = () => {
           <span onClick={handleSpanClick} className="cursor-pointer">
             Chọn tất cả
           </span>
-          {selectAll && (
+          {selectedRows.length >= 2 && (
             <div className="flex gap-1">
               <span className="px-2 border border-gray-400 bg-green-400 hover:underline cursor-pointer flex items-center">
-                Duyệt tất cả
+                Duyệt
               </span>
               <span className="px-2 py-1 border border-gray-400 bg-red-400 hover:underline cursor-pointer flex items-center">
-                Từ chối tất cả
+                Từ chối
               </span>
             </div>
           )}

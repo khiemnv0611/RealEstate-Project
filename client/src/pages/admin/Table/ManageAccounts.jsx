@@ -36,30 +36,26 @@ const ManageAccounts = () => {
     setSelectedRows((prevSelectedRows) => {
       let updatedSelectedRows;
       if (prevSelectedRows.includes(index)) {
-        // Nếu hàng đã được chọn, bỏ chọn hàng đó và bật lại button
         updatedSelectedRows = prevSelectedRows.filter(
           (rowIndex) => rowIndex !== index
         );
         setDisabledButtons((prevDisabledButtons) => {
           const updatedDisabledButtons = [...prevDisabledButtons];
-          updatedDisabledButtons[index] = false; // Bật lại button
+          updatedDisabledButtons[index] = false;
           return updatedDisabledButtons;
         });
       } else {
-        // Nếu hàng chưa được chọn, chọn hàng và vô hiệu hóa button
         updatedSelectedRows = [...prevSelectedRows, index];
         setDisabledButtons((prevDisabledButtons) => {
           const updatedDisabledButtons = [...prevDisabledButtons];
-          updatedDisabledButtons[index] = true; // Vô hiệu hóa button
+          updatedDisabledButtons[index] = true;
           return updatedDisabledButtons;
         });
       }
 
-      // Nếu chưa chọn tất cả checkbox, bỏ chọn checkbox "Chọn tất cả"
       if (updatedSelectedRows.length < totalRows) {
         setSelectAll(false);
       } else {
-        // Nếu đã chọn tất cả checkbox, tự động check lại "Chọn tất cả"
         setSelectAll(true);
       }
 
@@ -74,8 +70,8 @@ const ManageAccounts = () => {
   };
 
   const [userMode, setUserMode] = useState("CUSTOMER");
-  const [properties, setProperties] = useState([]);
-  const [filteredProperties, setFilteredProperties] = useState([]);
+  // const [properties, setProperties] = useState([]);
+  // const [filteredProperties, setFilteredProperties] = useState([]);
 
   const accountsData = [...Array(totalRows)].map((_, index) => ({
     id: "user.id",
@@ -211,7 +207,7 @@ const ManageAccounts = () => {
             <span onClick={handleSpanClick} className="cursor-pointer">
               Chọn tất cả
             </span>
-            {selectAll && (
+            {selectedRows.length >= 2 && (
               <span className="p-2 border border-gray-400 bg-white hover:bg-red-400 hover:underline cursor-pointer flex items-center">
                 <MdDeleteOutline size={18} />
               </span>
