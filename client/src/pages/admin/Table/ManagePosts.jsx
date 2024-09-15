@@ -86,7 +86,7 @@ const ManagePosts = () => {
 
     filterByStatus();
   }, [postMode, properties]);
-
+  
   const postsData = [...Array(totalRows)].map((_, index) => ({
     id: "property.id",
     time: "2023-09-12",

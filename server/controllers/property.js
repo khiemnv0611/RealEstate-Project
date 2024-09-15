@@ -252,6 +252,41 @@ module.exports = {
         : null,
     });
   }),
+  getPropertiesWithoutPagination: asyncHandler(async (req, res) => {
+    try {
+      const response = await db.Property.findAndCountAll({
+        include: [
+          {
+            model: db.User,
+            as: "rPostedBy",
+            attributes: ["id", "avatar", "phone", "name", "email"],
+          },
+          {
+            model: db.User,
+            as: "rOwner",
+            attributes: ["id", "avatar", "phone", "name", "email"],
+          },
+          {
+            model: db.PropertyType,
+            as: "rPropertyType",
+            attributes: ["name", "id"],
+          },
+        ],
+      });
+
+      return res.json({
+        success: true,
+        mes: response ? "Got." : "Cannot get properties.",
+        properties: response
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        mes: "An error occurred while fetching the properties.",
+        error: error.message,
+      });
+    }
+  }),
   getOneById: asyncHandler(async (req, res) => {
     const { propertyId } = req.params;
     const response = await db.Property.findByPk(propertyId, {

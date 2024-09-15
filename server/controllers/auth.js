@@ -43,6 +43,11 @@ const signIn = asyncHandler(async (req, res, next) => {
   //Handle logic
   const user = await db.User.findOne({
     where: { email },
+    include: {
+      model: db.User_Role,
+      as: "userRoles",
+      attributes: ["id", "roleCode"]
+    }
   });
   if (!user)
     return throwErrorWithStatus(
@@ -57,7 +62,7 @@ const signIn = asyncHandler(async (req, res, next) => {
     return throwErrorWithStatus(401, "Sai mật khẩu.", res, next);
 
   const token = jwt.sign(
-    { uid: user.id, roleCode: user.roleCode },
+    { uid: user.id, roleCodes: user.userRoles },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
@@ -72,7 +77,7 @@ const signIn = asyncHandler(async (req, res, next) => {
 // Đăng nhập bằng Google
 const signInWithGoogle = asyncHandler(async (req, res, next) => {
   const token = jwt.sign(
-    { uid: req.user.id, roleCode: req.user.roleCode },
+    { uid: req.user.id, roleCode: req.user.userRoles },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );

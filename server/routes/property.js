@@ -11,6 +11,7 @@ const { verifyToken, isAdmin } = require("../middlewares/verifyToken");
 // GET
 router.get("/one/:propertyId", ctrls.getOneById);
 router.get("/", ctrls.getProperties);
+router.get("/nopagination", verifyToken, isAdmin, ctrls.getPropertiesWithoutPagination);
 router.get("/ownerproperties", verifyToken, ctrls.getPropertiesByUserId)
 router.get("/comments/:propertyId", ctrls.getPropertyComments)
 
