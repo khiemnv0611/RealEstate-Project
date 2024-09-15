@@ -5,8 +5,23 @@ import { RiCheckboxIndeterminateFill } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
 import { Button, InputForm, InputSelect } from "~/components";
 import SelectLib from "~/components/inputs/SelectLib";
+import TablePagination from "@mui/material/TablePagination";
 
 const ManagePosts = () => {
+  const [page, setPage] = useState(0); // Quản lý trang hiện tại
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Số lượng hàng mỗi trang
+
+  // Xử lý khi chuyển trang
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Xử lý khi thay đổi số hàng trên mỗi trang
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const {
     register,
     formState: { errors },
@@ -86,7 +101,7 @@ const ManagePosts = () => {
 
     filterByStatus();
   }, [postMode, properties]);
-  
+
   const postsData = [...Array(totalRows)].map((_, index) => ({
     id: "property.id",
     time: "2023-09-12",
@@ -138,116 +153,118 @@ const ManagePosts = () => {
   const renderTableBody = () => {
     return (
       <tbody className="bg-white">
-        {postsData.map((property, index) => (
-          <tr
-            key={index}
-            className={twMerge(
-              clsx(
-                "border-b border-gray-200",
-                selectedRows.includes(index) && "bg-blue-200"
-              )
-            )}
-          >
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              <input
-                type="checkbox"
-                checked={selectedRows.includes(index)}
-                onChange={() => handleCheckboxChange(index)}
-              />
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.id}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.time}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              <div className="w-fit px-2 mx-auto rounded-3xl bg-orange-500">
-                {property.status}
-              </div>
-            </td>
-            <td className="relative p-6 whitespace-nowrap border-b">
-              <div className="flex items-center gap-3">
-                <img
-                  src={property.featuredImage}
-                  alt=""
-                  className="w-14 h-14 object-cover bg-gray-500 rounded-full"
+        {postsData
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          .map((property, index) => (
+            <tr
+              key={index}
+              className={twMerge(
+                clsx(
+                  "border-b border-gray-200",
+                  selectedRows.includes(index) && "bg-blue-200"
+                )
+              )}
+            >
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                <input
+                  type="checkbox"
+                  checked={selectedRows.includes(index)}
+                  onChange={() => handleCheckboxChange(index)}
                 />
-                <div className="flex flex-col">
-                  <span className="font-bold">{property.user.name}</span>
-                  <span>{property.user.role}</span>
-                  <span>{property.user.contact}</span>
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.id}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.time}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                <div className="w-fit px-2 mx-auto rounded-3xl bg-orange-500">
+                  {property.status}
                 </div>
-              </div>
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.listingType}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.projectType}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.title}
-            </td>
-            <td className="relative p-6 text-center border-b min-w-80 break-words overflow-hidden">
-              <div className="line-clamp-2">{property.description}</div>
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.address}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.city}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.featuredImage}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.images.join(", ")}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.rooms.bedRooms}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.rooms.bathRooms}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.size} m<sup>2</sup>
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {property.yearBuilt}
-            </td>
-            <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
-              <div className="flex gap-1">
-                <span
-                  className={twMerge(
-                    "px-2 py-1 border border-gray-400 flex items-center",
-                    clsx({
-                      "bg-green-400 hover:underline cursor-pointer":
-                        disabledButtons[index],
-                      " bg-gray-200 cursor-not-allowed":
-                        !disabledButtons[index],
-                    })
-                  )}
-                >
-                  Duyệt
-                </span>
-                <span
-                  className={twMerge(
-                    "px-2 py-1 border border-gray-400 flex items-center",
-                    clsx({
-                      "bg-red-400 hover:underline cursor-pointer":
-                        disabledButtons[index],
-                      " bg-gray-200 cursor-not-allowed":
-                        !disabledButtons[index],
-                    })
-                  )}
-                >
-                  Từ chối
-                </span>
-              </div>
-            </td>
-          </tr>
-        ))}
+              </td>
+              <td className="relative p-6 whitespace-nowrap border-b">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={property.featuredImage}
+                    alt=""
+                    className="w-14 h-14 object-cover bg-gray-500 rounded-full"
+                  />
+                  <div className="flex flex-col">
+                    <span className="font-bold">{property.user.name}</span>
+                    <span>{property.user.role}</span>
+                    <span>{property.user.contact}</span>
+                  </div>
+                </div>
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.listingType}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.projectType}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.title}
+              </td>
+              <td className="relative p-6 text-center border-b min-w-80 break-words overflow-hidden">
+                <div className="line-clamp-2">{property.description}</div>
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.address}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.city}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.featuredImage}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.images.join(", ")}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.rooms.bedRooms}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.rooms.bathRooms}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.size} m<sup>2</sup>
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {property.yearBuilt}
+              </td>
+              <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
+                <div className="flex gap-1">
+                  <span
+                    className={twMerge(
+                      "px-2 py-1 border border-gray-400 flex items-center",
+                      clsx({
+                        "bg-green-400 hover:underline cursor-pointer":
+                          disabledButtons[index],
+                        " bg-gray-200 cursor-not-allowed":
+                          !disabledButtons[index],
+                      })
+                    )}
+                  >
+                    Duyệt
+                  </span>
+                  <span
+                    className={twMerge(
+                      "px-2 py-1 border border-gray-400 flex items-center",
+                      clsx({
+                        "bg-red-400 hover:underline cursor-pointer":
+                          disabledButtons[index],
+                        " bg-gray-200 cursor-not-allowed":
+                          !disabledButtons[index],
+                      })
+                    )}
+                  >
+                    Từ chối
+                  </span>
+                </div>
+              </td>
+            </tr>
+          ))}
       </tbody>
     );
   };
@@ -377,11 +394,20 @@ const ManagePosts = () => {
           />
         </div>
       </div>
-      <div className="relative overflow-x-auto overflow-y-auto mt-6 max-h-[620px]">
+      <div className="relative overflow-x-auto overflow-y-auto mt-6">
         <table className="min-w-full">
           {renderTableHead()}
           {renderTableBody()}
         </table>
+        <TablePagination
+          component="div"
+          count={postsData.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="Số hàng mỗi trang:"
+        />
       </div>
     </div>
   );

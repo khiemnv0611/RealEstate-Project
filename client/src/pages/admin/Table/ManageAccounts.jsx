@@ -5,8 +5,23 @@ import { MdDeleteOutline } from "react-icons/md";
 import { RiCheckboxIndeterminateFill } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
 import { Button, InputForm } from "~/components";
+import TablePagination from "@mui/material/TablePagination";
 
 const ManageAccounts = () => {
+  const [page, setPage] = useState(0); // Quản lý trang hiện tại
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Số lượng hàng mỗi trang
+
+  // Xử lý khi chuyển trang
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Xử lý khi thay đổi số hàng trên mỗi trang
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const {
     register,
     formState: { errors },
@@ -14,7 +29,7 @@ const ManageAccounts = () => {
     containerClassname,
   } = useForm();
 
-  const totalRows = 10;
+  const totalRows = 16;
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const checkboxRef = useRef(null);
@@ -104,56 +119,59 @@ const ManageAccounts = () => {
   const renderTableBody = () => {
     return (
       <tbody className="bg-white">
-        {accountsData.map((account, index) => (
-          <tr
-            key={index}
-            className={twMerge(
-              clsx(
-                "border-b border-gray-200",
-                selectedRows.includes(index) && "bg-blue-200"
-              )
-            )}
-          >
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              <input
-                type="checkbox"
-                checked={selectedRows.includes(index)}
-                onChange={() => handleCheckboxChange(index)}
-              />
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {account.id}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {account.username}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {account.email}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {account.phone}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {account.role}
-            </td>
-            <td className="relative p-6 text-center whitespace-nowrap border-b">
-              {account.createdAt}
-            </td>
-            <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
-              <span
-                className={twMerge(
-                  "p-2 border border-gray-400 flex items-center w-fit",
-                  clsx({
-                    "bg-red-400 cursor-pointer": disabledButtons[index],
-                    " bg-gray-200 cursor-not-allowed": !disabledButtons[index],
-                  })
-                )}
-              >
-                <MdDeleteOutline size={18} />
-              </span>
-            </td>
-          </tr>
-        ))}
+        {accountsData
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          .map((account, index) => (
+            <tr
+              key={index}
+              className={twMerge(
+                clsx(
+                  "border-b border-gray-200",
+                  selectedRows.includes(index) && "bg-blue-200"
+                )
+              )}
+            >
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                <input
+                  type="checkbox"
+                  checked={selectedRows.includes(index)}
+                  onChange={() => handleCheckboxChange(index)}
+                />
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.id}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.username}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.email}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.phone}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.role}
+              </td>
+              <td className="relative p-6 text-center whitespace-nowrap border-b">
+                {account.createdAt}
+              </td>
+              <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
+                <span
+                  className={twMerge(
+                    "p-2 border border-gray-400 flex items-center w-fit",
+                    clsx({
+                      "bg-red-400 cursor-pointer": disabledButtons[index],
+                      " bg-gray-200 cursor-not-allowed":
+                        !disabledButtons[index],
+                    })
+                  )}
+                >
+                  <MdDeleteOutline size={18} />
+                </span>
+              </td>
+            </tr>
+          ))}
       </tbody>
     );
   };
@@ -223,11 +241,20 @@ const ManageAccounts = () => {
           />
         </div>
       </div>
-      <div className="relative overflow-x-auto overflow-y-auto mt-6 max-h-[620px]">
+      <div className="relative overflow-x-auto overflow-y-auto mt-6">
         <table className="min-w-full">
           {renderTableHead()}
           {renderTableBody()}
         </table>
+        <TablePagination
+          component="div"
+          count={accountsData.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="Số hàng mỗi trang:"
+        />
       </div>
     </div>
   );
