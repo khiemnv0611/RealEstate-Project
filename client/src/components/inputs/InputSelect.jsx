@@ -15,6 +15,7 @@ const InputSelect = ({
   placeholder,
   options = [],
   required,
+  onChange
 }) => {
   return (
     <div
@@ -37,6 +38,11 @@ const InputSelect = ({
         id={id}
         className={twMerge(clsx(style, "placeholder: text-sm", inputClassname))}
         {...register(id, validate)}
+        onChange={(e) => {
+          if (onChange) {
+            onChange(e);
+          }
+        }}
       >
         <option value="">{placeholder}</option>
         {options.map((el, idx) => (

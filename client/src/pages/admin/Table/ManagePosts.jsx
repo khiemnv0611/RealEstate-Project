@@ -6,10 +6,24 @@ import { twMerge } from "tailwind-merge";
 import { Button, InputForm, InputSelect } from "~/components";
 import SelectLib from "~/components/inputs/SelectLib";
 import TablePagination from "@mui/material/TablePagination";
+import { apiGetPropertiesWithoutPagination, apiUpdatePropertiesStatus, apiUpdatePropertyStatus } from "~/apis/properties";
+import { usePropertiesStore } from "~/store/usePropertiesStore";
+import { cityDistricts } from "~/utils/constants";
+import Swal from "sweetalert2";
 
 const ManagePosts = () => {
   const [page, setPage] = useState(0); // Quản lý trang hiện tại
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Số lượng hàng mỗi trang
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Số lượng hàng mỗi trang
+  const [searchPostedBy, setSearchPostedBy] = useState(""); // Tìm kiếm tên người đăng
+  const [selectedPropertyType, setSelectedPropertyType] = useState(null); // Loại hình dự án
+  const [selectedListingType, setSelectedListingType] = useState(""); // Loại giao dịch
+  const [selectedCity, setSelectedCity] = useState(""); // Thành phố
+  const [sortOrder, setSortOrder] = useState("-createdAt");
+
+  const handlePropertyTypeChange = (selectedOption) => {
+    setSelectedPropertyType(selectedOption);
+  };
+  
 
   // Xử lý khi chuyển trang
   const handleChangePage = (event, newPage) => {
@@ -23,10 +37,8 @@ const ManagePosts = () => {
   };
 
   const {
-    register,
     formState: { errors },
-    watch,
-    containerClassname,
+    register
   } = useForm();
 
   const totalRows = 10;
@@ -34,16 +46,26 @@ const ManagePosts = () => {
   const [selectAll, setSelectAll] = useState(false);
   const checkboxRef = useRef(null);
   const [disabledButtons, setDisabledButtons] = useState([]);
+  const [cities, setCities] = useState(Object.keys(cityDistricts));
 
   const handleSelectAllChange = (event) => {
     const isChecked = event.target.checked;
     setSelectAll(isChecked);
     if (isChecked) {
-      setSelectedRows([...Array(totalRows).keys()]);
-      setDisabledButtons(Array(totalRows).fill(true));
+      // setSelectedRows([...Array(totalRows).keys()]);
+      // setDisabledButtons(Array(totalRows).fill(true));
+
+      const start = page * rowsPerPage; // Vị trí bắt đầu
+      const end = start + rowsPerPage; // Vị trí kết thúc
+      const visibleProperties = filteredProperties.slice(start, end).map(property => property.id);
+      setSelectedRows(visibleProperties); // Chọn các property trong trang hiện tại
+      setDisabledButtons(Array(rowsPerPage).fill(true)); // Disable các button cho các hàng hiện tại
     } else {
-      setSelectedRows([]);
-      setDisabledButtons(Array(totalRows).fill(false));
+      // setSelectedRows([]);
+      // setDisabledButtons(Array(totalRows).fill(false));
+
+      setSelectedRows([]); // Bỏ chọn tất cả
+      setDisabledButtons(Array(rowsPerPage).fill(false)); // Bật lại tất cả button
     }
   };
 
@@ -87,10 +109,13 @@ const ManagePosts = () => {
   const [postMode, setPostMode] = useState("ALL");
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
+  const { propertyTypes } = usePropertiesStore();
+
+  // LỌC THEO STATUS
   useEffect(() => {
     const filterByStatus = () => {
       const filtered = properties.filter((property) => {
-        if (postMode === "ALL") return property.status === "Tất cả";
+        if (postMode === "ALL") return property.status === "Chờ duyệt" || property.status === "Đã duyệt" || property.status === "Bị hủy";
         if (postMode === "PENDING") return property.status === "Chờ duyệt";
         if (postMode === "APPROVED") return property.status === "Đã duyệt";
         if (postMode === "CANCELLED") return property.status === "Bị hủy";
@@ -102,24 +127,88 @@ const ManagePosts = () => {
     filterByStatus();
   }, [postMode, properties]);
 
-  const postsData = [...Array(totalRows)].map((_, index) => ({
-    id: "property.id",
-    time: "2023-09-12",
-    status: "Chờ duyệt",
-    user: { name: "Nguyễn Văn A", role: "Admin", contact: "0909000000" },
-    listingType: "Bán",
-    projectType: "Chung cư",
-    title: "Căn hộ cao cấp",
-    description:
-      "Mô tả bài đăng qiuwe gho qi uw eb hqưveq ựihb joklf nuiơ ehro uqbư ẹqưb equi wgeqơi uebq jhb ihgvq ơuiu",
-    address: "123 Nguyễn Thị Minh Khai, Quận 1",
-    city: "Hồ Chí Minh",
-    featuredImage: "img.jpg",
-    images: ["img1.jpg", "img2.jpg"],
-    rooms: { bedRooms: 3, bathRooms: 2 },
-    size: 120,
-    yearBuilt: 2015,
-  }));
+  // LỌC DANH SÁCH THEO KEYWORDS
+  useEffect(() => {
+    const filtered = properties.filter((property) => {
+      const matchesPostedBy = property.rPostedBy.name.toLowerCase().includes(searchPostedBy.toLowerCase());
+      const matchesPropertyType = selectedPropertyType ? property.rPropertyType.name === selectedPropertyType.name : true;
+      const matchesListingType = selectedListingType ? property.listingType === selectedListingType : true;
+      const matchesCity = selectedCity ? property.city.toLowerCase() === selectedCity.toLowerCase() : true;
+
+      return matchesPostedBy && matchesPropertyType && matchesListingType && matchesCity;
+    });
+
+    const sorted = filtered.sort((a, b) => {
+      if (sortOrder === "-createdAt") {
+        return new Date(b.createdAt) - new Date(a.createdAt); // Mới nhất trước
+      } else {
+        return new Date(a.createdAt) - new Date(b.createdAt); // Cũ hơn trước
+      }
+    });
+
+    setFilteredProperties(filtered);
+  }, [searchPostedBy, selectedPropertyType, selectedListingType, selectedCity, sortOrder, properties]);
+
+  // LẤY DỮ LIỆU BÀI ĐĂNG
+  useEffect(() => {
+    const fetchProperties = async () => {
+      const res = await apiGetPropertiesWithoutPagination();
+      if (res) setProperties(res.properties.rows)
+    }
+    fetchProperties();
+  }, [])
+
+  // DUYỆT 1 BÀI ĐĂNG
+  const handleApprove = async (id, status, message) => {
+    Swal.fire({
+      icon: "warning",
+      title: "Xác nhận!",
+      text: message,
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      denyButtonText: 'No',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await apiUpdatePropertyStatus(id, { status })
+        if (res) {
+          // Cập nhật thành công
+          Swal.fire('HAHA!', '', 'success')
+          setFilteredProperties(filtered.map(property => property.id === id ? { ...property, status } : property));
+        }
+      } else if (result.isDenied) {
+        // Cancel
+        Swal.fire('HAHA?', '', 'info')
+      }
+    });
+  }
+
+  // DUYỆT NHIỀU BÀI ĐĂNG
+  const handleApproveProperties = async (status, message) => {
+    console.log(selectedRows)
+
+    Swal.fire({
+      icon: "warning",
+      title: "Xác nhận!",
+      text: message,
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      denyButtonText: 'No',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await apiUpdatePropertiesStatus({ status, propertyIds: selectedRows })
+        if (res) {
+          // Cập nhật thành công
+          Swal.fire('HAHA!', '', 'success')
+          setFilteredProperties(filtered.map(property => property.id === id ? { ...property, status } : property));
+        }
+      } else if (result.isDenied) {
+        // Cancel
+        Swal.fire('HAHA?', '', 'info')
+      }
+    });
+  }
 
   const renderTableHead = () => {
     return (
@@ -153,7 +242,7 @@ const ManagePosts = () => {
   const renderTableBody = () => {
     return (
       <tbody className="bg-white">
-        {postsData
+        {filteredProperties
           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
           .map((property, index) => (
             <tr
@@ -161,22 +250,22 @@ const ManagePosts = () => {
               className={twMerge(
                 clsx(
                   "border-b border-gray-200",
-                  selectedRows.includes(index) && "bg-blue-200"
+                  selectedRows.includes(property.id) && "bg-blue-200"
                 )
               )}
             >
               <td className="relative p-6 text-center whitespace-nowrap border-b">
                 <input
                   type="checkbox"
-                  checked={selectedRows.includes(index)}
-                  onChange={() => handleCheckboxChange(index)}
+                  checked={selectedRows.includes(property.id)}
+                  onChange={() => handleCheckboxChange(property.id)}
                 />
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
                 {property.id}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {property.time}
+                {new Date(property.createdAt).toLocaleString()}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
                 <div className="w-fit px-2 mx-auto rounded-3xl bg-orange-500">
@@ -191,9 +280,16 @@ const ManagePosts = () => {
                     className="w-14 h-14 object-cover bg-gray-500 rounded-full"
                   />
                   <div className="flex flex-col">
-                    <span className="font-bold">{property.user.name}</span>
-                    <span>{property.user.role}</span>
-                    <span>{property.user.contact}</span>
+                    <span className="font-bold">{property.rPostedBy.name}</span>
+                    <span>
+                      {
+                        property.rPostedBy.userRoles
+                          .map((role) => role.roleName.value)
+                          .join(", ")
+                      }
+                    </span>
+                    <span>{property.rPostedBy.phone}</span>
+                    <span>{property.rPostedBy.email}</span>
                   </div>
                 </div>
               </td>
@@ -201,10 +297,10 @@ const ManagePosts = () => {
                 {property.listingType}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {property.projectType}
+                {property.rPropertyType.name}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {property.title}
+                {property.name}
               </td>
               <td className="relative p-6 text-center border-b min-w-80 break-words overflow-hidden">
                 <div className="line-clamp-2">{property.description}</div>
@@ -222,10 +318,10 @@ const ManagePosts = () => {
                 {property.images.join(", ")}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {property.rooms.bedRooms}
+                {property.bedRoom}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {property.rooms.bathRooms}
+                {property.bathRoom}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
                 {property.size} m<sup>2</sup>
@@ -245,6 +341,7 @@ const ManagePosts = () => {
                           !disabledButtons[index],
                       })
                     )}
+                    onClick={() => handleApprove(property.id, "Đã duyệt", "Bạn có muốn duyệt bài đăng này")}
                   >
                     Duyệt
                   </span>
@@ -258,6 +355,7 @@ const ManagePosts = () => {
                           !disabledButtons[index],
                       })
                     )}
+                    onClick={() => handleApprove(property.id, "Bị hủy", "Bạn có muốn từ chối bài đăng này")}
                   >
                     Từ chối
                   </span>
@@ -331,10 +429,16 @@ const ManagePosts = () => {
           </span>
           {selectedRows.length >= 2 && (
             <div className="flex gap-1">
-              <span className="px-2 border border-gray-400 bg-green-400 hover:underline cursor-pointer flex items-center">
+              <span
+                className="px-2 border border-gray-400 bg-green-400 hover:underline cursor-pointer flex items-center"
+                onClick={() => handleApproveProperties("Đã duyệt", "Bạn có muốn duyệt các bài đăng này")}
+              >
                 Duyệt
               </span>
-              <span className="px-2 py-1 border border-gray-400 bg-red-400 hover:underline cursor-pointer flex items-center">
+              <span 
+                className="px-2 py-1 border border-gray-400 bg-red-400 hover:underline cursor-pointer flex items-center"
+                onClick={() => handleApproveProperties("Bị hủy", "Bạn có muốn từ chối các bài đăng này")}
+              >
                 Từ chối
               </span>
             </div>
@@ -343,22 +447,26 @@ const ManagePosts = () => {
         <div className="flex gap-4 items-center">
           <InputForm
             id="search-postedBy"
-            register={register}
+            // register={register}
             errors={errors}
             placeholder="Tìm kiếm tên người đăng"
             containerClassname="flex-none w-fit"
             inputClassname="rounded-md border border-gray-300"
+            value={searchPostedBy}
+            onChange={(e) => setSearchPostedBy(e.target.value)}
           />
           <SelectLib
             id="sort-propertyType"
             register={register}
             errors={errors}
             inputClassname="rounded-md border border-gray-300"
+            options={propertyTypes?.map((el) => ({ ...el, label: el.name }))}
             placeholder="Loại hình dự án"
+            onChange={handlePropertyTypeChange}
           />
           <InputSelect
-            register={register}
             id="sort-time"
+            register={register}
             errors={errors}
             placeholder="Thời gian"
             options={[
@@ -367,30 +475,37 @@ const ManagePosts = () => {
             ]}
             containerClassname="flex-none w-fit"
             inputClassname="w-fit rounded-md"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
           />
           <InputSelect
-            register={register}
             id="sort-listingType"
+            register={register}
             errors={errors}
             placeholder="Loại giao dịch"
             options={[
-              { label: "Bán", code: "" },
-              { label: "Cho thuê", code: "" },
+              { label: "Bán", code: "Bán" },
+              { label: "Cho thuê", code: "Cho thuê" },
             ]}
             containerClassname="flex-none w-fit"
             inputClassname="w-fit rounded-md"
+            value={selectedListingType}
+            onChange={(e) => setSelectedListingType(e.target.value)}
           />
           <InputSelect
-            register={register}
             id="sort-city"
+            register={register}
             errors={errors}
             placeholder="Thành phố"
-            // options={[
-            //   { label: "Bán", code: "" },
-            //   { label: "Cho thuê", code: "" },
-            // ]}
+            options={
+              cities.map((city, index) => (
+                { label: city, code: city }
+              ))
+            }
             containerClassname="flex-none w-fit"
             inputClassname="w-fit rounded-md"
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
           />
         </div>
       </div>
@@ -402,12 +517,15 @@ const ManagePosts = () => {
       </div>
       <TablePagination
         component="div"
-        count={postsData.length}
+        count={filteredProperties.length} // Tổng số phần tử
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage="Số hàng mỗi trang:"
+        labelRowsPerPage="Số hàng mỗi trang"
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}-${to} trên tổng số ${count}`
+        }
       />
     </div>
   );

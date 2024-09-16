@@ -32,7 +32,6 @@ const isOwner = (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
   const { roleCodes } = req.user;
-  console.log(roleCodes)
 
   const hasAdminRole = roleCodes.some(role => role.roleCode === 'ROL1');
 

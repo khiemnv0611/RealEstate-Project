@@ -7,6 +7,12 @@ export const apiGetProperties = (params) =>
     params,
   });
 
+export const apiGetPropertiesWithoutPagination = (params) =>
+  axios({
+    url: "/properties/nopagination",
+    method: "get",
+  });
+
 export const apiGetDetailProperty = (id) =>
   axios({
     url: "/properties/one/" + id,
@@ -37,3 +43,17 @@ export const apiGetComments = (id) =>
     url: "/properties/comments/" + id,
     method: "get",
   });
+
+export const apiUpdatePropertyStatus = (id, data) =>
+  axios({
+    url: "/properties/status/" + id,
+    method: "put",
+    data
+  })
+
+export const apiUpdatePropertiesStatus = (data) =>
+  axios({
+    url: "/properties/status/",
+    method: "put",
+    data
+  })

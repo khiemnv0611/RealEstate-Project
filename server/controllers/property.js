@@ -260,6 +260,20 @@ module.exports = {
             model: db.User,
             as: "rPostedBy",
             attributes: ["id", "avatar", "phone", "name", "email"],
+            include: [
+              {
+                model: db.User_Role,
+                attributes: ["roleCode"],
+                as: "userRoles",
+                include: [
+                  {
+                    model: db.Role,
+                    as: "roleName",
+                    attributes: ["value"],
+                  },
+                ],
+              },
+            ],
           },
           {
             model: db.User,
@@ -480,7 +494,7 @@ module.exports = {
     }
   }),
   updatePropertyStatus: asyncHandler(async (req, res) => {
-    const { propertyId } = req.params;
+    const { id } = req.params;
     const { status } = req.body;
     const { uid } = req.user;
 
@@ -491,7 +505,7 @@ module.exports = {
         },
         {
           where: {
-            id: propertyId
+            id: id
           }
         }
       )
