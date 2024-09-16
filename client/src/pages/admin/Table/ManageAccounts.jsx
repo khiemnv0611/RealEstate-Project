@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
 import { RiCheckboxIndeterminateFill } from "react-icons/ri";
 import { twMerge } from "tailwind-merge";
-import { Button, InputForm } from "~/components";
+import { Button, InputForm, InputSelect } from "~/components";
 import TablePagination from "@mui/material/TablePagination";
 import { apiGetUsers, apiUpdateUserStatus } from "~/apis/user";
 import Swal from "sweetalert2";
@@ -41,81 +41,47 @@ const ManageAccounts = () => {
   const [searchName, setSearchName] = useState(""); // Tìm kiếm tên
   const [filteredUsers, setFilteredUsers] = useState([]);
 
-  const handleSelectAllChange = (event) => {
-    const isChecked = event.target.checked;
-    setSelectAll(isChecked);
-    if (isChecked) {
-      // setSelectedRows([...Array(totalRows).keys()]);
-      // setDisabledButtons(Array(totalRows).fill(true));
-
-      const start = page * rowsPerPage; // Vị trí bắt đầu
-      const end = start + rowsPerPage; // Vị trí kết thúc
-      const visibleUsers = filteredUsers.slice(start, end).map(user => user.id);
-      setSelectedRows(visibleUsers); // Chọn các property trong trang hiện tại
-      setDisabledButtons(Array(rowsPerPage).fill(true)); // Disable các button cho các hàng hiện tại
-    } else {
-      // setSelectedRows([]);
-      // setDisabledButtons(Array(totalRows).fill(false));
-
-      setSelectedRows([]); // Bỏ chọn tất cả
-      setDisabledButtons(Array(rowsPerPage).fill(false)); // Bật lại tất cả button
-    }
-  };
-
   const handleCheckboxChange = (userId) => {
-    setSelectedRows((prevSelectedRows) => {
-      let updatedSelectedRows;
-  
-      if (prevSelectedRows.includes(userId)) {
-        // Nếu user đã được chọn, thì loại bỏ user đó khỏi danh sách
-        updatedSelectedRows = prevSelectedRows.filter((id) => id !== userId);
-        setDisabledButtons((prevDisabledButtons) => {
-          const updatedDisabledButtons = [...prevDisabledButtons];
-          updatedDisabledButtons[userId] = false; // Bật lại button cho user này
-          return updatedDisabledButtons;
-        });
-      } else {
-        // Nếu user chưa được chọn, thì thêm vào danh sách
-        updatedSelectedRows = [...prevSelectedRows, userId];
-        setDisabledButtons((prevDisabledButtons) => {
-          const updatedDisabledButtons = [...prevDisabledButtons];
-          updatedDisabledButtons[userId] = true; // Disable button cho user này
-          return updatedDisabledButtons;
-        });
-      }
-  
-      // Kiểm tra nếu tất cả các user trong trang hiện tại đều được chọn
-      const start = page * rowsPerPage;
-      const end = start + rowsPerPage;
-      const visibleUsers = filteredUsers.slice(start, end).map(user => user.id);
-  
-      if (visibleUsers.every((id) => updatedSelectedRows.includes(id))) {
-        setSelectAll(true);
-      } else {
-        setSelectAll(false);
-      }
-  
+    setSelectedRows(() => {
+      // Chỉ cho phép chọn 1 user, nên userId sẽ là user được chọn duy nhất
+      const updatedSelectedRows = [userId];
+
+      // Disable button cho user được chọn và bật lại cho tất cả các user khác
+      setDisabledButtons((prevDisabledButtons) => {
+        const updatedDisabledButtons = [...prevDisabledButtons];
+
+        // Bật lại tất cả các button
+        for (let i = 0; i < updatedDisabledButtons.length; i++) {
+          updatedDisabledButtons[i] = false;
+        }
+
+        // Disable button của user được chọn
+        updatedDisabledButtons[userId] = true;
+
+        return updatedDisabledButtons;
+      });
+
       return updatedSelectedRows;
     });
-  };  
-
-  const handleSpanClick = () => {
-    if (checkboxRef.current) {
-      checkboxRef.current.click();
-    }
   };
 
   useEffect(() => {
     const filterByStatus = () => {
       const filtered = users.filter((user) => {
-        const roles = user.userRoles.map(role => role.roleName.value.toLowerCase());
+        const roles = user.userRoles.map((role) =>
+          role.roleName.value.toLowerCase()
+        );
 
         // Kiểm tra điều kiện theo từng `userMode`
         if (userMode === "ALL") {
-          return roles.includes("khách hàng") || roles.includes("chủ tài sản") || roles.includes("môi giới");
+          return (
+            roles.includes("khách hàng") ||
+            roles.includes("chủ tài sản") ||
+            roles.includes("môi giới")
+          );
         }
         if (userMode === "CUSTOMER") {
-          return roles.includes("khách hàng");
+          return roles.length === 1 && roles.includes("khách hàng");
         }
         if (userMode === "OWNER") {
           return roles.includes("chủ tài sản");
@@ -134,7 +100,9 @@ const ManageAccounts = () => {
   // LỌC DANH SÁCH THEO KEYWORDS
   useEffect(() => {
     const filtered = users.filter((user) => {
-      const matchesName = user.name.toLowerCase().includes(searchName.toLowerCase());
+      const matchesName = user.name
+        .toLowerCase()
+        .includes(searchName.toLowerCase());
 
       return matchesName;
     });
@@ -145,12 +113,12 @@ const ManageAccounts = () => {
   // GET DATA
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await apiGetUsers()
-      if (response) setUsers(response.users)
-    }
-    
-    fetchUsers()
-  }, [])
+      const response = await apiGetUsers();
+      if (response) setUsers(response.users);
+    };
+
+    fetchUsers();
+  }, []);
 
   // DUYỆT 1 USER
   const handleApprove = async (id, message) => {
@@ -158,24 +126,19 @@ const ManageAccounts = () => {
       icon: "warning",
       title: "Xác nhận!",
       text: message,
-      showDenyButton: true,
+      showConfirmButton: true,
       showCancelButton: true,
-      confirmButtonText: 'Yes',
-      denyButtonText: 'No',
+      confirmButtonText: "Xóa!",
+      cancelButtonText: "Hủy",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await apiUpdateUserStatus(id)
+        const res = await apiUpdateUserStatus(id);
         if (res) {
-          // Cập nhật thành công
-          Swal.fire('HAHA!', '', 'success')
-          // Update UI here
+          Swal.fire("Đã khóa tài khoản", "", "success");
         }
-      } else if (result.isDenied) {
-        // Cancel
-        Swal.fire('HAHA?', '', 'info')
       }
     });
-  }
+  };
 
   const renderTableHead = () => {
     return (
@@ -240,11 +203,7 @@ const ManageAccounts = () => {
                 {user.phone}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {
-                  user.userRoles
-                    .map((role) => role.roleName.value)
-                    .join(", ")
-                }
+                {user.userRoles.map((role) => role.roleName.value).join(", ")}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
                 {new Date(user.createdAt).toLocaleString()}
@@ -263,13 +222,18 @@ const ManageAccounts = () => {
                     })
                   )}
                 >
-                  <MdDeleteOutline size={18}
+                  <MdDeleteOutline
+                    size={18}
                     onClick={() => {
                       if (disabledButtons[user.id]) {
-                        handleApprove(user.id, (user.isAvailable ? "Xác nhận khóa tài khoảng" : "Xác nhận mở khóa tài khoản"))
+                        handleApprove(
+                          user.id,
+                          user.isAvailable
+                            ? "Xác nhận khóa tài khoản"
+                            : "Xác nhận mở khóa tài khoản"
+                        );
                       }
                     }}
-                    
                   />
                 </span>
               </td>
@@ -328,23 +292,19 @@ const ManageAccounts = () => {
           </Button>
         </div>
         <div className="flex justify-between items-center">
-          <div className="flex gap-4 items-center">
-            <input
-              type="checkbox"
-              checked={selectAll}
-              onChange={handleSelectAllChange}
-              ref={checkboxRef}
-              className="form-checkbox"
-            />
-            <span onClick={handleSpanClick} className="cursor-pointer">
-              Chọn tất cả
-            </span>
-            {selectedRows.length >= 2 && (
-              <span className="p-2 border border-gray-400 bg-white hover:bg-red-400 hover:underline cursor-pointer flex items-center">
-                <MdDeleteOutline size={18} />
-              </span>
-            )}
-          </div>
+          <InputSelect
+            register={register}
+            id="sort"
+            errors={errors}
+            placeholder="Thứ tự"
+            options={[
+              { label: "Đang hoạt động", code: "-createdAt" },
+              { label: "Bị khóa", code: "createdAt" },
+            ]}
+            containerClassname="flex-row items-center gap-2"
+            label="Sắp xếp: "
+            inputClassname="w-fit rounded-md"
+          />
           <InputForm
             id="search-user"
             register={register}
@@ -365,12 +325,15 @@ const ManageAccounts = () => {
       </div>
       <TablePagination
         component="div"
-        count={users.length}
+        count={filteredUsers.length}
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         labelRowsPerPage="Số hàng mỗi trang:"
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}-${to} trên tổng số ${count}`
+        }
       />
     </div>
   );

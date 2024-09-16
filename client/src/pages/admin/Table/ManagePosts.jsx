@@ -6,7 +6,11 @@ import { twMerge } from "tailwind-merge";
 import { Button, InputForm, InputSelect } from "~/components";
 import SelectLib from "~/components/inputs/SelectLib";
 import TablePagination from "@mui/material/TablePagination";
-import { apiGetPropertiesWithoutPagination, apiUpdatePropertiesStatus, apiUpdatePropertyStatus } from "~/apis/properties";
+import {
+  apiGetPropertiesWithoutPagination,
+  apiUpdatePropertiesStatus,
+  apiUpdatePropertyStatus,
+} from "~/apis/properties";
 import { usePropertiesStore } from "~/store/usePropertiesStore";
 import { cityDistricts } from "~/utils/constants";
 import Swal from "sweetalert2";
@@ -23,7 +27,6 @@ const ManagePosts = () => {
   const handlePropertyTypeChange = (selectedOption) => {
     setSelectedPropertyType(selectedOption);
   };
-  
 
   // Xử lý khi chuyển trang
   const handleChangePage = (event, newPage) => {
@@ -38,7 +41,7 @@ const ManagePosts = () => {
 
   const {
     formState: { errors },
-    register
+    register,
   } = useForm();
 
   const totalRows = 10;
@@ -51,57 +54,68 @@ const ManagePosts = () => {
   const handleSelectAllChange = (event) => {
     const isChecked = event.target.checked;
     setSelectAll(isChecked);
+
     if (isChecked) {
-      // setSelectedRows([...Array(totalRows).keys()]);
-      // setDisabledButtons(Array(totalRows).fill(true));
+      const start = page * rowsPerPage;
+      const end = start + rowsPerPage;
+      const visibleProperties = filteredProperties
+        .slice(start, end)
+        .map((property) => property.id);
 
-      const start = page * rowsPerPage; // Vị trí bắt đầu
-      const end = start + rowsPerPage; // Vị trí kết thúc
-      const visibleProperties = filteredProperties.slice(start, end).map(property => property.id);
-      setSelectedRows(visibleProperties); // Chọn các property trong trang hiện tại
-      setDisabledButtons(Array(rowsPerPage).fill(true)); // Disable các button cho các hàng hiện tại
+      setSelectedRows(visibleProperties);
+
+      // Disable các button cho từng property dựa trên ID
+      const updatedDisabledButtons = {};
+      visibleProperties.forEach((id) => {
+        updatedDisabledButtons[id] = true; // Disable button cho property này
+      });
+      setDisabledButtons(updatedDisabledButtons);
     } else {
-      // setSelectedRows([]);
-      // setDisabledButtons(Array(totalRows).fill(false));
+      setSelectedRows([]);
 
-      setSelectedRows([]); // Bỏ chọn tất cả
-      setDisabledButtons(Array(rowsPerPage).fill(false)); // Bật lại tất cả button
+      // Enable lại tất cả các button
+      const updatedDisabledButtons = {};
+      filteredProperties.forEach((property) => {
+        updatedDisabledButtons[property.id] = false; // Enable button cho từng property
+      });
+      setDisabledButtons(updatedDisabledButtons);
     }
   };
 
   const handleCheckboxChange = (pid) => {
     setSelectedRows((prevSelectedRows) => {
       let updatedSelectedRows;
-  
+
       if (prevSelectedRows.includes(pid)) {
-        // Nếu user đã được chọn, thì loại bỏ user đó khỏi danh sách
         updatedSelectedRows = prevSelectedRows.filter((id) => id !== pid);
-        setDisabledButtons((prevDisabledButtons) => {
-          const updatedDisabledButtons = [...prevDisabledButtons];
-          updatedDisabledButtons[pid] = false; // Bật lại button cho user này
-          return updatedDisabledButtons;
-        });
+
+        // Enable button cho property này
+        setDisabledButtons((prevDisabledButtons) => ({
+          ...prevDisabledButtons,
+          [pid]: false,
+        }));
       } else {
-        // Nếu user chưa được chọn, thì thêm vào danh sách
         updatedSelectedRows = [...prevSelectedRows, pid];
-        setDisabledButtons((prevDisabledButtons) => {
-          const updatedDisabledButtons = [...prevDisabledButtons];
-          updatedDisabledButtons[pid] = true; // Disable button cho user này
-          return updatedDisabledButtons;
-        });
+
+        // Disable button cho property này
+        setDisabledButtons((prevDisabledButtons) => ({
+          ...prevDisabledButtons,
+          [pid]: true,
+        }));
       }
-  
-      // Kiểm tra nếu tất cả các user trong trang hiện tại đều được chọn
+
       const start = page * rowsPerPage;
       const end = start + rowsPerPage;
-      const visibleProperties = filteredProperties.slice(start, end).map(property => property.id);
-  
+      const visibleProperties = filteredProperties
+        .slice(start, end)
+        .map((property) => property.id);
+
       if (visibleProperties.every((id) => updatedSelectedRows.includes(id))) {
         setSelectAll(true);
       } else {
         setSelectAll(false);
       }
-  
+
       return updatedSelectedRows;
     });
   };
@@ -121,7 +135,12 @@ const ManagePosts = () => {
   useEffect(() => {
     const filterByStatus = () => {
       const filtered = properties.filter((property) => {
-        if (postMode === "ALL") return property.status === "Chờ duyệt" || property.status === "Đã duyệt" || property.status === "Bị hủy";
+        if (postMode === "ALL")
+          return (
+            property.status === "Chờ duyệt" ||
+            property.status === "Đã duyệt" ||
+            property.status === "Bị hủy"
+          );
         if (postMode === "PENDING") return property.status === "Chờ duyệt";
         if (postMode === "APPROVED") return property.status === "Đã duyệt";
         if (postMode === "CANCELLED") return property.status === "Bị hủy";
@@ -136,12 +155,25 @@ const ManagePosts = () => {
   // LỌC DANH SÁCH THEO KEYWORDS
   useEffect(() => {
     const filtered = properties.filter((property) => {
-      const matchesPostedBy = property.rPostedBy.name.toLowerCase().includes(searchPostedBy.toLowerCase());
-      const matchesPropertyType = selectedPropertyType ? property.rPropertyType.name === selectedPropertyType.name : true;
-      const matchesListingType = selectedListingType ? property.listingType === selectedListingType : true;
-      const matchesCity = selectedCity ? property.city.toLowerCase() === selectedCity.toLowerCase() : true;
+      const matchesPostedBy = property.rPostedBy.name
+        .toLowerCase()
+        .includes(searchPostedBy.toLowerCase());
+      const matchesPropertyType = selectedPropertyType
+        ? property.rPropertyType.name === selectedPropertyType.name
+        : true;
+      const matchesListingType = selectedListingType
+        ? property.listingType === selectedListingType
+        : true;
+      const matchesCity = selectedCity
+        ? property.city.toLowerCase() === selectedCity.toLowerCase()
+        : true;
 
-      return matchesPostedBy && matchesPropertyType && matchesListingType && matchesCity;
+      return (
+        matchesPostedBy &&
+        matchesPropertyType &&
+        matchesListingType &&
+        matchesCity
+      );
     });
 
     const sorted = filtered.sort((a, b) => {
@@ -153,16 +185,23 @@ const ManagePosts = () => {
     });
 
     setFilteredProperties(filtered);
-  }, [searchPostedBy, selectedPropertyType, selectedListingType, selectedCity, sortOrder, properties]);
+  }, [
+    searchPostedBy,
+    selectedPropertyType,
+    selectedListingType,
+    selectedCity,
+    sortOrder,
+    properties,
+  ]);
 
   // LẤY DỮ LIỆU BÀI ĐĂNG
   useEffect(() => {
     const fetchProperties = async () => {
       const res = await apiGetPropertiesWithoutPagination();
-      if (res) setProperties(res.properties.rows)
-    }
+      if (res) setProperties(res.properties.rows);
+    };
     fetchProperties();
-  }, [])
+  }, []);
 
   // DUYỆT 1 BÀI ĐĂNG
   const handleApprove = async (id, status, message) => {
@@ -170,51 +209,62 @@ const ManagePosts = () => {
       icon: "warning",
       title: "Xác nhận!",
       text: message,
-      showDenyButton: true,
+      showConfirmButton: true,
       showCancelButton: true,
-      confirmButtonText: 'Yes',
-      denyButtonText: 'No',
+      confirmButtonText: "Có!",
+      cancelButtonText: "Hủy",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await apiUpdatePropertyStatus(id, { status })
+        const res = await apiUpdatePropertyStatus(id, { status });
         if (res) {
-          // Cập nhật thành công
-          Swal.fire('HAHA!', '', 'success')
-          setFilteredProperties(filtered.map(property => property.id === id ? { ...property, status } : property));
+          Swal.fire("Thành công!", "", "success").then(() => {
+            // Tải lại trang sau khi thông báo thành công
+            window.location.reload();
+          });
+          // Cập nhật danh sách thuộc tính nếu cần
+          setFilteredProperties(
+            filtered.map((property) =>
+              property.id === id ? { ...property, status } : property
+            )
+          );
         }
-      } else if (result.isDenied) {
-        // Cancel
-        Swal.fire('HAHA?', '', 'info')
       }
     });
-  }
+  };
 
   // DUYỆT NHIỀU BÀI ĐĂNG
   const handleApproveProperties = async (status, message) => {
-    console.log(selectedRows)
+    console.log(selectedRows);
 
     Swal.fire({
       icon: "warning",
       title: "Xác nhận!",
       text: message,
-      showDenyButton: true,
+      showConfirmButton: true,
       showCancelButton: true,
-      confirmButtonText: 'Yes',
-      denyButtonText: 'No',
+      confirmButtonText: "Có!",
+      cancelButtonText: "Hủy",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await apiUpdatePropertiesStatus({ status, propertyIds: selectedRows })
+        const res = await apiUpdatePropertiesStatus({
+          status,
+          propertyIds: selectedRows,
+        });
         if (res) {
-          // Cập nhật thành công
-          Swal.fire('HAHA!', '', 'success')
-          setFilteredProperties(filtered.map(property => property.id === id ? { ...property, status } : property));
+          Swal.fire("Thành công!", "", "success").then(() => {
+            // Tải lại trang sau khi thông báo thành công
+            window.location.reload();
+          });
+          // Cập nhật danh sách thuộc tính nếu cần
+          setFilteredProperties(
+            filtered.map((property) =>
+              property.id === id ? { ...property, status } : property
+            )
+          );
         }
-      } else if (result.isDenied) {
-        // Cancel
-        Swal.fire('HAHA?', '', 'info')
       }
     });
-  }
+  };
 
   const renderTableHead = () => {
     return (
@@ -274,25 +324,37 @@ const ManagePosts = () => {
                 {new Date(property.createdAt).toLocaleString()}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                <div className="w-fit px-2 mx-auto rounded-3xl bg-orange-500">
+                <div
+                  className={twMerge(
+                    "w-fit px-2 mx-auto rounded-3xl",
+                    clsx({
+                      "bg-blue-500": property.status === "Chờ duyệt",
+                      "bg-green-500": property.status === "Đã duyệt",
+                      "bg-red-500": property.status === "Bị hủy",
+                      "bg-orange-500": ![
+                        "Chờ duyệt",
+                        "Đã duyệt",
+                        "Bị hủy",
+                      ].includes(property.status), // Mặc định nếu không khớp
+                    })
+                  )}
+                >
                   {property.status}
                 </div>
               </td>
               <td className="relative p-6 whitespace-nowrap border-b">
                 <div className="flex items-center gap-3">
                   <img
-                    src={property.featuredImage}
+                    src={property.rPostedBy.avatar}
                     alt=""
                     className="w-14 h-14 object-cover bg-gray-500 rounded-full"
                   />
                   <div className="flex flex-col">
                     <span className="font-bold">{property.rPostedBy.name}</span>
                     <span>
-                      {
-                        property.rPostedBy.userRoles
-                          .map((role) => role.roleName.value)
-                          .join(", ")
-                      }
+                      {property.rPostedBy.userRoles
+                        .map((role) => role.roleName.value)
+                        .join(", ")}
                     </span>
                     <span>{property.rPostedBy.phone}</span>
                     <span>{property.rPostedBy.email}</span>
@@ -336,44 +398,54 @@ const ManagePosts = () => {
                 {property.yearBuilt}
               </td>
               <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
-                <div className="flex gap-1">
-                  <span
-                    className={twMerge(
-                      "px-2 py-1 border border-gray-400 flex items-center",
-                      clsx({
-                        "bg-green-400 hover:underline cursor-pointer":
-                          disabledButtons[property.id],
-                        " bg-gray-200 cursor-not-allowed":
-                          !disabledButtons[property.id],
-                      })
-                    )}
-                    onClick={() => {
-                      if (disabledButtons[property.id]) {
-                        handleApprove(property.id, "Đã duyệt", "Bạn có muốn duyệt bài đăng này");
-                      }
-                    }}
-                  >
-                    Duyệt
-                  </span>
-                  <span
-                    className={twMerge(
-                      "px-2 py-1 border border-gray-400 flex items-center",
-                      clsx({
-                        "bg-red-400 hover:underline cursor-pointer":
-                          disabledButtons[property.id],
-                        " bg-gray-200 cursor-not-allowed":
-                          !disabledButtons[property.id],
-                      })
-                    )}
-                    onClick={() => {
-                      if (disabledButtons[property.id]) {
-                        handleApprove(property.id, "Bị hủy", "Bạn có muốn từ chối bài đăng này");
-                      }
-                    }}
-                  >
-                    Từ chối
-                  </span>
-                </div>
+                {property.status === "Chờ duyệt" && (
+                  <div className="flex gap-1">
+                    <span
+                      className={twMerge(
+                        "px-2 py-1 border border-gray-400 flex items-center",
+                        clsx({
+                          "bg-green-400 hover:underline cursor-pointer":
+                            disabledButtons[property.id],
+                          " bg-gray-200 cursor-not-allowed":
+                            !disabledButtons[property.id],
+                        })
+                      )}
+                      onClick={() => {
+                        if (disabledButtons[property.id]) {
+                          handleApprove(
+                            property.id,
+                            "Đã duyệt",
+                            "Bạn có muốn duyệt bài đăng này"
+                          );
+                        }
+                      }}
+                    >
+                      Duyệt
+                    </span>
+                    <span
+                      className={twMerge(
+                        "px-2 py-1 border border-gray-400 flex items-center",
+                        clsx({
+                          "bg-red-400 hover:underline cursor-pointer":
+                            disabledButtons[property.id],
+                          " bg-gray-200 cursor-not-allowed":
+                            !disabledButtons[property.id],
+                        })
+                      )}
+                      onClick={() => {
+                        if (disabledButtons[property.id]) {
+                          handleApprove(
+                            property.id,
+                            "Bị hủy",
+                            "Bạn có muốn từ chối bài đăng này"
+                          );
+                        }
+                      }}
+                    >
+                      Từ chối
+                    </span>
+                  </div>
+                )}
               </td>
             </tr>
           ))}
@@ -430,31 +502,45 @@ const ManagePosts = () => {
         </Button>
       </div>
       <div className="flex justify-between items-center">
-        <div className="flex gap-4 items-center">
-          <input
-            type="checkbox"
-            checked={selectAll}
-            onChange={handleSelectAllChange}
-            ref={checkboxRef}
-            className="form-checkbox"
-          />
-          <span onClick={handleSpanClick} className="cursor-pointer">
-            Chọn tất cả
-          </span>
-          {selectedRows.length >= 2 && (
-            <div className="flex gap-1">
-              <span
-                className="px-2 border border-gray-400 bg-green-400 hover:underline cursor-pointer flex items-center"
-                onClick={() => handleApproveProperties("Đã duyệt", "Bạn có muốn duyệt các bài đăng này")}
-              >
-                Duyệt
+        <div>
+          {postMode === "PENDING" && (
+            <div className="flex gap-4 items-center">
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={handleSelectAllChange}
+                ref={checkboxRef}
+                className="form-checkbox"
+              />
+              <span onClick={handleSpanClick} className="cursor-pointer">
+                Chọn tất cả trong trang hiện tại
               </span>
-              <span 
-                className="px-2 py-1 border border-gray-400 bg-red-400 hover:underline cursor-pointer flex items-center"
-                onClick={() => handleApproveProperties("Bị hủy", "Bạn có muốn từ chối các bài đăng này")}
-              >
-                Từ chối
-              </span>
+              {selectedRows.length >= 2 && (
+                <div className="flex gap-1">
+                  <span
+                    className="px-2 border border-gray-400 bg-green-400 hover:underline cursor-pointer flex items-center"
+                    onClick={() =>
+                      handleApproveProperties(
+                        "Đã duyệt",
+                        "Bạn có muốn duyệt các bài đăng này"
+                      )
+                    }
+                  >
+                    Duyệt
+                  </span>
+                  <span
+                    className="px-2 py-1 border border-gray-400 bg-red-400 hover:underline cursor-pointer flex items-center"
+                    onClick={() =>
+                      handleApproveProperties(
+                        "Bị hủy",
+                        "Bạn có muốn từ chối các bài đăng này"
+                      )
+                    }
+                  >
+                    Từ chối
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -469,7 +555,7 @@ const ManagePosts = () => {
             value={searchPostedBy}
             onChange={(e) => setSearchPostedBy(e.target.value)}
           />
-          <SelectLib
+          {/* <SelectLib
             id="sort-propertyType"
             register={register}
             errors={errors}
@@ -477,7 +563,7 @@ const ManagePosts = () => {
             options={propertyTypes?.map((el) => ({ ...el, label: el.name }))}
             placeholder="Loại hình dự án"
             onChange={handlePropertyTypeChange}
-          />
+          /> */}
           <InputSelect
             id="sort-time"
             register={register}
@@ -511,11 +597,7 @@ const ManagePosts = () => {
             register={register}
             errors={errors}
             placeholder="Thành phố"
-            options={
-              cities.map((city, index) => (
-                { label: city, code: city }
-              ))
-            }
+            options={cities.map((city, index) => ({ label: city, code: city }))}
             containerClassname="flex-none w-fit"
             inputClassname="w-fit rounded-md"
             value={selectedCity}
@@ -536,7 +618,7 @@ const ManagePosts = () => {
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage="Số hàng mỗi trang"
+        labelRowsPerPage="Số hàng mỗi trang:"
         labelDisplayedRows={({ from, to, count }) =>
           `${from}-${to} trên tổng số ${count}`
         }
