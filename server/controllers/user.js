@@ -61,6 +61,42 @@ module.exports = {
       currentUser: response,
     });
   }),
+  getUsers: asyncHandler(async (req, res) => {
+    try {
+      const response = await db.User.findAll(
+        {
+          attributes: {
+            exclude: ["password"],
+          },
+          include: [
+            {
+              model: db.User_Role,
+              attributes: ["roleCode"],
+              as: "userRoles",
+              include: [
+                {
+                  model: db.Role,
+                  as: "roleName",
+                  attributes: ["value"],
+                },
+              ],
+            }
+          ]
+        }
+      )
+
+      return res.json({
+        success: Boolean(response),
+        mes: "Got data successfully!",
+        users: response
+      });
+    } catch (error) {
+      return res.json({
+        success: false,
+        mes: error.message,
+      });
+    }
+  }),
   getRoles: asyncHandler(async (req, res) => {
     const response = await db.Role.findAll({
       attributes: ["code", "value"],
@@ -71,6 +107,45 @@ module.exports = {
       roles: response,
     });
   }),
+  updateUserStatus: asyncHandler(async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      const user = await db.User.findOne({ where: { id } });
+  
+      if (!user) {
+        return res.json({
+          success: false,
+          mes: "User not found",
+        });
+      }
+  
+      const newAvailability = !user.isAvailable;
+  
+      const [updated] = await db.User.update(
+        { isAvailable: newAvailability },
+        { where: { id } }
+      );
+  
+      if (updated) {
+        return res.json({
+          success: true,
+          mes: "Updated successfully!",
+        });
+      } else {
+        return res.json({
+          success: false,
+          mes: "Update failed!",
+        });
+      }
+  
+    } catch (error) {
+      return res.json({
+        success: false,
+        mes: error.message,
+      });
+    }
+  }),  
   updateProfile: asyncHandler(async (req, res) => {
     const { name, email, address, avatar, phone } = req.body;
     const updateData = new Object();

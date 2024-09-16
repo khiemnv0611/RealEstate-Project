@@ -3,7 +3,7 @@ const ctrls = require("../controllers/user");
 const Joi = require("joi");
 const validateDto = require("../middlewares/validation");
 const { stringReq, array, string, numberReq, booleanReq } = require("../middlewares/joiSchema");
-const { verifyToken } = require("../middlewares/verifyToken");
+const { verifyToken, isAdmin } = require("../middlewares/verifyToken");
 
 // GET
 router.get("/current", verifyToken, ctrls.getCurrent);
@@ -11,6 +11,7 @@ router.get("/roles", ctrls.getRoles);
 router.get("/wish/:id", verifyToken, ctrls.checkIsPropertyInWishList)
 router.get("/wishlist/", verifyToken, ctrls.getWishListByUser)
 router.get("/notifications", verifyToken, ctrls.getUserNotifications)
+router.get("/all", verifyToken, isAdmin, ctrls.getUsers)
 
 // POST
 router.post("/wish/:id", validateDto(Joi.object({owner: numberReq})), verifyToken, ctrls.addPropertyToWish)
@@ -42,5 +43,11 @@ router.put(
   ),
   ctrls.updateProfile
 );
+router.put(
+  "/status/:id",
+  verifyToken,
+  isAdmin,
+  ctrls.updateUserStatus
+)
 
 module.exports = router;

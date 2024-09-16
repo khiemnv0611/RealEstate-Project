@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       avatar: DataTypes.STRING,
+      isAvailable: DataTypes.BOOLEAN,
     },
     {
       sequelize,

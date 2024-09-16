@@ -69,33 +69,39 @@ const ManagePosts = () => {
     }
   };
 
-  const handleCheckboxChange = (index) => {
+  const handleCheckboxChange = (pid) => {
     setSelectedRows((prevSelectedRows) => {
       let updatedSelectedRows;
-      if (prevSelectedRows.includes(index)) {
-        updatedSelectedRows = prevSelectedRows.filter(
-          (rowIndex) => rowIndex !== index
-        );
+  
+      if (prevSelectedRows.includes(pid)) {
+        // Nếu user đã được chọn, thì loại bỏ user đó khỏi danh sách
+        updatedSelectedRows = prevSelectedRows.filter((id) => id !== pid);
         setDisabledButtons((prevDisabledButtons) => {
           const updatedDisabledButtons = [...prevDisabledButtons];
-          updatedDisabledButtons[index] = false;
+          updatedDisabledButtons[pid] = false; // Bật lại button cho user này
           return updatedDisabledButtons;
         });
       } else {
-        updatedSelectedRows = [...prevSelectedRows, index];
+        // Nếu user chưa được chọn, thì thêm vào danh sách
+        updatedSelectedRows = [...prevSelectedRows, pid];
         setDisabledButtons((prevDisabledButtons) => {
           const updatedDisabledButtons = [...prevDisabledButtons];
-          updatedDisabledButtons[index] = true;
+          updatedDisabledButtons[pid] = true; // Disable button cho user này
           return updatedDisabledButtons;
         });
       }
-
-      if (updatedSelectedRows.length < totalRows) {
-        setSelectAll(false);
-      } else {
+  
+      // Kiểm tra nếu tất cả các user trong trang hiện tại đều được chọn
+      const start = page * rowsPerPage;
+      const end = start + rowsPerPage;
+      const visibleProperties = filteredProperties.slice(start, end).map(property => property.id);
+  
+      if (visibleProperties.every((id) => updatedSelectedRows.includes(id))) {
         setSelectAll(true);
+      } else {
+        setSelectAll(false);
       }
-
+  
       return updatedSelectedRows;
     });
   };
@@ -246,7 +252,7 @@ const ManagePosts = () => {
           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
           .map((property, index) => (
             <tr
-              key={index}
+              key={property.id}
               className={twMerge(
                 clsx(
                   "border-b border-gray-200",
@@ -336,12 +342,16 @@ const ManagePosts = () => {
                       "px-2 py-1 border border-gray-400 flex items-center",
                       clsx({
                         "bg-green-400 hover:underline cursor-pointer":
-                          disabledButtons[index],
+                          disabledButtons[property.id],
                         " bg-gray-200 cursor-not-allowed":
-                          !disabledButtons[index],
+                          !disabledButtons[property.id],
                       })
                     )}
-                    onClick={() => handleApprove(property.id, "Đã duyệt", "Bạn có muốn duyệt bài đăng này")}
+                    onClick={() => {
+                      if (disabledButtons[property.id]) {
+                        handleApprove(property.id, "Đã duyệt", "Bạn có muốn duyệt bài đăng này");
+                      }
+                    }}
                   >
                     Duyệt
                   </span>
@@ -350,12 +360,16 @@ const ManagePosts = () => {
                       "px-2 py-1 border border-gray-400 flex items-center",
                       clsx({
                         "bg-red-400 hover:underline cursor-pointer":
-                          disabledButtons[index],
+                          disabledButtons[property.id],
                         " bg-gray-200 cursor-not-allowed":
-                          !disabledButtons[index],
+                          !disabledButtons[property.id],
                       })
                     )}
-                    onClick={() => handleApprove(property.id, "Bị hủy", "Bạn có muốn từ chối bài đăng này")}
+                    onClick={() => {
+                      if (disabledButtons[property.id]) {
+                        handleApprove(property.id, "Bị hủy", "Bạn có muốn từ chối bài đăng này");
+                      }
+                    }}
                   >
                     Từ chối
                   </span>

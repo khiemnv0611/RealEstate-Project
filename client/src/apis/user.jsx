@@ -6,11 +6,24 @@ export const apiGetCurrent = () =>
     method: "get",
   });
 
+export const apiGetUsers = () =>
+  axios({
+    url: "/user/all",
+    method: "get",
+  });
+
 export const apiGetRoles = () =>
   axios({
     url: "/user/roles",
     method: "get",
   });
+
+export const apiUpdateUserStatus = (id) =>
+  axios({
+    url: "/user/status/" + id,
+    method: "put",
+  });
+
 export const apiUpdateProfile = (data) =>
   axios({
     url: "/user/profile",
