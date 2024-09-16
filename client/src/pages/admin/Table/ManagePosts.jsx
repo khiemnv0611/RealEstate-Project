@@ -399,16 +399,16 @@ const ManagePosts = () => {
           {renderTableHead()}
           {renderTableBody()}
         </table>
-        <TablePagination
-          component="div"
-          count={postsData.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          labelRowsPerPage="Số hàng mỗi trang:"
-        />
       </div>
+      <TablePagination
+        component="div"
+        count={postsData.length}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        labelRowsPerPage="Số hàng mỗi trang:"
+      />
     </div>
   );
 };
