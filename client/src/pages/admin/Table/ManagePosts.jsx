@@ -10,6 +10,7 @@ import { apiGetPropertiesWithoutPagination, apiUpdatePropertiesStatus, apiUpdate
 import { usePropertiesStore } from "~/store/usePropertiesStore";
 import { cityDistricts } from "~/utils/constants";
 import Swal from "sweetalert2";
+import { ImageList, ImageListItem } from "@mui/material";
 
 const ManagePosts = () => {
   const [page, setPage] = useState(0); // Quản lý trang hiện tại
@@ -274,7 +275,13 @@ const ManagePosts = () => {
                 {new Date(property.createdAt).toLocaleString()}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                <div className="w-fit px-2 mx-auto rounded-3xl bg-orange-500">
+                <div className={twMerge("w-fit px-2 mx-auto rounded-3xl text-white",
+                  clsx({
+                    "bg-orange-500": property.status === "Chờ duyệt" ,
+                    "bg-green-500": property.status === "Đã duyệt",
+                    "bg-red-500": property.status === "Bị hủy"
+                  })
+                )}>
                   {property.status}
                 </div>
               </td>
@@ -318,10 +325,26 @@ const ManagePosts = () => {
                 {property.city}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {property.featuredImage}
+                <img
+                  src={property.featuredImage}
+                  alt={property.name}
+                  className="w-64 h-24 object-cover bg-gray-500 rounded"
+                />
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {property.images.join(", ")}
+                {/* {property.images.join(", ")} */}
+                <ImageList sx={{ width: 425, height: 128 }} variant="masonry" cols={3} gap={8}>
+                  {property.images.map((item) => (
+                    <ImageListItem key={item}>
+                      <img
+                        srcSet={`${item}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                        src={`${item}?w=248&fit=crop&auto=format`}
+                        alt={item}
+                        loading="lazy"
+                      />
+                    </ImageListItem>
+                  ))}
+                </ImageList>
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
                 {property.bedRoom}
@@ -330,7 +353,7 @@ const ManagePosts = () => {
                 {property.bathRoom}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {property.size} m<sup>2</sup>
+                {property.propertySize} m<sup>2</sup>
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
                 {property.yearBuilt}
