@@ -18,7 +18,7 @@ import { ImageList, ImageListItem } from "@mui/material";
 
 const ManagePosts = () => {
   const [page, setPage] = useState(0); // Quản lý trang hiện tại
-  const [rowsPerPage, setRowsPerPage] = useState(10); // Số lượng hàng mỗi trang
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Số lượng hàng mỗi trang
   const [searchPostedBy, setSearchPostedBy] = useState(""); // Tìm kiếm tên người đăng
   const [selectedPropertyType, setSelectedPropertyType] = useState(null); // Loại hình dự án
   const [selectedListingType, setSelectedListingType] = useState(""); // Loại giao dịch
@@ -212,7 +212,7 @@ const ManagePosts = () => {
       text: message,
       showConfirmButton: true,
       showCancelButton: true,
-      confirmButtonText: "Có!",
+      confirmButtonText: "Có",
       cancelButtonText: "Hủy",
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -243,7 +243,7 @@ const ManagePosts = () => {
       text: message,
       showConfirmButton: true,
       showCancelButton: true,
-      confirmButtonText: "Có!",
+      confirmButtonText: "Có",
       cancelButtonText: "Hủy",
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -271,26 +271,39 @@ const ManagePosts = () => {
     return (
       <thead className="sticky top-0 bg-gray-200 z-20">
         <tr>
-          <th className="whitespace-nowrap px-10 py-3">
+          <th className="sticky left-0 z-10 bg-gray-200 whitespace-nowrap px-10 py-3">
             <RiCheckboxIndeterminateFill size={20} />
           </th>
-          <th className="whitespace-nowrap px-10 py-3">STT</th>
-          <th className="whitespace-nowrap px-10 py-3">Thời gian</th>
-          <th className="whitespace-nowrap px-10 py-3">Trạng thái</th>
-          <th className="whitespace-nowrap px-10 py-3">Người đăng</th>
-          <th className="whitespace-nowrap px-10 py-3">Loại giao dịch</th>
-          <th className="whitespace-nowrap px-10 py-3">Loại hình dự án</th>
-          <th className="whitespace-nowrap px-10 py-3">Tiêu đề</th>
-          <th className="whitespace-nowrap px-10 py-3">Mô tả</th>
-          <th className="whitespace-nowrap px-10 py-3">Địa chỉ</th>
-          <th className="whitespace-nowrap px-10 py-3">Thành phố</th>
-          <th className="whitespace-nowrap px-10 py-3">Hình tổng quát</th>
-          <th className="whitespace-nowrap px-10 py-3">Toàn bộ hình ảnh</th>
-          <th className="whitespace-nowrap px-10 py-3">Số phòng ngủ</th>
-          <th className="whitespace-nowrap px-10 py-3">Số phòng tắm</th>
-          <th className="whitespace-nowrap px-10 py-3">Diện tích</th>
-          <th className="whitespace-nowrap px-10 py-3">Năm xây dựng</th>
-          <th></th>
+          <th className="relative whitespace-nowrap px-10 py-3">STT</th>
+          <th className="relative whitespace-nowrap px-10 py-3">Thời gian</th>
+          <th className="relative whitespace-nowrap px-10 py-3">Trạng thái</th>
+          <th className="relative whitespace-nowrap px-10 py-3">Người đăng</th>
+          <th className="relative whitespace-nowrap px-10 py-3">
+            Loại giao dịch
+          </th>
+          <th className="relative whitespace-nowrap px-10 py-3">
+            Loại hình dự án
+          </th>
+          <th className="relative whitespace-nowrap px-10 py-3">Tiêu đề</th>
+          <th className="relative whitespace-nowrap px-10 py-3">Mô tả</th>
+          <th className="relative whitespace-nowrap px-10 py-3">Địa chỉ</th>
+          <th className="relative whitespace-nowrap px-10 py-3">Thành phố</th>
+          <th className="relative whitespace-nowrap px-10 py-3">
+            Hình tổng quát
+          </th>
+          <th className="relative whitespace-nowrap px-10 py-3">
+            Toàn bộ hình ảnh
+          </th>
+          <th className="relative whitespace-nowrap px-10 py-3">
+            Số phòng ngủ
+          </th>
+          <th className="relative whitespace-nowrap px-10 py-3">
+            Số phòng tắm
+          </th>
+          <th className="relative whitespace-nowrap px-10 py-3">Diện tích</th>
+          <th className="relative whitespace-nowrap px-10 py-3">
+            Năm xây dựng
+          </th>
         </tr>
       </thead>
     );
@@ -311,7 +324,16 @@ const ManagePosts = () => {
                 )
               )}
             >
-              <td className="relative p-6 text-center whitespace-nowrap border-b">
+              <td
+                className={twMerge(
+                  clsx(
+                    "sticky left-0 z-10 p-6 text-center whitespace-nowrap border-b",
+                    selectedRows.includes(property.id)
+                      ? "bg-blue-200"
+                      : "bg-white"
+                  )
+                )}
+              >
                 <input
                   type="checkbox"
                   checked={selectedRows.includes(property.id)}
@@ -389,7 +411,12 @@ const ManagePosts = () => {
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
                 {/* {property.images.join(", ")} */}
-                <ImageList sx={{ width: 425, height: 128 }} variant="masonry" cols={3} gap={8}>
+                <ImageList
+                  sx={{ width: 425, height: 128 }}
+                  variant="masonry"
+                  cols={3}
+                  gap={8}
+                >
                   {property.images.map((item) => (
                     <ImageListItem key={item}>
                       <img
@@ -414,8 +441,15 @@ const ManagePosts = () => {
               <td className="relative p-6 text-center whitespace-nowrap border-b">
                 {property.yearBuilt}
               </td>
-              <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
-                {property.status === "Chờ duyệt" && (
+              {property.status === "Chờ duyệt" && (
+                <td
+                  className={twMerge(
+                    "p-6 text-center whitespace-nowrap sticky right-0 z-10",
+                    selectedRows.includes(property.id)
+                      ? "bg-blue-200"
+                      : "bg-white" // Đồng bộ màu với tr khi được chọn
+                  )}
+                >
                   <div className="flex gap-1">
                     <span
                       className={twMerge(
@@ -423,7 +457,7 @@ const ManagePosts = () => {
                         clsx({
                           "bg-green-400 hover:underline cursor-pointer":
                             disabledButtons[property.id],
-                          " bg-gray-200 cursor-not-allowed":
+                          "bg-gray-200 cursor-not-allowed":
                             !disabledButtons[property.id],
                         })
                       )}
@@ -445,7 +479,7 @@ const ManagePosts = () => {
                         clsx({
                           "bg-red-400 hover:underline cursor-pointer":
                             disabledButtons[property.id],
-                          " bg-gray-200 cursor-not-allowed":
+                          "bg-gray-200 cursor-not-allowed":
                             !disabledButtons[property.id],
                         })
                       )}
@@ -462,8 +496,8 @@ const ManagePosts = () => {
                       Từ chối
                     </span>
                   </div>
-                )}
-              </td>
+                </td>
+              )}
             </tr>
           ))}
       </tbody>

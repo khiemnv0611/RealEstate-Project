@@ -8,6 +8,7 @@ import { Button, InputForm, InputSelect } from "~/components";
 import TablePagination from "@mui/material/TablePagination";
 import { apiGetUsers, apiUpdateUserStatus } from "~/apis/user";
 import Swal from "sweetalert2";
+import { FaCheck } from "react-icons/fa6";
 
 const ManageAccounts = () => {
   const [page, setPage] = useState(0); // Quản lý trang hiện tại
@@ -33,8 +34,6 @@ const ManageAccounts = () => {
 
   const totalRows = 16;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
-  const checkboxRef = useRef(null);
   const [disabledButtons, setDisabledButtons] = useState([]);
   const [users, setUsers] = useState([]);
   const [userMode, setUserMode] = useState("ALL");
@@ -42,26 +41,31 @@ const ManageAccounts = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
 
   const handleCheckboxChange = (userId) => {
-    setSelectedRows(() => {
-      // Chỉ cho phép chọn 1 user, nên userId sẽ là user được chọn duy nhất
-      const updatedSelectedRows = [userId];
+    setSelectedRows((prevSelectedRows) => {
+      // Nếu userId đã có trong mảng, thì bỏ chọn (xóa khỏi mảng)
+      if (prevSelectedRows.includes(userId)) {
+        setDisabledButtons((prevDisabledButtons) => {
+          const updatedDisabledButtons = [...prevDisabledButtons];
+          // Bật lại button cho user vừa bị bỏ chọn
+          updatedDisabledButtons[userId] = false;
+          return updatedDisabledButtons;
+        });
+        return [];
+      } else {
+        // Chọn userId và disable button cho user đó
+        setDisabledButtons((prevDisabledButtons) => {
+          const updatedDisabledButtons = [...prevDisabledButtons];
+          // Bật lại tất cả các button
+          for (let i = 0; i < updatedDisabledButtons.length; i++) {
+            updatedDisabledButtons[i] = false;
+          }
+          // Disable button của user được chọn
+          updatedDisabledButtons[userId] = true;
+          return updatedDisabledButtons;
+        });
 
-      // Disable button cho user được chọn và bật lại cho tất cả các user khác
-      setDisabledButtons((prevDisabledButtons) => {
-        const updatedDisabledButtons = [...prevDisabledButtons];
-
-        // Bật lại tất cả các button
-        for (let i = 0; i < updatedDisabledButtons.length; i++) {
-          updatedDisabledButtons[i] = false;
-        }
-
-        // Disable button của user được chọn
-        updatedDisabledButtons[userId] = true;
-
-        return updatedDisabledButtons;
-      });
-
-      return updatedSelectedRows;
+        return [userId]; // Chỉ chọn 1 user
+      }
     });
   };
 
@@ -128,13 +132,16 @@ const ManageAccounts = () => {
       text: message,
       showConfirmButton: true,
       showCancelButton: true,
-      confirmButtonText: "Xóa!",
+      confirmButtonText: "Có",
       cancelButtonText: "Hủy",
     }).then(async (result) => {
       if (result.isConfirmed) {
         const res = await apiUpdateUserStatus(id);
         if (res) {
-          Swal.fire("Đã khóa tài khoản", "", "success");
+          Swal.fire("Thành công!", "", "success").then(() => {
+            // Tải lại trang sau khi thông báo thành công
+            window.location.reload();
+          });
         }
       }
     });
@@ -144,18 +151,22 @@ const ManageAccounts = () => {
     return (
       <thead className="sticky top-0 bg-gray-200 z-20">
         <tr>
-          <th className="whitespace-nowrap px-10 py-3">
+          <th className="sticky left-0 z-10 whitespace-nowrap px-10 py-3">
             <RiCheckboxIndeterminateFill size={20} />
           </th>
-          <th className="whitespace-nowrap px-10 py-3">STT</th>
-          <th className="whitespace-nowrap px-10 py-3">Tên tài khoản</th>
-          <th className="whitespace-nowrap px-10 py-3">Avatar</th>
-          <th className="whitespace-nowrap px-10 py-3">Email</th>
-          <th className="whitespace-nowrap px-10 py-3">Số điện thoại</th>
-          <th className="whitespace-nowrap px-10 py-3">Vai trò</th>
-          <th className="whitespace-nowrap px-10 py-3">Ngày tạo</th>
-          <th className="whitespace-nowrap px-10 py-3">Available</th>
-          <th className="whitespace-nowrap px-10 py-3"></th>
+          <th className="relative whitespace-nowrap px-10 py-3">STT</th>
+          <th className="relative whitespace-nowrap px-10 py-3">
+            Tên tài khoản
+          </th>
+          <th className="relative whitespace-nowrap px-10 py-3">Avatar</th>
+          <th className="relative whitespace-nowrap px-10 py-3">Email</th>
+          <th className="relative whitespace-nowrap px-10 py-3">
+            Số điện thoại
+          </th>
+          <th className="relative whitespace-nowrap px-10 py-3">Vai trò</th>
+          <th className="relative whitespace-nowrap px-10 py-3">Trạng thái</th>
+          <th className="relative whitespace-nowrap px-10 py-3">Ngày tạo</th>
+          <th className="relative whitespace-nowrap px-10 py-3"></th>
         </tr>
       </thead>
     );
@@ -172,11 +183,16 @@ const ManageAccounts = () => {
               className={twMerge(
                 clsx(
                   "border-b border-gray-200",
-                  selectedRows.includes(user.id) && "bg-blue-200"
+                  selectedRows.includes(user.id) ? "bg-blue-200" : "bg-white"
                 )
               )}
             >
-              <td className="relative p-6 text-center whitespace-nowrap border-b">
+              <td
+                className={twMerge(
+                  "sticky left-0 z-10 p-6 text-center whitespace-nowrap border-b",
+                  selectedRows.includes(user.id) ? "bg-blue-200" : "bg-white" // Đồng bộ màu nền khi được chọn
+                )}
+              >
                 <input
                   type="checkbox"
                   checked={selectedRows.includes(user.id)}
@@ -206,35 +222,64 @@ const ManageAccounts = () => {
                 {user.userRoles.map((role) => role.roleName.value).join(", ")}
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {new Date(user.createdAt).toLocaleString()}
+                <span
+                  className={twMerge(
+                    clsx(
+                      "font-bold",
+                      user.isAvailable ? "text-green-500" : "text-red-500"
+                    )
+                  )}
+                >
+                  {user.isAvailable ? "Hoạt động" : "Đã khóa"}
+                </span>
               </td>
               <td className="relative p-6 text-center whitespace-nowrap border-b">
-                {user.isAvailable ? "Hoạt động" : "Đã khóa"}
+                {new Date(user.createdAt).toLocaleString()}
               </td>
-              <td className="p-6 text-center whitespace-nowrap sticky right-0 z-10">
+              <td
+                className={twMerge(
+                  "p-6 text-center whitespace-nowrap sticky right-0 z-10",
+                  selectedRows.includes(user.id) ? "bg-blue-200" : "bg-white" // Đồng bộ màu với tr khi được chọn
+                )}
+              >
                 <span
                   className={twMerge(
                     "p-2 border border-gray-400 flex items-center w-fit",
                     clsx({
-                      "bg-red-400 cursor-pointer": disabledButtons[user.id],
-                      " bg-gray-200 cursor-not-allowed":
-                        !disabledButtons[user.id],
+                      "bg-green-400 cursor-pointer":
+                        !user.isAvailable && disabledButtons[user.id], // FaCheck
+                      "bg-red-400 cursor-pointer":
+                        user.isAvailable && disabledButtons[user.id], // MdDeleteOutline
+                      "bg-gray-200 cursor-not-allowed":
+                        !disabledButtons[user.id], // Disabled state
                     })
                   )}
                 >
-                  <MdDeleteOutline
-                    size={18}
-                    onClick={() => {
-                      if (disabledButtons[user.id]) {
-                        handleApprove(
-                          user.id,
-                          user.isAvailable
-                            ? "Xác nhận khóa tài khoản"
-                            : "Xác nhận mở khóa tài khoản"
-                        );
-                      }
-                    }}
-                  />
+                  {user.isAvailable ? (
+                    <MdDeleteOutline
+                      size={17}
+                      onClick={() => {
+                        if (disabledButtons[user.id]) {
+                          handleApprove(
+                            user.id,
+                            "Xác nhận khóa tài khoản" // hoặc tùy theo ngữ cảnh
+                          );
+                        }
+                      }}
+                    />
+                  ) : (
+                    <FaCheck
+                      // size={18}
+                      onClick={() => {
+                        if (disabledButtons[user.id]) {
+                          handleApprove(
+                            user.id,
+                            "Xác nhận mở khóa tài khoản" // hoặc tùy theo ngữ cảnh
+                          );
+                        }
+                      }}
+                    />
+                  )}
                 </span>
               </td>
             </tr>
@@ -296,14 +341,15 @@ const ManageAccounts = () => {
             register={register}
             id="sort"
             errors={errors}
-            placeholder="Thứ tự"
+            placeholder="Trạng thái"
             options={[
-              { label: "Đang hoạt động", code: "-createdAt" },
-              { label: "Bị khóa", code: "createdAt" },
+              { label: "Đang hoạt động", code: "Hoạt động" },
+              { label: "Bị khóa", code: "Đã khóa" },
             ]}
             containerClassname="flex-row items-center gap-2"
-            label="Sắp xếp: "
+            label="Lọc: "
             inputClassname="w-fit rounded-md"
+            onChange={(e) => setSelectedStatus(e.target.value)}
           />
           <InputForm
             id="search-user"

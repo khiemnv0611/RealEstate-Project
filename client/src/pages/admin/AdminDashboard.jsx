@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Title } from "~/components";
 import { GrDocumentText } from "react-icons/gr";
 import { FaUsers } from "react-icons/fa6";
@@ -8,7 +8,15 @@ import { useForm } from "react-hook-form";
 import { ManageAccounts, ManagePosts } from ".";
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("POSTS");
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem("activeTab") || "POSTS";
+  });
+
+  // Mỗi khi activeTab thay đổi, lưu nó vào localStorage
+  useEffect(() => {
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
+
   const {
     register,
     formState: { errors },
