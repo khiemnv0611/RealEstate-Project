@@ -12,6 +12,7 @@ router.get("/wish/:id", verifyToken, ctrls.checkIsPropertyInWishList)
 router.get("/wishlist/", verifyToken, ctrls.getWishListByUser)
 router.get("/notifications", verifyToken, ctrls.getUserNotifications)
 router.get("/all", verifyToken, isAdmin, ctrls.getUsers)
+router.get("/count", verifyToken, isAdmin, ctrls.getUsersCount)
 
 // POST
 router.post("/wish/:id", validateDto(Joi.object({owner: numberReq})), verifyToken, ctrls.addPropertyToWish)

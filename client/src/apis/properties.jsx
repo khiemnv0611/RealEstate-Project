@@ -7,6 +7,12 @@ export const apiGetProperties = (params) =>
     params,
   });
 
+export const apiGetPropertiesCount = () =>
+  axios({
+    url: "/properties/count",
+    method: "get",
+  });
+
 export const apiGetPropertiesWithoutPagination = (params) =>
   axios({
     url: "/properties/nopagination",

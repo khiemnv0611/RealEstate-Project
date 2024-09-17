@@ -16,7 +16,7 @@ import { cityDistricts } from "~/utils/constants";
 import Swal from "sweetalert2";
 import { ImageList, ImageListItem } from "@mui/material";
 
-const ManagePosts = () => {
+const ManagePosts = ({ onChangeDataCount }) => {
   const [page, setPage] = useState(0); // Quản lý trang hiện tại
   const [rowsPerPage, setRowsPerPage] = useState(5); // Số lượng hàng mỗi trang
   const [searchPostedBy, setSearchPostedBy] = useState(""); // Tìm kiếm tên người đăng
@@ -199,10 +199,14 @@ const ManagePosts = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       const res = await apiGetPropertiesWithoutPagination();
-      if (res) setProperties(res.properties.rows);
+      if (res) {
+        setProperties(res.properties.rows);
+      }
     };
     fetchProperties();
   }, []);
+
+  // onChangeDataCount(filteredProperties.length)
 
   // DUYỆT 1 BÀI ĐĂNG
   const handleApprove = async (id, status, message) => {

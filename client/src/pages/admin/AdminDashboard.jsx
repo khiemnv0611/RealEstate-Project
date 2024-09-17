@@ -6,6 +6,8 @@ import { twMerge } from "tailwind-merge";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
 import { ManageAccounts, ManagePosts } from ".";
+import { apiGetPropertiesCount } from "~/apis/properties";
+import { apiGetUsersCount } from "~/apis/user";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState(() => {
@@ -23,6 +25,21 @@ const Dashboard = () => {
     watch,
     containerClassname,
   } = useForm();
+
+  // Callback function to get data
+  const [ postCount, setPostCount ] = useState(0);
+  const [ userCount, setUserCount ] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const posts = await apiGetPropertiesCount();
+      const users = await apiGetUsersCount();
+      setPostCount(posts.success ? posts.count : 0)
+      setUserCount(users.success ? users.count : 0)
+    }
+
+    fetchData()
+  }, [])
 
   return (
     <div>
@@ -43,7 +60,7 @@ const Dashboard = () => {
                 <GrDocumentText size={30} />
               </div>
               <div className="flex flex-col justify-between">
-                <h4 className="font-semibold text-2xl">Post.Count</h4>
+                <h4 className="font-semibold text-2xl">{postCount}</h4>
                 <span className="text-gray-500">Bài đăng</span>
               </div>
             </div>
@@ -62,7 +79,7 @@ const Dashboard = () => {
                 <FaUsers size={30} />
               </div>
               <div className="flex flex-col justify-between">
-                <h4 className="font-semibold text-2xl">User.Count</h4>
+                <h4 className="font-semibold text-2xl">{userCount}</h4>
                 <span className="text-gray-500">Tài khoản</span>
               </div>
             </div>

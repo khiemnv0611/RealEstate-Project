@@ -14,6 +14,7 @@ router.get("/", ctrls.getProperties);
 router.get("/nopagination", verifyToken, isAdmin, ctrls.getPropertiesWithoutPagination);
 router.get("/ownerproperties", verifyToken, ctrls.getPropertiesByUserId)
 router.get("/comments/:propertyId", ctrls.getPropertyComments)
+router.get("/count", verifyToken, isAdmin, ctrls.getPropetiesCount)
 
 // POST
 router.post(

@@ -10,7 +10,7 @@ import { apiGetUsers, apiUpdateUserStatus } from "~/apis/user";
 import Swal from "sweetalert2";
 import { FaCheck } from "react-icons/fa6";
 
-const ManageAccounts = () => {
+const ManageAccounts = ({ onChangeDataCount }) => {
   const [page, setPage] = useState(0); // Quản lý trang hiện tại
   const [rowsPerPage, setRowsPerPage] = useState(5); // Số lượng hàng mỗi trang
 
@@ -39,6 +39,7 @@ const ManageAccounts = () => {
   const [userMode, setUserMode] = useState("ALL");
   const [searchName, setSearchName] = useState(""); // Tìm kiếm tên
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState(null);
 
   const handleCheckboxChange = (userId) => {
     setSelectedRows((prevSelectedRows) => {
@@ -70,36 +71,39 @@ const ManageAccounts = () => {
   };
 
   useEffect(() => {
-    const filterByStatus = () => {
-      const filtered = users.filter((user) => {
-        const roles = user.userRoles.map((role) =>
-          role.roleName.value.toLowerCase()
-        );
+    const filtered = users.filter((user) => {
+      const roles = user.userRoles.map((role) =>
+        role.roleName.value.toLowerCase()
+      );
 
-        // Kiểm tra điều kiện theo từng `userMode`
-        if (userMode === "ALL") {
-          return (
-            roles.includes("khách hàng") ||
-            roles.includes("chủ tài sản") ||
-            roles.includes("môi giới")
-          );
-        }
-        if (userMode === "CUSTOMER") {
-          return roles.length === 1 && roles.includes("khách hàng");
-        }
-        if (userMode === "OWNER") {
-          return roles.includes("chủ tài sản");
-        }
-        if (userMode === "AGENT") {
-          return roles.includes("môi giới");
-        }
-        return true;
-      });
-      setFilteredUsers(filtered);
-    };
+      let filterMode = true;
+      // Kiểm tra điều kiện theo từng `userMode`
+      if (userMode === "ALL") {
+        filterMode = roles.includes("khách hàng") ||
+          roles.includes("chủ tài sản") ||
+          roles.includes("môi giới")
+      }
+      if (userMode === "CUSTOMER") {
+        filterMode = roles.length === 1 && roles.includes("khách hàng");
+      }
+      if (userMode === "OWNER") {
+        filterMode = roles.includes("chủ tài sản");
+      }
+      if (userMode === "AGENT") {
+        filterMode = roles.includes("môi giới");
+      }
 
-    filterByStatus();
-  }, [userMode, users]);
+      const statusFilter =
+        selectedStatus === null || selectedStatus === ""
+          ? true
+          : user.isAvailable === (selectedStatus === "true");
+
+      return statusFilter && filterMode;
+    });
+    
+    console.log(selectedStatus)
+    setFilteredUsers(filtered);
+  }, [selectedStatus, userMode, users]);
 
   // LỌC DANH SÁCH THEO KEYWORDS
   useEffect(() => {
@@ -118,11 +122,15 @@ const ManageAccounts = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await apiGetUsers();
-      if (response) setUsers(response.users);
+      if (response) {
+        setUsers(response.users);
+      }
     };
 
     fetchUsers();
   }, []);
+
+  // onChangeDataCount(filteredUsers.length)
 
   // DUYỆT 1 USER
   const handleApprove = async (id, message) => {
@@ -343,13 +351,14 @@ const ManageAccounts = () => {
             errors={errors}
             placeholder="Trạng thái"
             options={[
-              { label: "Đang hoạt động", code: "Hoạt động" },
-              { label: "Bị khóa", code: "Đã khóa" },
+              { label: "Đang hoạt động", code: true },
+              { label: "Bị khóa", code: false },
             ]}
             containerClassname="flex-row items-center gap-2"
             label="Lọc: "
             inputClassname="w-fit rounded-md"
-            onChange={(e) => setSelectedStatus(e.target.value)}
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)} // value is string
           />
           <InputForm
             id="search-user"

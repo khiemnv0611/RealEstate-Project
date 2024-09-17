@@ -583,5 +583,21 @@ module.exports = {
       });
     }
   }),
+  getPropetiesCount: asyncHandler(async (req, res) => {
+    try {
+      const response = await db.Property.count();
 
+      return res.json({
+        success: true,
+        mes: response ? "Got." : "Cannot get properties.",
+        count: response
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        mes: "An error occurred while fetching the properties.",
+        error: error.message,
+      });
+    }
+  })
 };

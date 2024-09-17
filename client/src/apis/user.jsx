@@ -12,6 +12,12 @@ export const apiGetUsers = () =>
     method: "get",
   });
 
+export const apiGetUsersCount = () =>
+  axios({
+    url: "/user/count",
+    method: "get",
+  });
+
 export const apiGetRoles = () =>
   axios({
     url: "/user/roles",
