@@ -19,6 +19,7 @@ const path = {
   USER_LAYOUT: "user",
   PERSONAL: "personal",
   WISHLIST: "wishlist",
+  DEPOSIT: "deposit",
 
   // AGENT
   AGENT_LAYOUT: "agent",

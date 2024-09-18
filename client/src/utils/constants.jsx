@@ -3,6 +3,7 @@ import { RiDashboardLine } from "react-icons/ri";
 import { FaProjectDiagram } from "react-icons/fa";
 import { FaHouseChimneyUser } from "react-icons/fa6";
 import { FaRegHeart } from "react-icons/fa6";
+import { MdAddCard } from "react-icons/md";
 
 export const navigations = [
   {
@@ -68,6 +69,13 @@ export const userSidebar = [
     name: "Các dự án yêu thích",
     path: `/${path.USER_LAYOUT}/${path.WISHLIST}`,
     icon: <FaRegHeart size={25} />,
+    type: "SINGLE",
+  },
+  {
+    id: 12,
+    name: "Nạp tiền",
+    path: `/${path.USER_LAYOUT}/${path.DEPOSIT}`,
+    icon: <MdAddCard size={25} />,
     type: "SINGLE",
   },
 ];

@@ -46,11 +46,11 @@ const WishList = () => {
   };
 
   return (
-    <div>
+    <div className="bg-gray-200 px-8 h-full">
       <Title title="CÁC DỰ ÁN YÊU THÍCH"></Title>
       {properties?.map((property) => (
         <div className="p-8">
-          <div className="border border-main-700 rounded-md p-4 flex gap-4 items-center relative">
+          <div className="border shadow-lg rounded-md p-4 flex gap-4 items-center relative bg-white">
             <IoClose
               className="absolute top-2 right-2 h-10 w-10 text-gray-600 cursor-pointer rounded-md p-2 hover:bg-gray-200 "
               onClick={() => handleFavoriteToggle(property.id)}

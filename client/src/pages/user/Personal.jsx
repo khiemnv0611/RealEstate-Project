@@ -62,7 +62,7 @@ const Personal = () => {
   };
 
   return (
-    <div>
+    <div className="px-8">
       <Title title="THÔNG TIN CÁ NHÂN">
         <Button className="font-bold" onClick={handleSubmit(onSubmit)}>
           Cập nhật

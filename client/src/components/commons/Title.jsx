@@ -6,7 +6,10 @@ const Title = ({ title, children, className }) => {
   return (
     <div
       className={twMerge(
-        clsx("p-4 border-b flex justify-between items-center", className)
+        clsx(
+          "p-4 border-b border-gray-400 flex justify-between items-center",
+          className
+        )
       )}
     >
       <h1 className="font-bold text-2xl tracking-tight">{title}</h1>

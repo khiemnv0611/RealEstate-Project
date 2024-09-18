@@ -15,7 +15,7 @@ import {
   AdminDashboard,
   ManagePropertyType,
 } from "~/pages/admin";
-import { Personal, WishList, UserLayout } from "~/pages/user";
+import { Personal, WishList, UserLayout, Deposit } from "~/pages/user";
 import { OwnerLayout, OwnerDashboard } from "~/pages/owner";
 import AuthCallback from "~/components/login/AuthCallback";
 import AuthFailure from "~/components/login/AuthFailure";
@@ -92,6 +92,10 @@ const routes = [
           {
             path: path.WISHLIST,
             element: <WishList />,
+          },
+          {
+            path: path.DEPOSIT,
+            element: <Deposit />,
           },
         ],
       },

@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       avatar: DataTypes.STRING,
       isAvailable: DataTypes.BOOLEAN,
+      balance: DataTypes.FLOAT,
     },
     {
       sequelize,

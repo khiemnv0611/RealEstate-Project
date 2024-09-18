@@ -445,7 +445,7 @@ const ManagePosts = ({ onChangeDataCount }) => {
               <td className="relative p-6 text-center whitespace-nowrap border-b">
                 {property.yearBuilt}
               </td>
-              {property.status === "Chờ duyệt" && (
+              {property.status === "Chờ duyệt" ? (
                 <td
                   className={twMerge(
                     "p-6 text-center whitespace-nowrap sticky right-0 z-10",
@@ -501,6 +501,8 @@ const ManagePosts = ({ onChangeDataCount }) => {
                     </span>
                   </div>
                 </td>
+              ) : (
+                <td className="relative p-6 text-center whitespace-nowrap border-b"></td>
               )}
             </tr>
           ))}

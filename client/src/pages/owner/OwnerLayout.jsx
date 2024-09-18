@@ -34,7 +34,7 @@ const OwnerLayout = () => {
           <div className="col-span-2">
             <OwnerSideBar />
           </div>
-          <div className="col-span-9 px-8">
+          <div className="col-span-9">
             <Outlet />
           </div>
         </div>

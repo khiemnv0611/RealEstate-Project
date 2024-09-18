@@ -2,30 +2,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("UserMedias", {
+    await queryInterface.createTable("MembershipPlans", {
       id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
-        autoIncrement: true,
       },
-      uid: {
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      price: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false,
+      },
+      description: {
+        type: Sequelize.TEXT,
+      },
+      postLimit: {
         type: Sequelize.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-        },
-      },
-      provider: {
-        type: Sequelize.STRING,
         allowNull: false,
       },
-      link: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      icon: {
-        type: Sequelize.STRING,
+      duration: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       createdAt: {
@@ -39,6 +39,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("UserMedias");
+    await queryInterface.dropTable("MembershipPlans");
   },
 };

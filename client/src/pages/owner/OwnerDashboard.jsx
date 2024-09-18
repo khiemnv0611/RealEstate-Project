@@ -68,7 +68,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
+    <div className="bg-gray-200 px-8 h-full">
       <Title title="CÁC DỰ ÁN ĐÃ ĐĂNG"></Title>
       <div className="flex items-center justify-center gap-4">
         <Button
@@ -108,7 +108,7 @@ const Dashboard = () => {
 
       {filteredProperties?.map((property) => (
         <div className="p-8" key={property.id}>
-          <div className="border border-main-700 rounded-md p-4 flex items-center justify-between">
+          <div className="border shadow-lg rounded-md p-4 flex items-center justify-between bg-white">
             <div className="flex gap-4 items-center">
               <Link
                 to={`/${path.PROPERTIES}/${property.id}`}

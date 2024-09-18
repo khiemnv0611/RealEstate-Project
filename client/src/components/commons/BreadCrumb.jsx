@@ -11,6 +11,8 @@ const breadcrumbRoutes = [
   { path: "/", breadcrumb: "Trang chủ" },
   { path: "/properties", breadcrumb: "Dự án" },
   { path: "/properties/:id", breadcrumb: DynamicBreakCrumb },
+  { path: "/about-us", breadcrumb: "Giới thiệu" },
+  { path: "/our-agents", breadcrumb: "Môi giới" },
   { path: "/add-post", breadcrumb: "Đăng tin" },
 ];
 
