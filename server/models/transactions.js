@@ -9,6 +9,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Transactions.belongsTo(models.User, {
+        foreignKey: "userId",
+        as: "rUser",
+      });
+      Transactions.belongsTo(models.MembershipPlans, {
+        foreignKey: "membershipPlansId",
+        as: "rMembershipPlans",
+      });
     }
   }
   Transactions.init(
@@ -20,6 +28,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM,
         values: ["Nạp tiền", "Mua gói"],
       },
+      userId: DataTypes.INTEGER,
+      membershipPlansId: DataTypes.INTEGER
     },
     {
       sequelize,

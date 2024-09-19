@@ -20,6 +20,12 @@ import { OwnerLayout, OwnerDashboard } from "~/pages/owner";
 import AuthCallback from "~/components/login/AuthCallback";
 import AuthFailure from "~/components/login/AuthFailure";
 
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { stripeKey } from "./constants";
+
+const stripePromise = loadStripe(stripeKey);
+
 const routes = [
   {
     path: "/",
@@ -95,7 +101,11 @@ const routes = [
           },
           {
             path: path.DEPOSIT,
-            element: <Deposit />,
+            element: (
+              <Elements stripe={stripePromise}>
+                <Deposit />
+              </Elements>
+            ),
           },
         ],
       },

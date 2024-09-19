@@ -172,3 +172,5 @@ export const cityDistricts = {
     "Bến Lức": ["Thị trấn Bến Lức", "Xã Nhựt Chánh"],
   },
 };
+
+export const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;

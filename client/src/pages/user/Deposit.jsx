@@ -12,6 +12,14 @@ import {
   FormHelperText,
   TextField,
 } from "@mui/material";
+import {
+  useStripe,
+  useElements,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+} from "@stripe/react-stripe-js";
+import { createPayment } from "~/apis/payment";
 
 const Deposit = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -20,9 +28,6 @@ const Deposit = () => {
     setIsVisible(!isVisible);
   };
 
-  const [numberValue, setNumberValue] = useState("");
-  const [textValue, setTextValue] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
   const [cvc, setCvc] = useState("");
   const [amount, setAmount] = useState("");
   const [isChecked, setIsChecked] = useState(false);
@@ -34,60 +39,9 @@ const Deposit = () => {
     amount: false,
   });
 
-  const handleNumberChange = (e) => {
-    const inputValue = e.target.value;
-
-    if (/^\d*$/.test(inputValue)) {
-      setNumberValue(inputValue);
-
-      if (inputValue.length === 16) {
-        setError((prev) => ({ ...prev, number: false }));
-      } else {
-        setError((prev) => ({ ...prev, number: true }));
-      }
-    }
-  };
-
-  const handleTextChange = (e) => {
-    const inputValue = e.target.value;
-
-    // Xóa dấu, số, ký tự đặc biệt và chuyển thành in hoa
-    const formattedValue = inputValue
-      .replace(/[^a-zA-Z\s]/g, "") // Chỉ giữ lại chữ và khoảng trắng
-      .toUpperCase(); // Chuyển thành chữ in hoa
-
-    setTextValue(formattedValue);
-
-    // Kiểm tra lỗi (tên không được rỗng)
-    if (formattedValue.trim() === "") {
-      setError((prev) => ({ ...prev, text: true }));
-    } else {
-      setError((prev) => ({ ...prev, text: false }));
-    }
-  };
-
-  const handleExpiryDateChange = (e) => {
-    const inputValue = e.target.value;
-
-    // Chỉ chấp nhận định dạng MM/YY với tối đa 5 ký tự
-    const formattedValue = inputValue
-      .replace(/[^0-9/]/g, "") // Chỉ giữ lại số và dấu "/"
-      .slice(0, 5); // Giới hạn tối đa 5 ký tự
-
-    // Tự động thêm dấu "/" sau khi nhập 2 số đầu
-    if (formattedValue.length === 2 && !formattedValue.includes("/")) {
-      setExpiryDate(formattedValue + "/");
-    } else {
-      setExpiryDate(formattedValue);
-    }
-
-    // Kiểm tra xem độ dài có đúng 5 ký tự và có định dạng MM/YY không
-    if (formattedValue.length === 5 && /^\d{2}\/\d{2}$/.test(formattedValue)) {
-      setError((prev) => ({ ...prev, expiryDate: false }));
-    } else {
-      setError((prev) => ({ ...prev, expiryDate: true }));
-    }
-  };
+  // Sử dụng Stripe hooks
+  const stripe = useStripe();
+  const elements = useElements();
 
   const handleCvcChange = (e) => {
     const inputValue = e.target.value;
@@ -128,37 +82,53 @@ const Deposit = () => {
     }
   };
 
-  const handleSubmit = () => {
-    // Kiểm tra tất cả các trường và cập nhật trạng thái lỗi nếu cần
-    const hasErrors = {
-      number: !numberValue.match(/^\d{16}$/),
-      text: textValue.trim() === "",
-      expiryDate: !expiryDate.match(/^\d{2}\/\d{2}$/),
-      cvc: !cvc.match(/^\d{3}$/),
-      amount: amount.replace(/,/g, "").trim() === "", // Loại bỏ dấu phẩy để kiểm tra rỗng
-      checkbox: !isChecked,
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
 
-    // Cập nhật trạng thái lỗi
-    setError((prev) => ({
-      ...prev,
-      ...hasErrors,
-    }));
+    const cardNumberElement = elements.getElement(CardNumberElement);
+    const cardExpiryElement = elements.getElement(CardExpiryElement);
+    const cardCvcElement = elements.getElement(CardCvcElement);
 
-    // Nếu không có lỗi, xử lý dữ liệu
-    if (Object.values(hasErrors).every((error) => !error)) {
-      const cardData = {
-        numberValue,
-        textValue,
-        expiryDate,
-        cvc,
-        amount,
-        isChecked,
-      };
+    if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
+      console.log("Card elements are not loaded properly.");
+      return;
+    }
 
-      console.log("Submitted Data: ", cardData);
+    const numericAmount = parseInt(amount.replace(/,/g, ""), 10);
 
-      // Thực hiện các xử lý tiếp theo với cardData như gửi lên server
+    if (error.cvc || error.amount || !isChecked) {
+      console.log("Validation failed.");
+      return;
+    }
+
+    try {
+      const { paymentMethod, error: stripeError } = await stripe.createPaymentMethod({
+        type: "card",
+        card: cardNumberElement,
+      });
+
+      if (stripeError) {
+        console.log("Stripe payment method error: ", stripeError);
+        return;
+      }
+
+      const response = await createPayment(numericAmount, 'vnd', paymentMethod.id);
+
+      if (response.success) {
+        console.log("Payment successful!", response.transaction);
+        alert("Payment successful!");
+        // Reset form fields
+        setAmount("");
+        setCvc("");
+        setIsChecked(false);
+        // Optionally redirect or update UI
+      } else {
+        console.log("Payment failed: ", response.mes);
+        alert(response.mes);
+      }
+    } catch (error) {
+      console.error("Error while processing payment: ", error.message);
     }
   };
 
@@ -211,49 +181,19 @@ const Deposit = () => {
         >
           <span className="font-semibold">Nhập thông tin thẻ</span>
           <img src="/visa-template.png" alt="" />
-          <TextField
-            id="number-card"
-            label="Số thẻ"
-            variant="outlined"
-            value={numberValue}
-            onChange={handleNumberChange}
-            error={error.number}
-            helperText={error.number ? "Số thẻ phải đúng 16 kí tự" : ""}
-            className="w-full max-w-lg"
-          />
 
-          <TextField
-            id="name-card"
-            label="Tên in trên thẻ"
-            variant="outlined"
-            value={textValue}
-            onChange={handleTextChange}
-            error={error.text}
-            helperText={error.text ? "Tên không đúng định dạng" : ""}
-            className="w-full max-w-lg"
-          />
-          <div className="flex w-[512px] justify-between">
-            <TextField
-              id="expiry-date"
-              placeholder="MM/YY"
-              variant="outlined"
-              value={expiryDate}
-              onChange={handleExpiryDateChange}
-              error={error.expiryDate}
-              helperText={error.expiryDate ? "Phải nhập đúng định dạng" : ""}
-              className="w-[250px]"
-            />
-            <TextField
-              id="cvc"
-              placeholder="CVC/CCC"
-              variant="outlined"
-              value={cvc}
-              onChange={handleCvcChange}
-              error={error.cvc}
-              helperText={error.cvc ? "Phải nhập đúng định dạng" : ""}
-              className="w-[250px]"
-            />
+          <div className="max-w-lg" style={{ border: "1px solid #ced4da", borderRadius: "8px", padding: "12px", width: "100%" }}>
+            <CardNumberElement />
           </div>
+          <div className="flex w-[512px] justify-between gap-4">
+            <div style={{ border: "1px solid #ced4da", borderRadius: "8px", padding: "12px", width: "50%" }}>
+              <CardExpiryElement />
+            </div>
+            <div style={{ border: "1px solid #ced4da", borderRadius: "8px", padding: "12px", width: "50%" }}>
+              <CardCvcElement />
+            </div>
+          </div>
+
           <TextField
             id="amount"
             label="Số tiền muốn nạp"
