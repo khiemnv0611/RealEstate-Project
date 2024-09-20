@@ -7,8 +7,10 @@ const path = {
   PROPERTIES: "properties",
   PROPERTY_DETAIL__ID: "properties/:id",
   ADD_POST: "add-post",
+  MEMBERSHIP_PACKAGE: "membership-package",
   AUTH_CALLBACK: "auth/callback",
   AUTH_FAILURE: "auth/failure",
+
   // ADMIN
   ADMIN_LAYOUT: "admin",
   ADMIN_DASHBOARD: "dashboard",
@@ -20,6 +22,7 @@ const path = {
   PERSONAL: "personal",
   WISHLIST: "wishlist",
   DEPOSIT: "deposit",
+  TRANSACTION_HISTORY: "transaction-history",
 
   // AGENT
   AGENT_LAYOUT: "agent",

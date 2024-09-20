@@ -62,13 +62,13 @@ const Personal = () => {
   };
 
   return (
-    <div className="px-8">
+    <div className="bg-gray-200 px-8 h-full">
       <Title title="THÔNG TIN CÁ NHÂN">
-        <Button className="font-bold" onClick={handleSubmit(onSubmit)}>
+        <Button className="font-bold -my-3" onClick={handleSubmit(onSubmit)}>
           Cập nhật
         </Button>
       </Title>
-      <form className="p-4 max-w-[900px] space-y-4 mx-auto">
+      <form className="p-4 max-w-[900px] space-y-4 mx-auto border shadow-lg bg-white rounded-md mt-20">
         <InputForm
           id="name"
           register={register}
@@ -117,7 +117,7 @@ const Personal = () => {
           required
           placeholder="Nhập địa chỉ..."
         />
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 w-full">
           <span className="font-medium text-main-800">
             Ảnh đại diện{" "}
             <span
@@ -139,7 +139,7 @@ const Personal = () => {
             <img
               src={current.avatar || "/user.svg"}
               alt=""
-              className="w-28 h-28 object-cover rounded-full"
+              className="w-28 h-28 object-cover rounded-full mx-auto"
             />
           )}
         </div>

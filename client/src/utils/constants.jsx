@@ -73,8 +73,8 @@ export const userSidebar = [
   },
   {
     id: 12,
-    name: "Nạp tiền",
-    path: `/${path.USER_LAYOUT}/${path.DEPOSIT}`,
+    name: "Lịch sử giao dịch",
+    path: `/${path.USER_LAYOUT}/${path.TRANSACTION_HISTORY}`,
     icon: <MdAddCard size={25} />,
     type: "SINGLE",
   },

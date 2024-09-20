@@ -1,12 +1,15 @@
 import clsx from "clsx";
 import React, { Fragment, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { userSidebar } from "~/utils/constants";
 import { FaCaretRight, FaCaretDown } from "react-icons/fa6";
 import { TiArrowForwardOutline } from "react-icons/ti";
 import { useUserStore } from "~/store/useUserStore";
+import { MdAddCard } from "react-icons/md";
+import path from "~/utils/path";
 
 const UserSidebar = () => {
+  const navigate = useNavigate();
   const [activeTabs, setActiveTabs] = useState([]);
   const { current } = useUserStore();
   const handleActiveTabs = (tabId) => {
@@ -17,17 +20,31 @@ const UserSidebar = () => {
 
   return (
     <div className="w-full bg-main-700 text-white sticky top-0 h-screen">
-      <div className="w-full p-4 flex flex-col justify-center items-center gap-2">
+      <div className="w-full p-4 flex flex-col justify-center items-center gap-4">
         <img
           src={current?.avatar || "/user.svg"}
           alt="logo"
           className="w-28 h-28 object-cover rounded-full"
         />
         <span className="text-orange-500 font-bold">{current?.name}</span>
-        {/* <span>{current?.phone}</span> */}
         <span>
           {current?.userRoles?.map((el) => el.roleName.value)?.join(" / ")}
         </span>
+        <div className="p-6 flex flex-col items-center border border-transparent shadow-lg rounded-md w-60 gap-3 bg-white text-main-700">
+          <span className="font-bold -ml-16 text-lg">Số dư tài khoản:</span>
+          <span className="ml-2 font-semibold text-lg text-red-500">
+            {current?.balance?.toLocaleString("vi-VN")} đ
+          </span>
+          <div
+            className="bg-main-700 text-white border rounded-md w-52 py-2 shadow-lg hover:cursor-pointer hover:text-main-700 hover:bg-white hover:boder-black"
+            onClick={() => navigate(`/${path.USER_LAYOUT}/${path.DEPOSIT}`)}
+          >
+            <div className="flex items-center justify-center gap-4">
+              <MdAddCard />
+              <span>Nạp tiền</span>
+            </div>
+          </div>
+        </div>
       </div>
       <div className="mt-6 mx-3 flex flex-col gap-0">
         {userSidebar.map((el) => (

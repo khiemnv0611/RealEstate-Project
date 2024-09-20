@@ -2,6 +2,7 @@ import {
   AboutUs,
   AddPost,
   Home,
+  MembershipPakage,
   OurAgents,
   Properties,
   PropertyDetail,
@@ -15,7 +16,13 @@ import {
   AdminDashboard,
   ManagePropertyType,
 } from "~/pages/admin";
-import { Personal, WishList, UserLayout, Deposit } from "~/pages/user";
+import {
+  Personal,
+  WishList,
+  UserLayout,
+  Deposit,
+  TransactionHistory,
+} from "~/pages/user";
 import { OwnerLayout, OwnerDashboard } from "~/pages/owner";
 import AuthCallback from "~/components/login/AuthCallback";
 import AuthFailure from "~/components/login/AuthFailure";
@@ -58,6 +65,10 @@ const routes = [
           {
             path: path.ADD_POST,
             element: <AddPost />,
+          },
+          {
+            path: path.MEMBERSHIP_PACKAGE,
+            element: <MembershipPakage />,
           },
           {
             path: path.AUTH_CALLBACK,
@@ -104,6 +115,14 @@ const routes = [
             element: (
               <Elements stripe={stripePromise}>
                 <Deposit />
+              </Elements>
+            ),
+          },
+          {
+            path: path.TRANSACTION_HISTORY,
+            element: (
+              <Elements stripe={stripePromise}>
+                <TransactionHistory />
               </Elements>
             ),
           },

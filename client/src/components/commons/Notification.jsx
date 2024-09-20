@@ -19,7 +19,7 @@ const Notification = () => {
       try {
         const response = await apiGetNotifications();
 
-        console.log(response.submission)
+        console.log(response.submission);
 
         if (response.success) {
           setNotifications(response.submission);
@@ -46,7 +46,9 @@ const Notification = () => {
   const handleNotificationClick = async (notification) => {
     try {
       // Task 1: Update isRead status to true
-      const res = await apiUpdateNotificationStatus(notification.id, { isRead: true });
+      const res = await apiUpdateNotificationStatus(notification.id, {
+        isRead: true,
+      });
 
       // Task 2: Navigate to the property page
       navigate(`${path.PROPERTIES}/${notification.propertyId}`, {
@@ -54,16 +56,16 @@ const Notification = () => {
       });
 
       setNotifications((prev) =>
-        prev.map((n) =>
-          n.id === notification.id ? { ...n, isRead: true } : n
-        )
+        prev.map((n) => (n.id === notification.id ? { ...n, isRead: true } : n))
       );
     } catch (error) {
       console.error("Error updating notification status:", error);
     }
   };
 
-  const unreadCount = notifications.filter((notification) => !notification.isRead).length;
+  const unreadCount = notifications.filter(
+    (notification) => !notification.isRead
+  ).length;
 
   return (
     <div>
@@ -87,23 +89,50 @@ const Notification = () => {
         }}
         disableScrollLock={true}
       >
-        {/* <Typography sx={{ p: 2 }}>Thông báo của bạn!</Typography> */}
-        <List sx={{ width: "300px" }}>
+        <Typography
+          sx={{ p: 2, fontWeight: "bold", textAlign: "center" }}
+          className="border-b-2 sticky top-0 bg-white z-10"
+        >
+          Thông báo của bạn
+        </Typography>
+
+        <List className="max-h-96 overflow-auto cursor-pointer">
           {notifications.length > 0 ? (
             notifications.map((notification) => (
               <ListItem
                 button
                 key={notification.id}
                 onClick={() => handleNotificationClick(notification)}
+                className="flex flex-col"
               >
-                <ListItemText
-                  primary={notification.message}
-                  secondary={notification.time}
-                  sx={{ 
-                    fontWeight: !notification.isRead ? "bold" : "normal",
-                    color: !notification.isRead ? "red" : "inherit",
-                  }}
-                />
+                <div className="flex gap-2 w-full items-center">
+                  {/* Nội dung thông báo */}
+                  <ListItemText
+                    primary={notification.message}
+                    sx={{
+                      fontWeight: !notification.isRead ? "bold" : "normal",
+                      color: !notification.isRead ? "red" : "inherit",
+                    }}
+                    className="max-w-60"
+                  />
+
+                  {/* Dấu chấm xanh dương nếu chưa đọc */}
+                  {!notification.isRead && (
+                    <span className="rounded-full w-2 h-2 bg-blue-500"></span>
+                  )}
+                </div>
+
+                {/* Thời gian hiển thị dưới dòng thông báo */}
+                <Typography variant="body2" color="textSecondary">
+                  {new Date(notification.createdAt).toLocaleString("vi-VN", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })}
+                </Typography>
               </ListItem>
             ))
           ) : (

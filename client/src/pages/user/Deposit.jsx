@@ -20,6 +20,7 @@ import {
   CardCvcElement,
 } from "@stripe/react-stripe-js";
 import { createPayment } from "~/apis/payment";
+import { toast } from "react-toastify";
 
 const Deposit = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -103,29 +104,34 @@ const Deposit = () => {
     }
 
     try {
-      const { paymentMethod, error: stripeError } = await stripe.createPaymentMethod({
-        type: "card",
-        card: cardNumberElement,
-      });
+      const { paymentMethod, error: stripeError } =
+        await stripe.createPaymentMethod({
+          type: "card",
+          card: cardNumberElement,
+        });
 
       if (stripeError) {
         console.log("Stripe payment method error: ", stripeError);
         return;
       }
 
-      const response = await createPayment(numericAmount, 'vnd', paymentMethod.id);
+      const response = await createPayment(
+        numericAmount,
+        "vnd",
+        paymentMethod.id
+      );
 
       if (response.success) {
-        console.log("Payment successful!", response.transaction);
-        alert("Payment successful!");
+        // console.log("Payment successful!", response.transaction);
+        toast.success("Payment successful!");
         // Reset form fields
         setAmount("");
         setCvc("");
         setIsChecked(false);
         // Optionally redirect or update UI
       } else {
-        console.log("Payment failed: ", response.mes);
-        alert(response.mes);
+        // console.log("Payment failed: ", response.mes);
+        toast.error("Payment failed: ", response.mes);
       }
     } catch (error) {
       console.error("Error while processing payment: ", error.message);
@@ -182,14 +188,36 @@ const Deposit = () => {
           <span className="font-semibold">Nhập thông tin thẻ</span>
           <img src="/visa-template.png" alt="" />
 
-          <div className="max-w-lg" style={{ border: "1px solid #ced4da", borderRadius: "8px", padding: "12px", width: "100%" }}>
+          <div
+            className="max-w-lg"
+            style={{
+              border: "1px solid #ced4da",
+              borderRadius: "8px",
+              padding: "12px",
+              width: "100%",
+            }}
+          >
             <CardNumberElement />
           </div>
           <div className="flex w-[512px] justify-between gap-4">
-            <div style={{ border: "1px solid #ced4da", borderRadius: "8px", padding: "12px", width: "50%" }}>
+            <div
+              style={{
+                border: "1px solid #ced4da",
+                borderRadius: "8px",
+                padding: "12px",
+                width: "50%",
+              }}
+            >
               <CardExpiryElement />
             </div>
-            <div style={{ border: "1px solid #ced4da", borderRadius: "8px", padding: "12px", width: "50%" }}>
+            <div
+              style={{
+                border: "1px solid #ced4da",
+                borderRadius: "8px",
+                padding: "12px",
+                width: "50%",
+              }}
+            >
               <CardCvcElement />
             </div>
           </div>
