@@ -20,7 +20,7 @@ const UserSidebar = () => {
 
   return (
     <div className="w-full bg-main-700 text-white sticky top-0 h-screen">
-      <div className="w-full p-4 flex flex-col justify-center items-center gap-4">
+      <div className="w-full p-4 flex flex-col justify-center items-center gap-2">
         <img
           src={current?.avatar || "/user.svg"}
           alt="logo"
@@ -36,7 +36,7 @@ const UserSidebar = () => {
             {current?.balance?.toLocaleString("vi-VN")} đ
           </span>
           <div
-            className="bg-main-700 text-white border rounded-md w-52 py-2 shadow-lg hover:cursor-pointer hover:text-main-700 hover:bg-white hover:boder-black"
+            className="bg-main-700 text-white border rounded-md w-52 py-2 shadow-lg hover:cursor-pointer hover:text-main-700 hover:bg-white hover:shadow-2xl hover:border-blue-700"
             onClick={() => navigate(`/${path.USER_LAYOUT}/${path.DEPOSIT}`)}
           >
             <div className="flex items-center justify-center gap-4">
@@ -46,7 +46,7 @@ const UserSidebar = () => {
           </div>
         </div>
       </div>
-      <div className="mt-6 mx-3 flex flex-col gap-0">
+      <div className="mx-3 flex flex-col gap-0">
         {userSidebar.map((el) => (
           <Fragment key={el.id}>
             {el.type === "SINGLE" && (

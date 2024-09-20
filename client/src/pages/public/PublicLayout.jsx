@@ -24,7 +24,7 @@ const PublicLayout = () => {
           isLoaded
             ? location.pathname === "/"
               ? "pt-0"
-              : "pt-[187px]"
+              : "pt-[172px]"
             : "pt-0"
         )}
       >

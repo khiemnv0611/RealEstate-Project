@@ -1,4 +1,5 @@
 npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string
-npx sequelize-cli seed:generate --name demo-user
 npx sequelize-cli migration:generate --name add-column-to-table
 npx sequelize-cli migration:generate --name rename-table
+npx sequelize-cli seed:generate --name demo-user
+npx sequelize-cli db:seed --seed seed-name

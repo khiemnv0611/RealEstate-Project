@@ -123,16 +123,18 @@ const Notification = () => {
                 </div>
 
                 {/* Thời gian hiển thị dưới dòng thông báo */}
-                <Typography variant="body2" color="textSecondary">
-                  {new Date(notification.createdAt).toLocaleString("vi-VN", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  })}
-                </Typography>
+                <div className="flex justify-start w-full">
+                  <Typography variant="body2" color="textSecondary">
+                    {new Date(notification.createdAt).toLocaleString("vi-VN", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })}
+                  </Typography>
+                </div>
               </ListItem>
             ))
           ) : (

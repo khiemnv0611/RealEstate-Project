@@ -2,7 +2,7 @@ import {
   AboutUs,
   AddPost,
   Home,
-  MembershipPakage,
+  MembershipPackage,
   OurAgents,
   Properties,
   PropertyDetail,
@@ -68,7 +68,7 @@ const routes = [
           },
           {
             path: path.MEMBERSHIP_PACKAGE,
-            element: <MembershipPakage />,
+            element: <MembershipPackage />,
           },
           {
             path: path.AUTH_CALLBACK,

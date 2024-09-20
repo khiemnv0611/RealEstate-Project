@@ -1,7 +1,6 @@
 const { faker } = require("@faker-js/faker");
 const bcrypt = require("bcrypt");
 const hashPassword = (pwd) => bcrypt.hashSync(pwd, bcrypt.genSaltSync(10));
-const listingTypes = ["Bán", "Cho thuê"];
 
 module.exports = {
   roles: [
@@ -320,49 +319,43 @@ module.exports = {
     updatedAt: new Date(),
   })),
 
-  // features: [
-  //   {
-  //     name: "Hệ thống điều hòa",
-  //     image: faker.image.urlLoremFlickr({ category: "airconditioning" }),
-  //     createdAt: new Date(),
-  //     updatedAt: new Date(),
-  //   },
-  //   {
-  //     name: "Lò sưởi",
-  //     image: faker.image.urlLoremFlickr({ category: "furnace" }),
-  //     createdAt: new Date(),
-  //     updatedAt: new Date(),
-  //   },
-  //   {
-  //     name: "Garage",
-  //     image: faker.image.urlLoremFlickr({ category: "garage" }),
-  //     createdAt: new Date(),
-  //     updatedAt: new Date(),
-  //   },
-  //   {
-  //     name: "Hồ bơi",
-  //     image: faker.image.urlLoremFlickr({ category: "pool" }),
-  //     createdAt: new Date(),
-  //     updatedAt: new Date(),
-  //   },
-  //   {
-  //     name: "Vườn",
-  //     image: faker.image.urlLoremFlickr({ category: "garden" }),
-  //     createdAt: new Date(),
-  //     updatedAt: new Date(),
-  //   },
-  //   {
-  //     name: "Ban công",
-  //     image: faker.image.urlLoremFlickr({ category: "balcony" }),
-  //     createdAt: new Date(),
-  //     updatedAt: new Date(),
-  //   },
-  // ],
-
-  // property_features: Array.from([...Array(60).keys()]).map((el) => ({
-  //   propertyId: el + 1,
-  //   featureId: faker.number.int({ max: 4, min: 1 }),
-  //   createdAt: new Date(),
-  //   updatedAt: new Date(),
-  // })),
+  membership_plans: [
+    {
+      name: "Miễn phí",
+      price: 0,
+      description: "Phù hợp với tất cả mọi người",
+      postLimit: 1,
+      duration: 5,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      name: "Cơ bản",
+      price: 100000,
+      description: "Phù hợp với môi giới mới hoặc giỏ hàng nhỏ",
+      postLimit: 2,
+      duration: 10,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      name: "Tiêu chuẩn",
+      price: 500000,
+      description: "Phù hợp với môi giới chuyên nghiệp có giỏ hàng từ 5 BDS",
+      postLimit: 5,
+      duration: 20,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      name: "Cơ bản",
+      price: 100000,
+      description:
+        "Phù hợp với môi giới có giỏ hàng và ngân sách quảng cáo lớn",
+      postLimit: 10,
+      duration: 30,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ],
 };

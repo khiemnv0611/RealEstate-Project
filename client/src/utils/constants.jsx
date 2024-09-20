@@ -4,6 +4,8 @@ import { FaProjectDiagram } from "react-icons/fa";
 import { FaHouseChimneyUser } from "react-icons/fa6";
 import { FaRegHeart } from "react-icons/fa6";
 import { MdAddCard } from "react-icons/md";
+import { FaUser, FaUserTag, FaBuildingUser } from "react-icons/fa6";
+import { IoIosSettings } from "react-icons/io";
 
 export const navigations = [
   {
@@ -96,24 +98,28 @@ export const showOptions = [
     name: "Cá nhân",
     code: "ROL7",
     path: `/${path.USER_LAYOUT}/${path.PERSONAL}`,
+    icon: <FaUser />,
   },
   {
     id: 2,
     name: "Môi giới",
     code: "ROL5",
     path: `/${path.AGENT_LAYOUT}/${path.AGENT_DASHBOARD}`,
+    icon: <FaUserTag />,
   },
   {
     id: 3,
     name: "Chủ sở hữu",
     code: "ROL3",
     path: `/${path.OWNER_LAYOUT}/${path.OWNER_DASHBOARD}`,
+    icon: <FaBuildingUser />,
   },
   {
     id: 4,
     name: "Quản trị viên",
     code: "ROL1",
     path: `/${path.ADMIN_LAYOUT}/${path.ADMIN_DASHBOARD}`,
+    icon: <IoIosSettings />,
   },
 ];
 

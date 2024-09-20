@@ -12,10 +12,14 @@ import clsx from "clsx";
 import withRouter from "~/hocs/withRouter";
 import { useUserStore } from "~/store/useUserStore";
 import { showOptions } from "~/utils/constants";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Notification } from "..";
+import { TbLogout2 } from "react-icons/tb";
+import { PiUserGearFill } from "react-icons/pi";
+import path from "~/utils/path";
 
 const Topheader = ({ location }) => {
+  const navigate = useNavigate();
   const { current, logOut } = useUserStore();
   const optionBox = useRef();
   const [isShowOptions, setIsShowOptions] = useState(false);
@@ -92,16 +96,27 @@ const Topheader = ({ location }) => {
                           className="hover:bg-gray-100 px-6 py-2"
                           to={el.path}
                         >
-                          {el.name}
+                          <span className="flex items-center gap-6">
+                            {el.icon}
+                            {el.name}
+                          </span>
                         </Link>
                       )}
                     </Fragment>
                   ))}
                   <span
-                    onClick={() => logOut()}
-                    className="px-6 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => navigate(`/${path.MEMBERSHIP_PACKAGE}`)}
+                    className="px-6 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-6"
                   >
-                    Đăng xuất
+                    <PiUserGearFill />
+                    <span>Gói hội viên</span>
+                  </span>
+                  <span
+                    onClick={() => logOut()}
+                    className="px-6 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-6"
+                  >
+                    <TbLogout2 />
+                    <span>Đăng xuất</span>
                   </span>
                 </div>
               )}

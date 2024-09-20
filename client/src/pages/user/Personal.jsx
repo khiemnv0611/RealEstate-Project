@@ -68,7 +68,7 @@ const Personal = () => {
           Cập nhật
         </Button>
       </Title>
-      <form className="p-4 max-w-[900px] space-y-4 mx-auto border shadow-lg bg-white rounded-md mt-20">
+      <form className="p-4 max-w-[900px] space-y-4 mx-auto mt-10 border shadow-lg bg-white rounded-md">
         <InputForm
           id="name"
           register={register}

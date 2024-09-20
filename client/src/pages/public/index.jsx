@@ -5,4 +5,4 @@ export { default as OurAgents } from "./OurAgents";
 export { default as Properties } from "./Properties";
 export { default as PropertyDetail } from "./PropertyDetail";
 export { default as AddPost } from "./AddPost";
-export { default as MembershipPakage } from "./MembershipPakage";
+export { default as MembershipPackage } from "./MembershipPackage";

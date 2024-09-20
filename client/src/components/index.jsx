@@ -28,3 +28,4 @@ export { default as BoxInfo } from "./users/BoxInfo";
 export { default as Map } from "./maps/Map";
 export { default as CommentInput } from "./comments/CommentInput";
 export { default as CommentContainer } from "./comments/CommentContainer";
+export { default as LottieAnimations } from "./animations/LottieAnimations";
