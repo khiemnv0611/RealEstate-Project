@@ -21,6 +21,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { createPayment } from "~/apis/payment";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 const Deposit = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -122,16 +123,27 @@ const Deposit = () => {
       );
 
       if (response.success) {
-        // console.log("Payment successful!", response.transaction);
-        toast.success("Payment successful!");
-        // Reset form fields
-        setAmount("");
-        setCvc("");
-        setIsChecked(false);
-        // Optionally redirect or update UI
+        // toast.success("Thanh toán thành công!");
+        // setAmount("");
+        // setCvc("");
+        // setIsChecked(false);
+        Swal.fire({
+          title: "Thành công!",
+          text: "Thanh toán thành công!",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(() => {
+          window.location.reload();
+        });
       } else {
         // console.log("Payment failed: ", response.mes);
-        toast.error("Payment failed: ", response.mes);
+        // toast.error("Thanh toán không thành công: ", response.mes);
+        Swal.fire({
+          title: "Thất bại!",
+          text: `Thanh toán không thành công: ${response.mes}`,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
       }
     } catch (error) {
       console.error("Error while processing payment: ", error.message);
@@ -198,6 +210,7 @@ const Deposit = () => {
             }}
           >
             <CardNumberElement />
+            {/* 4242424242424242 */}
           </div>
           <div className="flex w-[512px] justify-between gap-4">
             <div
@@ -209,6 +222,7 @@ const Deposit = () => {
               }}
             >
               <CardExpiryElement />
+              {/* 12/34 */}
             </div>
             <div
               style={{

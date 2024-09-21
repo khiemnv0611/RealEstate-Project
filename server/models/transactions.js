@@ -28,6 +28,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM,
         values: ["Nạp tiền", "Mua gói"],
       },
+      startDate: DataTypes.DATE,
+      endDate: DataTypes.DATE,
+      status: {
+        type: DataTypes.ENUM,
+        values: ["active", "canceled"],
+        defaultValue: null,
+      },
       userId: DataTypes.INTEGER,
       membershipPlansId: DataTypes.INTEGER
     },

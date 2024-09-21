@@ -63,7 +63,7 @@ const MembershipPackage = () => {
             </div>
             <div className="flex items-center gap-1">
               <span>Thời gian mỗi bài:</span>
-              <span className="font-semibold">durian</span>
+              <span className="font-semibold">postDate</span>
             </div>
           </div>
         </div>

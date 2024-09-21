@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       price: DataTypes.DECIMAL(10, 2),
       description: DataTypes.TEXT,
       postLimit: DataTypes.INTEGER,
+      postDate: DataTypes.INTEGER,
       duration: DataTypes.INTEGER,
     },
     {

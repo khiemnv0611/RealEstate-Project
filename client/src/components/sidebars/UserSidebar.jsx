@@ -7,6 +7,11 @@ import { TiArrowForwardOutline } from "react-icons/ti";
 import { useUserStore } from "~/store/useUserStore";
 import { MdAddCard } from "react-icons/md";
 import path from "~/utils/path";
+import { twMerge } from "tailwind-merge";
+import { IconButton, Menu, MenuItem } from "@mui/material";
+import { MdMoreHoriz } from "react-icons/md";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 const UserSidebar = () => {
   const navigate = useNavigate();
@@ -16,6 +21,32 @@ const UserSidebar = () => {
     if (activeTabs.some((el) => el === tabId))
       setActiveTabs((prev) => prev.filter((el) => !el == tabId));
     else setActiveTabs((prev) => [...prev, tabId]);
+  };
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleCancel = () => {
+    Swal.fire({
+      title: "Bạn có chắc chắn muốn hủy gói?",
+      text: "Gói vẫn hoạt động đến khi hết thời hạn.",
+      icon: "warning",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Có, hủy!",
+      cancelButtonText: "Không",
+    }).then((response) => {
+      if (response.isConfirmed) {
+        toast.success("Hủy thành công!");
+      }
+    });
   };
 
   return (
@@ -30,7 +61,7 @@ const UserSidebar = () => {
         <span>
           {current?.userRoles?.map((el) => el.roleName.value)?.join(" / ")}
         </span>
-        <div className="p-6 flex flex-col items-center border border-transparent shadow-lg rounded-md w-72 gap-3 bg-white text-main-700">
+        <div className="p-4 flex flex-col items-center border border-transparent shadow-lg rounded-md w-[95%] gap-3 bg-white text-main-700">
           <div className="flex justify-start w-full">
             <span className="font-semibold">Số dư tài khoản:</span>
           </div>
@@ -42,8 +73,33 @@ const UserSidebar = () => {
             <span className="px-2 bg-gray-300 rounded-2xl">MemPlans.name</span>
             {/*Miễn phí: gray, Cơ bản: yellow, Tiêu chuẩn: blue, Cao cấp: purple*/}
           </div>
+          {/*Không hiện ở gói miễn phí*/}
+          <div className="flex items-center justify-between w-full">
+            <div className="flex gap-2">
+              <span className="font-semibold">Thời hạn:</span>
+              <span>endDate - now</span> {/*endDate = startDate + 30*/}
+            </div>
+            <IconButton
+              onClick={handleClick}
+              className="bg-gray-300 hover:bg-gray-500 text-blue-600"
+            >
+              <MdMoreHoriz />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              <MenuItem>Nâng cấp gói</MenuItem>
+              <MenuItem onClick={handleCancel}>Hủy gói</MenuItem>
+            </Menu>
+          </div>
+          {/**/}
           <div
-            className="bg-main-700 text-white border rounded-md w-52 py-2 shadow-lg hover:cursor-pointer hover:text-main-700 hover:bg-white hover:shadow-2xl hover:border-blue-700"
+            className="mt-2 bg-main-700 text-white border rounded-md w-52 py-2 shadow-lg hover:cursor-pointer hover:text-main-700 hover:bg-white hover:shadow-2xl hover:border-blue-700"
             onClick={() => navigate(`/${path.USER_LAYOUT}/${path.DEPOSIT}`)}
           >
             <div className="flex items-center justify-center gap-4">
