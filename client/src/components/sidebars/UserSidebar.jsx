@@ -30,11 +30,18 @@ const UserSidebar = () => {
         <span>
           {current?.userRoles?.map((el) => el.roleName.value)?.join(" / ")}
         </span>
-        <div className="p-6 flex flex-col items-center border border-transparent shadow-lg rounded-md w-60 gap-3 bg-white text-main-700">
-          <span className="font-bold -ml-16 text-lg">Số dư tài khoản:</span>
-          <span className="ml-2 font-semibold text-lg text-red-500">
+        <div className="p-6 flex flex-col items-center border border-transparent shadow-lg rounded-md w-72 gap-3 bg-white text-main-700">
+          <div className="flex justify-start w-full">
+            <span className="font-semibold">Số dư tài khoản:</span>
+          </div>
+          <span className="ml-2 font-semibold text-2xl text-red-500">
             {current?.balance?.toLocaleString("vi-VN")} đ
           </span>
+          <div className="flex items-center justify-start w-full gap-2">
+            <span className="font-semibold">Gói hội viên:</span>
+            <span className="px-2 bg-gray-300 rounded-2xl">MemPlans.name</span>
+            {/*Miễn phí: gray, Cơ bản: yellow, Tiêu chuẩn: blue, Cao cấp: purple*/}
+          </div>
           <div
             className="bg-main-700 text-white border rounded-md w-52 py-2 shadow-lg hover:cursor-pointer hover:text-main-700 hover:bg-white hover:shadow-2xl hover:border-blue-700"
             onClick={() => navigate(`/${path.USER_LAYOUT}/${path.DEPOSIT}`)}

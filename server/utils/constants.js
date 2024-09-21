@@ -348,8 +348,8 @@ module.exports = {
       updatedAt: new Date(),
     },
     {
-      name: "Cơ bản",
-      price: 100000,
+      name: "Cao cấp",
+      price: 1000000,
       description:
         "Phù hợp với môi giới có giỏ hàng và ngân sách quảng cáo lớn",
       postLimit: 10,
