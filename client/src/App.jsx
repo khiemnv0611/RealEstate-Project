@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Modal } from "./components";
 import { useAppStore } from "./store/useAppStore";
-import { ToastContainer } from "react-toastify";
+import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useUserStore } from "./store/useUserStore";
 import { usePropertiesStore } from "./store/usePropertiesStore";
@@ -31,7 +31,7 @@ const App = () => {
         draggable
         pauseOnHover
         theme="colored"
-        transition:Bounce
+        transition={Bounce}
       />
     </>
   );
