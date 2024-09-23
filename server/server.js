@@ -6,6 +6,7 @@ const dbconn = require("./config/dbconn");
 const initRoutes = require("./routes");
 const app = express();
 const compression = require("compression");
+const startCron = require("./config/nodecron.config");
 //require("./config/redis.config");
 
 app.use(
@@ -31,8 +32,10 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 initRoutes(app);
 dbconn();
+startCron();
 
 const PORT = process.env.PORT || 7777;
 app.listen(5000, () => console.log(":::::SERVER READY ON " + PORT));

@@ -8,6 +8,7 @@ const properties = require("./property");
 const propertyType = require("./propertyType");
 // const momoRoutes = require("./momo");
 const paymentRoutes = require("./payment");
+const membership = require("./membership")
 
 const initRoutes = (app) => {
   app.use("/api/auth", auth);
@@ -16,6 +17,7 @@ const initRoutes = (app) => {
   app.use("/api/property-type", propertyType);
   // app.use("/momo", momoRoutes);
   app.use("/api/payment", paymentRoutes);
+  app.use("/api/membership", membership);
 
   // Middleware xử lý lỗi
   app.use("/", badRequestException);

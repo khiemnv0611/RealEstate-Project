@@ -70,33 +70,45 @@ const UserSidebar = () => {
           </span>
           <div className="flex items-center justify-start w-full gap-2">
             <span className="font-semibold">Gói hội viên:</span>
-            <span className="px-2 bg-gray-300 rounded-2xl">MemPlans.name</span>
+            <span className={clsx(
+              "px-2 rounded-2xl",
+              current?.membershipPlan?.id == 1 && "bg-gray-300",
+              current?.membershipPlan?.id == 2 && "bg-blue-300",
+              current?.membershipPlan?.id == 3 && "bg-purple-300",
+            )}>
+              {current?.membershipPlan?.name}
+            </span>
             {/*Miễn phí: gray, Cơ bản: yellow, Tiêu chuẩn: blue, Cao cấp: purple*/}
           </div>
           {/*Không hiện ở gói miễn phí*/}
-          <div className="flex items-center justify-between w-full">
-            <div className="flex gap-2">
-              <span className="font-semibold">Thời hạn:</span>
-              <span>endDate - now</span> {/*endDate = startDate + 30*/}
+          {(current?.membershipPlan?.id != 1) && (
+
+            <div className="flex items-center justify-between w-full">
+              <div className="flex gap-2">
+                <span className="font-semibold">Thời hạn:</span>
+                <span>{current?.planRegisterDate && current?.membershipPlan?.duration
+                  ? new Date(new Date(current.planRegisterDate).getTime() + current.membershipPlan.duration * 24 * 60 * 60 * 1000).toLocaleDateString()
+                  : ""}</span> {/*endDate = startDate + 30*/}
+              </div>
+              <IconButton
+                onClick={handleClick}
+                className="bg-gray-300 hover:bg-gray-500 text-blue-600"
+              >
+                <MdMoreHoriz />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                <MenuItem>Nâng cấp gói</MenuItem>
+                <MenuItem onClick={handleCancel}>Hủy gói</MenuItem>
+              </Menu>
             </div>
-            <IconButton
-              onClick={handleClick}
-              className="bg-gray-300 hover:bg-gray-500 text-blue-600"
-            >
-              <MdMoreHoriz />
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
-            >
-              <MenuItem>Nâng cấp gói</MenuItem>
-              <MenuItem onClick={handleCancel}>Hủy gói</MenuItem>
-            </Menu>
-          </div>
+          )}
           {/**/}
           <div
             className="mt-2 bg-main-700 text-white border rounded-md w-52 py-2 shadow-lg hover:cursor-pointer hover:text-main-700 hover:bg-white hover:shadow-2xl hover:border-blue-700"

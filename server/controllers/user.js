@@ -53,6 +53,11 @@ module.exports = {
             },
           ],
         },
+        {
+          model: db.MembershipPlans,
+          attributes: ["id", "name", "duration", "postLimit", "postDate"],
+          as: "membershipPlan",
+        },
       ],
     });
     return res.json({
@@ -293,12 +298,12 @@ module.exports = {
               {
                 model: db.User,
                 as: "rPostedBy",
-                attributes: ["name", "phone", "avatar"],
+                attributes: ["id", "name", "phone", "avatar"],
               },
               {
                 model: db.User,
                 as: "rOwner",
-                attributes: ["name", "phone", "avatar"],
+                attributes: ["id", "name", "phone", "avatar"],
               },
             ],
           });

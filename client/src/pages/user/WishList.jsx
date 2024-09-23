@@ -25,9 +25,9 @@ const WishList = () => {
     fetchProperties();
   }, []);
 
-  const handleFavoriteToggle = async (id) => {
+  const handleFavoriteToggle = async (property) => {
     try {
-      const response = await addPropertyToWishList(id);
+      const response = await addPropertyToWishList(property.id, { owner: property.rOwner.id });
       if (response.success) {
         toast.success("Đã xóa khỏi danh mục yêu thích.");
         const refresheddata = await getWishListByCurrentUser();
@@ -53,7 +53,7 @@ const WishList = () => {
           <div className="border shadow-lg rounded-md p-4 flex gap-4 items-center relative bg-white">
             <IoClose
               className="absolute top-2 right-2 h-10 w-10 text-gray-600 cursor-pointer rounded-md p-2 hover:bg-gray-200 "
-              onClick={() => handleFavoriteToggle(property.id)}
+              onClick={() => handleFavoriteToggle(property)}
             />
             <Link
               to={`/${path.PROPERTIES}/${property.id}`}

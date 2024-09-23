@@ -10,6 +10,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.belongsTo(models.MembershipPlans, {
+        foreignKey: "membershipPlansId",
+        as: "membershipPlan",
+      });
+
       User.hasMany(models.User_Role, { foreignKey: "userId", as: "userRoles" });
     }
   }
@@ -29,6 +34,8 @@ module.exports = (sequelize, DataTypes) => {
       avatar: DataTypes.STRING,
       isAvailable: DataTypes.BOOLEAN,
       balance: DataTypes.FLOAT,
+      membershipPlansId: DataTypes.INTEGER,
+      planRegisterDate: DataTypes.DATE
     },
     {
       sequelize,

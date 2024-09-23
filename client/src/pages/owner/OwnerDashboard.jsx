@@ -11,11 +11,13 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import path from "~/utils/path";
+import { useUserStore } from "~/store/useUserStore";
 
 const Dashboard = () => {
   const [mode, setMode] = useState("PENDING");
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
+  const { current } = useUserStore();
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -69,7 +71,7 @@ const Dashboard = () => {
 
   return (
     <div className="bg-gray-200 px-8 h-full">
-      <Title title="CÁC DỰ ÁN ĐÃ ĐĂNG"></Title>
+      <Title title={`CÁC DỰ ÁN ĐÃ ĐĂNG ${properties.filter((property) => property.status !== "Bị hủy").length}/${current.membershipPlan.postLimit}`}></Title>
       <div className="flex items-center justify-center gap-4">
         <Button
           onClick={() => setMode("PENDING")}

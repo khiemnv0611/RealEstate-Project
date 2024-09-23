@@ -62,6 +62,36 @@ module.exports = {
     }
 
     try {
+      // Fetch user's current membership plan and post limit
+      const user = await db.User.findByPk(uid, {
+        include: [{ model: db.MembershipPlans, as: 'membershipPlan' }],
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          mes: "User not found.",
+        });
+      }
+
+      const postLimit = user.membershipPlan.postLimit;
+
+      // Count the number of properties the user has already posted
+      const propertyCount = await db.Property.count({
+        where: {
+          owner: uid,
+          status: { [Op.ne]: "Bị hủy" }
+        },
+      });
+
+      // Check if the user has exceeded their post limit
+      if (propertyCount >= postLimit) {
+        return res.status(400).json({
+          success: false,
+          mes: `You have exceeded your post limit of ${postLimit} properties.`,
+        });
+      }
+
       const status = "Chờ duyệt";
       const isAvailable = true;
       const imageArray = Array.isArray(images) ? images : [];
@@ -131,6 +161,8 @@ module.exports = {
     const { limit, page, fields, name, sort, address, city, price, listingType, ...query } =
       req.query;
     const options = {};
+
+    query.status = "Đã duyệt";
 
     // Giá
     if (price) {
@@ -279,6 +311,25 @@ module.exports = {
             model: db.User,
             as: "rOwner",
             attributes: ["id", "avatar", "phone", "name", "email"],
+            include: [
+              {
+                model: db.User_Role,
+                attributes: ["roleCode"],
+                as: "userRoles",
+                include: [
+                  {
+                    model: db.Role,
+                    as: "roleName",
+                    attributes: ["value"],
+                  },
+                ],
+              },
+              {
+                model: db.MembershipPlans,
+                attributes: ["id", "name", "duration", "postLimit", "postDate"],
+                as: "membershipPlan",
+              },
+            ]
           },
           {
             model: db.PropertyType,
@@ -368,7 +419,16 @@ module.exports = {
       });
     }
 
-    await property.destroy();
+    await property.update(
+      {
+        status: "Bị hủy"
+      },
+      {
+        where: {
+          id: id
+        }
+      }
+    );
 
     return res.status(200).json({
       success: true,
@@ -422,7 +482,7 @@ module.exports = {
       const submissions = await db.Submission.findAll({
         where: { propertyId: propertyId }
       });
-  
+
       if (!submissions || submissions.length === 0) {
         return res.json({
           success: false,
@@ -443,32 +503,32 @@ module.exports = {
         acc[user.id] = user;
         return acc;
       }, {});
-      
+
       const commentsWithReplies = await Promise.all(
         submissions.map(async (submission) => {
           const replyComments = await db.Comment.findAll({
             where: { parentComment: submission.id }
           });
-  
+
           const replyUids = replyComments.map((reply) => reply.uid);
-  
+
           const replyUsers = await db.User.findAll({
             where: {
               id: replyUids
             },
             attributes: ["id", "name", "avatar"]
           });
-  
+
           const replyUserMap = replyUsers.reduce((acc, user) => {
             acc[user.id] = user;
             return acc;
           }, {});
-  
+
           const repliesWithUsers = replyComments.map((reply) => ({
             ...reply.toJSON(),
             rCommentedBy: replyUserMap[reply.uid] || null
           }));
-  
+
           return {
             ...submission.toJSON(),
             rCommentedBy: userMap[submission.uid] || null,
@@ -545,17 +605,17 @@ module.exports = {
   updatePropertiesStatus: asyncHandler(async (req, res) => {
     const { propertyIds, status } = req.body;
     const { uid } = req.user;
-  
+
     try {
       // Duyệt qua từng property trong mảng propertyIds
       for (const propertyId of propertyIds) {
         const property = await db.Property.findByPk(propertyId);
-  
+
         if (property) {
           await property.update({
             status: status
           });
-  
+
           const message = status == Status.ACCEPT || status == Status.REJECT ? "Bài đăng của bạn đã được duyệt, nhấn để xem bài đăng" : "Bài đăng của bạn không được xét duyệt";
 
           const notify = db.Notification.create({
@@ -570,7 +630,7 @@ module.exports = {
           console.log(`Không tìm thấy property với ID: ${propertyId}`);
         }
       }
-  
+
       return res.json({
         success: true,
         message: "Cập nhật trạng thái thành công cho các property.",
