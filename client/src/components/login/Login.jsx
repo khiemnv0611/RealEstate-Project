@@ -3,19 +3,21 @@ import React, { useEffect, useState } from "react";
 import { InputForm, InputRadio } from "..";
 import { useForm } from "react-hook-form";
 import { Button } from "..";
-import { apiRegister, apiSignIn } from "~/apis/auth";
+import { apiCheckEmailnPhone, apiRegister, apiSignIn } from "~/apis/auth";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { useAppStore } from "~/store/useAppStore";
 import { useUserStore } from "~/store/useUserStore";
-// import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-// import { auth } from "~/utils/firebaseConfig";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
+import { auth } from "~/utils/firebaseConfig";
 
 const Login = () => {
   const [variant, setVariant] = useState("LOGIN");
   const [isLoading, setIsLoading] = useState(false);
   const { setModal } = useAppStore();
-  // const [isShowConfirmOTP, setIsShowConfirmOTP] = useState(false);
   const { token, setToken, roles } = useUserStore();
   const {
     register,
@@ -24,56 +26,19 @@ const Login = () => {
     watch,
     reset,
   } = useForm();
+
   useEffect(() => {
     reset();
   }, [variant]);
 
-  //Captcha
-  // const handleCaptchaVerify = () => {
-  //   if (!window.recaptchaVerifier) {
-  //     window.recaptchaVerifier = new RecaptchaVerifier(
-  //       auth,
-  //       "recaptcha-container",
-  //       {
-  //         size: "invisible",
-  //         callback: () => {},
-  //         "expired-callback": () => {},
-  //       }
-  //     );
-  //   }
-  // };
-
-  // Send OTP
-  // const handleSendOTP = (phone) => {
-  //   setIsLoading(true);
-  //   handleCaptchaVerify();
-  //   const verifier = window.recaptchaVerifier;
-  //   const formatPhone = "+84" + phone.slice(1);
-  //   signInWithPhoneNumber(auth, formatPhone, verifier)
-  //     .then((confirmationResult) => {
-  //       setIsLoading(false);
-  //       window.confirmationResult = confirmationResult;
-  //       toast.success("OTP đã được gửi đến số điện thoại của bạn.");
-  //       setIsShowConfirmOTP(true);
-  //     })
-  //     .catch((error) => {
-  //       setIsLoading(false);
-  //       if (error.code === "auth/too-many-requests") {
-  //         toast.error("Quá nhiều yêu cầu. Vui lòng thử lại sau.");
-  //       } else {
-  //         toast.error("Lỗi khi gửi OTP:", error);
-  //         console.log(error);
-  //       }
-  //     });
-  // };
-
   const onSubmit = async (data) => {
+    setIsLoading(true);
     if (variant === "REGISTER") {
-      handleRegister(data);
+      await handleRegister(data);
     }
 
     if (variant === "LOGIN") {
-      const { name, role, ...payload } = data;
+      const { name, phone, ...payload } = data;
       const response = await apiSignIn(payload);
       setIsLoading(false);
       if (response.success) {
@@ -85,26 +50,88 @@ const Login = () => {
   };
 
   const handleRegister = async (data) => {
-    const { roleCode, confirmPassword, ...payload } = data;
+    const { confirmPassword, ...payload } = data;
+    const { email, phone } = payload;
 
-    if (roleCode !== "ROL7") {
-      payload.roleCode = roleCode;
-    }
-
-    const response = await apiRegister(payload);
-    if (response.success) {
-      Swal.fire({
-        icon: "success",
-        title: "Chúc mừng!",
-        text: response.mes,
-        showConfirmButton: true,
-        confirmButtonText: "Đi đến đăng nhập",
-      }).then(({ isConfirmed }) => {
-        if (isConfirmed) {
-          setVariant("LOGIN");
-        }
+    // Kiểm tra email trong cơ sở dữ liệu trước
+    try {
+      const checkEmailnPhoneResponse = await apiCheckEmailnPhone({
+        email,
+        phone,
       });
-    } else toast.error(response.mes);
+
+      if (!checkEmailnPhoneResponse.success) {
+        // Nếu email đã tồn tại trong cơ sở dữ liệu, ngừng xử lý và báo lỗi
+        toast.error("Email hoặc số điện thoại này đã được đăng ký.");
+        return;
+      }
+
+      // Nếu email không tồn tại, tiếp tục xử lý với Firebase
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          payload.email,
+          payload.password
+        );
+        const user = userCredential.user;
+
+        toast.promise(
+          new Promise((resolve, reject) => {
+            // Gửi email xác thực
+            sendEmailVerification(user)
+              .then(() => {
+                let isEmailVerified = false;
+                const interval = setInterval(async () => {
+                  await user.reload();
+                  if (user.emailVerified) {
+                    isEmailVerified = true;
+                    clearInterval(interval);
+
+                    // Đăng ký vào API hệ thống sau khi xác thực email
+                    apiRegister(payload)
+                      .then((response) => {
+                        if (response.success) {
+                          resolve(); // Xác thực thành công
+                          setIsLoading(false);
+
+                          Swal.fire({
+                            icon: "success",
+                            title: "Chúc mừng!",
+                            text: "Email đã được xác thực. Bạn có thể đăng nhập.",
+                            showConfirmButton: true,
+                            confirmButtonText: "Đi đến đăng nhập",
+                          }).then(({ isConfirmed }) => {
+                            if (isConfirmed) {
+                              setVariant("LOGIN");
+                            }
+                          });
+                        } else {
+                          reject(response.mes); // Đăng ký vào API thất bại
+                        }
+                      })
+                      .catch((error) => {
+                        reject(error.message); // Xử lý lỗi API
+                      });
+                  }
+                }, 3000); // Kiểm tra email sau mỗi 3 giây
+              })
+              .catch((error) => {
+                reject("Lỗi khi gửi email xác thực: " + error.message);
+              });
+          }),
+          {
+            pending: "Vui lòng kiểm tra email để xác thực tài khoản.",
+            success: "Đăng ký thành công. Email đã được xác thực!",
+            error: "Có lỗi xảy ra trong quá trình đăng ký.",
+          }
+        );
+      } catch (error) {
+        toast.error("Lỗi khi đăng ký tài khoản Firebase: " + error.message);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      toast.error("Lỗi khi kiểm tra thông tin: " + error.message);
+    }
   };
 
   return (
@@ -112,11 +139,6 @@ const Login = () => {
       onClick={(e) => e.stopPropagation()}
       className="bg-white relative text-base rounded-md px-6 py-8 w-[500px] flex flex-col items-center gap-4"
     >
-      {/* {isShowConfirmOTP && (
-        <div className="absolute inset-0 bg-white rounded-md">
-          <OTPVerifier cb={handleSubmit(handleRegister)} />
-        </div>
-      )} */}
       <h1 className="text-3xl font-josejinsans font-semibold tracking-tight">
         Chào mừng đến với REIS
       </h1>
@@ -196,20 +218,6 @@ const Login = () => {
                 required: "Trường này không được để trống",
               }}
               errors={errors}
-            />
-            <InputRadio
-              label="Loại tài khoản"
-              register={register}
-              id="roleCode"
-              validate={{ required: "Trường này không được để trống" }}
-              optionsClassname="grid grid-cols-3 gap-4"
-              errors={errors}
-              options={roles
-                ?.filter((el) => el.code !== "ROL1")
-                ?.map((el) => ({
-                  label: el.value,
-                  value: el.code,
-                }))}
             />
           </>
         )}

@@ -7,6 +7,13 @@ export const apiRegister = (data) =>
     data,
   });
 
+export const apiCheckEmailnPhone = (data) =>
+  axios({
+    url: "/auth/check-email-phone",
+    method: "post",
+    data,
+  });
+
 export const apiSignIn = (data) =>
   axios({
     url: "/auth/signin",

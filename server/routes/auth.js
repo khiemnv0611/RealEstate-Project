@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Joi = require("joi");
 const ctrls = require("../controllers/auth");
 const validateDto = require("../middlewares/validation");
-const passport = require('passport');
+const passport = require("passport");
 const {
   stringReq,
   numberReq,
@@ -10,7 +10,7 @@ const {
   array,
 } = require("../middlewares/joiSchema");
 
-require("../config/passport.config")
+require("../config/passport.config");
 
 // Phải thỏa các điều kiện của validateDto thì mới thực hiện
 router.post(
@@ -25,6 +25,17 @@ router.post(
     })
   ),
   ctrls.register
+);
+
+router.post(
+  "/check-email-phone",
+  validateDto(
+    Joi.object({
+      email: Joi.string().email().required(), // Xác thực email
+      phone: Joi.string().required(), // Xác thực số điện thoại (có thể thêm pattern nếu cần)
+    })
+  ),
+  ctrls.checkEmailnPhone
 );
 
 router.post(

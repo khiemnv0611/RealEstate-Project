@@ -86,12 +86,6 @@ const Personal = () => {
           label="Số điện thoại"
           required
           placeholder="Nhập số điện thoại..."
-          // readOnly={
-          //   !(
-          //     current?.userRoles?.length === 1 &&
-          //     current?.userRoles[0]?.roleCode === "ROL7"
-          //   )
-          // }
         />
         <InputForm
           id="email"
@@ -101,12 +95,7 @@ const Personal = () => {
           label="Email"
           required
           placeholder="Nhập email..."
-          readOnly={
-            !(
-              current?.userRoles?.length === 1 &&
-              current?.userRoles[0]?.roleCode === "ROL7"
-            )
-          }
+          readOnly
         />
         <InputForm
           id="address"
