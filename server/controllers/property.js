@@ -5,8 +5,8 @@ const { Sequelize, Op, DATE, where } = require("sequelize");
 const Status = {
   ACCEPT: "Đã duyệt",
   REJECT: "Bị hủy",
-  WAITING: "Chờ duyệt"
-}
+  WAITING: "Chờ duyệt",
+};
 
 module.exports = {
   // CREATE NEW PROPERTY
@@ -64,7 +64,7 @@ module.exports = {
     try {
       // Fetch user's current membership plan and post limit
       const user = await db.User.findByPk(uid, {
-        include: [{ model: db.MembershipPlans, as: 'membershipPlan' }],
+        include: [{ model: db.MembershipPlans, as: "membershipPlan" }],
       });
 
       if (!user) {
@@ -80,7 +80,7 @@ module.exports = {
       const propertyCount = await db.Property.count({
         where: {
           owner: uid,
-          status: { [Op.ne]: "Bị hủy" }
+          status: { [Op.ne]: "Bị hủy" },
         },
       });
 
@@ -158,8 +158,18 @@ module.exports = {
     }
   }),
   getProperties: asyncHandler(async (req, res) => {
-    const { limit, page, fields, name, sort, address, city, price, listingType, ...query } =
-      req.query;
+    const {
+      limit,
+      page,
+      fields,
+      name,
+      sort,
+      address,
+      city,
+      price,
+      listingType,
+      ...query
+    } = req.query;
     const options = {};
 
     query.status = "Đã duyệt";
@@ -181,7 +191,7 @@ module.exports = {
     }
 
     // Lọc theo loại "Bán", "Cho thuê" hoặc cả hai
-    if (listingType && listingType !== 'ALL') {
+    if (listingType && listingType !== "ALL") {
       query.listingType = listingType;
     }
 
@@ -202,6 +212,13 @@ module.exports = {
         Sequelize.fn("LOWER", Sequelize.col("Property.address")),
         "LIKE",
         `%${address.toLocaleLowerCase()}%`
+      );
+
+    if (city)
+      query.city = Sequelize.where(
+        Sequelize.fn("LOWER", Sequelize.col("Property.city")),
+        "LIKE",
+        `%${city.toLocaleLowerCase()}%`
       );
 
     //Sắp xếp
@@ -329,7 +346,7 @@ module.exports = {
                 attributes: ["id", "name", "duration", "postLimit", "postDate"],
                 as: "membershipPlan",
               },
-            ]
+            ],
           },
           {
             model: db.PropertyType,
@@ -342,7 +359,7 @@ module.exports = {
       return res.json({
         success: true,
         mes: response ? "Got." : "Cannot get properties.",
-        properties: response
+        properties: response,
       });
     } catch (error) {
       return res.status(500).json({
@@ -421,12 +438,12 @@ module.exports = {
 
     await property.update(
       {
-        status: "Bị hủy"
+        status: "Bị hủy",
       },
       {
         where: {
-          id: id
-        }
+          id: id,
+        },
       }
     );
 
@@ -480,13 +497,13 @@ module.exports = {
 
     try {
       const submissions = await db.Submission.findAll({
-        where: { propertyId: propertyId }
+        where: { propertyId: propertyId },
       });
 
       if (!submissions || submissions.length === 0) {
         return res.json({
           success: false,
-          mes: "No comments found for this property."
+          mes: "No comments found for this property.",
         });
       }
 
@@ -494,9 +511,9 @@ module.exports = {
 
       const users = await db.User.findAll({
         where: {
-          id: uids
+          id: uids,
         },
-        attributes: ["id", "name", "avatar"]
+        attributes: ["id", "name", "avatar"],
       });
 
       const userMap = users.reduce((acc, user) => {
@@ -507,16 +524,16 @@ module.exports = {
       const commentsWithReplies = await Promise.all(
         submissions.map(async (submission) => {
           const replyComments = await db.Comment.findAll({
-            where: { parentComment: submission.id }
+            where: { parentComment: submission.id },
           });
 
           const replyUids = replyComments.map((reply) => reply.uid);
 
           const replyUsers = await db.User.findAll({
             where: {
-              id: replyUids
+              id: replyUids,
             },
-            attributes: ["id", "name", "avatar"]
+            attributes: ["id", "name", "avatar"],
           });
 
           const replyUserMap = replyUsers.reduce((acc, user) => {
@@ -526,13 +543,13 @@ module.exports = {
 
           const repliesWithUsers = replyComments.map((reply) => ({
             ...reply.toJSON(),
-            rCommentedBy: replyUserMap[reply.uid] || null
+            rCommentedBy: replyUserMap[reply.uid] || null,
           }));
 
           return {
             ...submission.toJSON(),
             rCommentedBy: userMap[submission.uid] || null,
-            replies: repliesWithUsers
+            replies: repliesWithUsers,
           };
         })
       );
@@ -561,37 +578,40 @@ module.exports = {
     try {
       const response = await db.Property.update(
         {
-          status: status
+          status: status,
         },
         {
           where: {
-            id: id
-          }
+            id: id,
+          },
         }
-      )
+      );
 
       if (response) {
         const sender = await db.User.findByPk(uid, {
           attributes: {
             exclude: ["password"],
-          }
+          },
         });
 
-        const message = status == Status.ACCEPT || status == Status.REJECT ? "Bài đăng của bạn đã được duyệt, nhấn để xem bài đăng" : "Bài đăng của bạn không được xét duyệt";
+        const message =
+          status == Status.ACCEPT || status == Status.REJECT
+            ? "Bài đăng của bạn đã được duyệt, nhấn để xem bài đăng"
+            : "Bài đăng của bạn không được xét duyệt";
 
         const notify = db.Notification.create({
           message: message,
           senderId: uid,
           receiverId: response.owner,
-          propertyId: req.params.id
-        })
+          propertyId: req.params.id,
+        });
 
-        console.log(notify)
+        console.log(notify);
 
         return res.json({
           success: true,
           mes: "Update successfully.",
-          data: response
+          data: response,
         });
       }
     } catch (error) {
@@ -613,19 +633,22 @@ module.exports = {
 
         if (property) {
           await property.update({
-            status: status
+            status: status,
           });
 
-          const message = status == Status.ACCEPT || status == Status.REJECT ? "Bài đăng của bạn đã được duyệt, nhấn để xem bài đăng" : "Bài đăng của bạn không được xét duyệt";
+          const message =
+            status == Status.ACCEPT || status == Status.REJECT
+              ? "Bài đăng của bạn đã được duyệt, nhấn để xem bài đăng"
+              : "Bài đăng của bạn không được xét duyệt";
 
           const notify = db.Notification.create({
             message: message,
             senderId: uid,
             receiverId: property.owner,
-            propertyId: propertyId
-          })
+            propertyId: propertyId,
+          });
 
-          console.log(notify)
+          console.log(notify);
         } else {
           console.log(`Không tìm thấy property với ID: ${propertyId}`);
         }
@@ -650,7 +673,7 @@ module.exports = {
       return res.json({
         success: true,
         mes: response ? "Got." : "Cannot get properties.",
-        count: response
+        count: response,
       });
     } catch (error) {
       return res.status(500).json({
@@ -659,5 +682,5 @@ module.exports = {
         error: error.message,
       });
     }
-  })
+  }),
 };

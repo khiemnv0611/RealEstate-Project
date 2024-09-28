@@ -108,7 +108,10 @@ const PropertyDetail = () => {
               </h1>
               <span className="flex items-center">
                 <GrLocation size={20} />
-                <span>{propertyDetail.address}</span>
+                <span>
+                  {propertyDetail.address}
+                  {propertyDetail.city ? `, ${propertyDetail.city}` : ""}
+                </span>
               </span>
               <div
                 dangerouslySetInnerHTML={{
@@ -194,7 +197,11 @@ const PropertyDetail = () => {
                   Bình luận
                 </span>
                 {current ? (
-                  <CommentContainer key={propertyDetail.id} propertyId={propertyDetail.id} receiverId={propertyDetail.owner} />
+                  <CommentContainer
+                    key={propertyDetail.id}
+                    propertyId={propertyDetail.id}
+                    receiverId={propertyDetail.owner}
+                  />
                 ) : (
                   <p className="text-red-500">
                     Bạn cần đăng nhập để sử dụng tính năng này!!!

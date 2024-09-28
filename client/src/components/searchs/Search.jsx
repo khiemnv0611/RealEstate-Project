@@ -10,6 +10,7 @@ import { createSearchParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import clsx from "clsx";
 import { useAppStore } from "~/store/useAppStore";
+import { cityDistricts } from "../../utils/constants";
 
 const Search = ({ navigate, direction = "horizontal" }) => {
   const {
@@ -21,10 +22,15 @@ const Search = ({ navigate, direction = "horizontal" }) => {
   const { setModal } = useAppStore();
   const { propertyTypes } = usePropertiesStore();
   const [isShowPopupPrice, setIsShowPopupPrice] = useState(false);
+
+  const [selectedCity, setSelectedCity] = useState("");
+  const cities = Object.keys(cityDistricts);
+
   const handleSearchParams = (data) => {
-    const { start, end, address, propertyType } = data;
+    const { start, end, address, city, propertyType } = data;
     const params = new Object();
     if (address) params.address = address;
+    if (selectedCity) params.city = selectedCity;
     if (propertyType) params.propertyTypeId = data.propertyType.id;
     if (start && !end) params.price = ["gte", +start]; // greater than equal
     if (end && !start) params.price = ["lte", +end]; // less than equal
@@ -45,7 +51,7 @@ const Search = ({ navigate, direction = "horizontal" }) => {
         direction === "vertical"
           ? "flex flex-col gap-4 h-fit w-[400px] px-8"
           : "",
-        direction === "horizontal" ? "grid grid-cols-4 h-[8em] w-[1096px]" : ""
+        direction === "horizontal" ? "grid grid-cols-5 h-[8em] w-[1400px]" : ""
       )}
       onClick={(e) => e.stopPropagation()}
     >
@@ -65,6 +71,33 @@ const Search = ({ navigate, direction = "horizontal" }) => {
           containerClassname={direction === "vertical" ? "w-full" : "w-[15em]"}
           inputClassname="rounded-md border border-gray-300"
         />
+      </SearchItem>
+      <SearchItem
+        className={
+          direction === "vertical"
+            ? "items-start justify-start border-none"
+            : "-mt-2"
+        }
+      >
+        <label className="font-bold text-main-700">Thành phố</label>
+        <select
+          id="city"
+          value={selectedCity}
+          onChange={(e) => setSelectedCity(e.target.value)}
+          className={twMerge(
+            clsx(
+              "h-[38px] text-sm rounded-md border-gray-300",
+              direction === "vertical" ? "w-full" : "w-[15em]"
+            )
+          )}
+        >
+          <option value="">Chọn thành phố / tỉnh</option>
+          {cities.map((city, index) => (
+            <option key={index} value={city}>
+              {city}
+            </option>
+          ))}
+        </select>
       </SearchItem>
       <SearchItem
         className={
