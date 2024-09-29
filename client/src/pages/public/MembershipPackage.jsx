@@ -119,11 +119,15 @@ const MembershipPackage = () => {
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-1">
                     <span className="font-semibold">{plan.postLimit}</span>
-                    <span>tin đăng / tuần</span>
+                    <span>tin đăng</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <span>Thời gian mỗi bài:</span>
-                    <span className="font-semibold">{plan.postDate}</span>
+                    <span className="font-semibold">{plan.postDate} ngày</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span>Thời hạn gói:</span>
+                    <span className="font-semibold">{plan.duration} ngày</span>
                   </div>
                 </div>
               </div>

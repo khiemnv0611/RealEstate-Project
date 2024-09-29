@@ -19,27 +19,20 @@ const Dashboard = () => {
     localStorage.setItem("activeTab", activeTab);
   }, [activeTab]);
 
-  const {
-    register,
-    formState: { errors },
-    watch,
-    containerClassname,
-  } = useForm();
-
   // Callback function to get data
-  const [ postCount, setPostCount ] = useState(0);
-  const [ userCount, setUserCount ] = useState(0);
+  const [postCount, setPostCount] = useState(0);
+  const [userCount, setUserCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       const posts = await apiGetPropertiesCount();
       const users = await apiGetUsersCount();
-      setPostCount(posts.success ? posts.count : 0)
-      setUserCount(users.success ? users.count : 0)
-    }
+      setPostCount(posts.success ? posts.count : 0);
+      setUserCount(users.success ? users.count : 0);
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   return (
     <div>
@@ -102,8 +95,10 @@ const Dashboard = () => {
                 />
               </div>
               <div className="flex flex-col justify-between">
-                <h4 className="font-semibold text-2xl">Role.Count</h4>
-                <span className="text-gray-500">Vai trò</span>
+                <h4 className="font-semibold text-2xl">
+                  MembershipPlans.Count
+                </h4>
+                <span className="text-gray-500">Gói hội viên</span>
               </div>
             </div>
           </div>

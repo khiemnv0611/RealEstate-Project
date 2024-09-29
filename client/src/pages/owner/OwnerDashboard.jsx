@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import path from "~/utils/path";
 import { useUserStore } from "~/store/useUserStore";
+import { GrLocation } from "react-icons/gr";
 
 const Dashboard = () => {
   const [mode, setMode] = useState("PENDING");
@@ -71,7 +72,7 @@ const Dashboard = () => {
 
   return (
     <div className="bg-gray-200 px-8 h-full">
-      <Title title={`CÁC DỰ ÁN ĐÃ ĐĂNG ${properties.filter((property) => property.status !== "Bị hủy").length}/${current.membershipPlan.postLimit}`}></Title>
+      <Title title={"CÁC DỰ ÁN ĐÃ ĐĂNG "}></Title>
       <div className="flex items-center justify-center gap-4">
         <Button
           onClick={() => setMode("PENDING")}
@@ -107,7 +108,27 @@ const Dashboard = () => {
           Bị hủy
         </Button>
       </div>
-
+      <div className="px-8 flex flex-col gap-2">
+        <div>
+          <span className="font-bold text-gray-600">
+            Tổng bài hiện có (không bao gồm bị hủy):{" "}
+          </span>
+          <span className="text-green-700 font-semibold">
+            {
+              properties.filter((property) => property.status !== "Bị hủy")
+                .length
+            }
+          </span>
+        </div>
+        <div>
+          <span className="font-bold text-gray-600">
+            Giới hạn bài đăng trong tài khoản:{" "}
+          </span>
+          <span className="text-red-700 font-semibold">
+            {current.membershipPlan.postLimit}
+          </span>
+        </div>
+      </div>
       {filteredProperties?.map((property) => (
         <div className="p-8" key={property.id}>
           <div className="border shadow-lg rounded-md p-4 flex items-center justify-between bg-white">
@@ -130,27 +151,37 @@ const Dashboard = () => {
                 >
                   {property.name}
                 </Link>
-                <span className="flex items-center gap-3">
-                  <FcMoneyTransfer size={18} />
-                  <span>{property.price}</span>
-                </span>
-                <div className="flex items-center gap-4">
-                  <span className="flex items-center gap-2">
-                    <IoBedOutline size={22} />
-                    <span>{property.bedRoom}</span>
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <PiBathtubDuotone size={22} />
-                    <span>{property.bathRoom}</span>
-                  </span>
+                <div className="flex items-center gap-20">
                   <span className="flex items-center gap-3">
-                    <SlSizeFullscreen size={17} />
-                    <span>
-                      {property.propertySize}
-                      <span className="align-super text-xs">m²</span>
-                    </span>
+                    <FcMoneyTransfer size={18} />
+                    <span>{property.price}</span>
                   </span>
+                  <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-2">
+                      <IoBedOutline size={22} />
+                      <span>{property.bedRoom}</span>
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <PiBathtubDuotone size={22} />
+                      <span>{property.bathRoom}</span>
+                    </span>
+                    <span className="flex items-center gap-3">
+                      <SlSizeFullscreen size={17} />
+                      <span>
+                        {property.propertySize}
+                        <span className="align-super text-xs">m²</span>
+                      </span>
+                    </span>
+                  </div>
                 </div>
+                <span className="flex items-center gap-3">
+                  <GrLocation size={20} />
+                  <span>
+                    {property.address}
+                    <span>{property.city ? `, ${property.city}` : ""}</span>
+                  </span>
+                </span>
+
                 <span>
                   Đã đăng vào lúc{" "}
                   <span className="font-semibold">
@@ -177,15 +208,19 @@ const Dashboard = () => {
               >
                 <span>{property.status}</span>
               </div>
-              <Button className="font-semibold border border-main-600 bg-white text-main-600 hover:underline hover:bg-main-600 hover:text-white">
-                Chỉnh sửa bài đăng
-              </Button>
-              <Button
-                onClick={() => handleDeleteProperty(property.id)}
-                className="font-semibold border border-red-600 bg-white text-red-600 hover:underline hover:bg-red-600 hover:text-white"
-              >
-                Xóa bài đăng
-              </Button>
+              {property.status === "Chờ duyệt" && (
+                <Button className="font-semibold border border-main-600 bg-white text-main-600 hover:underline hover:bg-main-600 hover:text-white">
+                  Chỉnh sửa bài đăng
+                </Button>
+              )}
+              {property.status !== "Bị hủy" && (
+                <Button
+                  onClick={() => handleDeleteProperty(property.id)}
+                  className="font-semibold border border-red-600 bg-white text-red-600 hover:underline hover:bg-red-600 hover:text-white"
+                >
+                  Xóa bài đăng
+                </Button>
+              )}
             </div>
           </div>
         </div>

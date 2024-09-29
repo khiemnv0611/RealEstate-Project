@@ -50,7 +50,7 @@ const UserSidebar = () => {
   };
 
   return (
-    <div className="w-full bg-main-700 text-white sticky top-0 h-screen">
+    <div className="w-full bg-main-700 text-white sticky top-0 min-h-screen">
       <div className="w-full p-4 flex flex-col justify-center items-center gap-2">
         <img
           src={current?.avatar || "/user.svg"}
@@ -70,25 +70,33 @@ const UserSidebar = () => {
           </span>
           <div className="flex items-center justify-start w-full gap-2">
             <span className="font-semibold">Gói hội viên:</span>
-            <span className={clsx(
-              "px-2 rounded-2xl",
-              current?.membershipPlan?.id == 1 && "bg-gray-300",
-              current?.membershipPlan?.id == 2 && "bg-blue-300",
-              current?.membershipPlan?.id == 3 && "bg-purple-300",
-            )}>
+            <span
+              className={clsx(
+                "px-2 rounded-2xl",
+                current?.membershipPlan?.id == 1 && "bg-gray-300",
+                current?.membershipPlan?.id == 2 && "bg-blue-300",
+                current?.membershipPlan?.id == 3 && "bg-purple-300"
+              )}
+            >
               {current?.membershipPlan?.name}
             </span>
             {/*Miễn phí: gray, Cơ bản: yellow, Tiêu chuẩn: blue, Cao cấp: purple*/}
           </div>
           {/*Không hiện ở gói miễn phí*/}
-          {(current?.membershipPlan?.id != 1) && (
-
+          {current?.membershipPlan?.id != 1 && (
             <div className="flex items-center justify-between w-full">
               <div className="flex gap-2">
                 <span className="font-semibold">Thời hạn:</span>
-                <span>{current?.planRegisterDate && current?.membershipPlan?.duration
-                  ? new Date(new Date(current.planRegisterDate).getTime() + current.membershipPlan.duration * 24 * 60 * 60 * 1000).toLocaleDateString()
-                  : ""}</span> {/*endDate = startDate + 30*/}
+                <span>
+                  {current?.planRegisterDate &&
+                  current?.membershipPlan?.duration
+                    ? new Date(
+                        new Date(current.planRegisterDate).getTime() +
+                          current.membershipPlan.duration * 24 * 60 * 60 * 1000
+                      ).toLocaleDateString()
+                    : ""}
+                </span>{" "}
+                {/*endDate = startDate + 30*/}
               </div>
               <IconButton
                 onClick={handleClick}

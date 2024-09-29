@@ -88,7 +88,7 @@ module.exports = {
       if (propertyCount >= postLimit) {
         return res.status(400).json({
           success: false,
-          mes: `You have exceeded your post limit of ${postLimit} properties.`,
+          mes: `Bạn đã vượt quá giới hạn bài đăng là ${postLimit} bài.`,
         });
       }
 

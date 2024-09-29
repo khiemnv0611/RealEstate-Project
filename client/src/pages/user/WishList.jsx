@@ -9,6 +9,7 @@ import { getWishListByCurrentUser, addPropertyToWishList } from "~/apis/user";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import path from "~/utils/path";
+import { GrLocation } from "react-icons/gr";
 
 const WishList = () => {
   const [properties, setProperties] = useState([]);
@@ -27,7 +28,9 @@ const WishList = () => {
 
   const handleFavoriteToggle = async (property) => {
     try {
-      const response = await addPropertyToWishList(property.id, { owner: property.rOwner.id });
+      const response = await addPropertyToWishList(property.id, {
+        owner: property.rOwner.id,
+      });
       if (response.success) {
         toast.success("Đã xóa khỏi danh mục yêu thích.");
         const refresheddata = await getWishListByCurrentUser();
@@ -94,20 +97,13 @@ const WishList = () => {
                   </span>
                 </span>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex justify-center items-center gap-2">
-                  <span>{property.rOwner.name}</span>
-                  <span className="px-3 py-1 text-sm text-white flex items-center justify-center bg-purple-600">
-                    Chủ sở hữu
-                  </span>
-                </div>
-                <div className="flex justify-center items-center gap-2">
-                  <span>{property.rPostedBy.name}</span>
-                  <span className="px-3 py-1 text-sm text-white flex items-center justify-center bg-green-600">
-                    Môi giới
-                  </span>
-                </div>
-              </div>
+              <span className="flex items-center gap-3">
+                <GrLocation size={20} />
+                <span>
+                  {property.address}
+                  <span>{property.city ? `, ${property.city}` : ""}</span>
+                </span>
+              </span>
             </div>
           </div>
         </div>

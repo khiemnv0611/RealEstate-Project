@@ -106,7 +106,7 @@ const PropertyDetail = () => {
               <h1 className="font-bold text-3xl line-clamp-2">
                 {propertyDetail.name}
               </h1>
-              <span className="flex items-center">
+              <span className="flex items-center gap-3">
                 <GrLocation size={20} />
                 <span>
                   {propertyDetail.address}

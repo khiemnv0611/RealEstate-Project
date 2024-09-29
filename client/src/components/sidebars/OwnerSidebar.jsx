@@ -16,7 +16,7 @@ const OwnerSidebar = () => {
   };
 
   return (
-    <div className="w-full bg-main-700 text-white sticky top-0 h-screen">
+    <div className="w-full bg-main-700 text-white sticky top-0 min-h-screen">
       <div className="w-full p-10 flex items-center justify-center">
         <img src="/logo_white.png" alt="logo" />
       </div>
