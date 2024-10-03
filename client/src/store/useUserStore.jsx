@@ -7,12 +7,14 @@ export const useUserStore = create(
     (set, get) => ({
       token: null,
       current: null,
+      isAvailable: null,
       roles: [],
       setToken: (token) => set(() => ({ token })),
       getCurrent: async () => {
         const response = await apiGetCurrent();
+        // console.log(response)
         if (response.success)
-          return set(() => ({ current: response.currentUser }));
+          return set(() => ({ current: response.currentUser, isAvailable: response.currentUser.isAvailable }));
         else return set(() => ({ current: null }));
       },
       getRoles: async () => {

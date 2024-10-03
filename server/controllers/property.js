@@ -576,24 +576,13 @@ module.exports = {
     const { uid } = req.user;
 
     try {
-      const response = await db.Property.update(
-        {
-          status: status,
-        },
-        {
-          where: {
-            id: id,
-          },
-        }
-      );
+      const response = await db.Property.findByPk(id);
+
+      response.status = status;
+
+      await response.save()
 
       if (response) {
-        const sender = await db.User.findByPk(uid, {
-          attributes: {
-            exclude: ["password"],
-          },
-        });
-
         const message =
           status == Status.ACCEPT || status == Status.REJECT
             ? "Bài đăng của bạn đã được duyệt, nhấn để xem bài đăng"

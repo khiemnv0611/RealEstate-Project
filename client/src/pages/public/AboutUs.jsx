@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BreadCrumb } from "~/components";
+import { useUserStore } from "~/store/useUserStore";
 
 const AboutUs = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -7,6 +8,10 @@ const AboutUs = () => {
   const handleImageLoad = () => {
     setIsImageLoaded(true);
   };
+
+  const { isAvailable } = useUserStore();
+
+  console.log(isAvailable)
 
   return (
     <div className="w-full">
@@ -26,7 +31,9 @@ const AboutUs = () => {
           </div>
         )}
       </div>
-      <div className="w-main mx-auto my-16"></div>
+      <div className="w-main mx-auto my-16">
+        <h1>{isAvailable ? 'HAHA' : 'ACCOUNT HAS BEEN LOCKED'}</h1>
+      </div>
     </div>
   );
 };
