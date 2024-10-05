@@ -73,14 +73,14 @@ const UserSidebar = () => {
             <span
               className={clsx(
                 "px-2 rounded-2xl",
-                current?.membershipPlan?.id == 1 && "bg-gray-300",
-                current?.membershipPlan?.id == 2 && "bg-blue-300",
-                current?.membershipPlan?.id == 3 && "bg-purple-300"
+                current?.membershipPlan?.id == 1 && "bg-gray-400", // Miễn phí
+                current?.membershipPlan?.id == 2 && "bg-blue-400", // Cơ bản
+                current?.membershipPlan?.id == 3 && "bg-purple-400", // Tiêu chuẩn
+                current?.membershipPlan?.id == 4 && "bg-yellow-400" // Cao cấp
               )}
             >
               {current?.membershipPlan?.name}
             </span>
-            {/*Miễn phí: gray, Cơ bản: yellow, Tiêu chuẩn: blue, Cao cấp: purple*/}
           </div>
           {/*Không hiện ở gói miễn phí*/}
           {current?.membershipPlan?.id != 1 && (
@@ -119,7 +119,7 @@ const UserSidebar = () => {
           )}
           {/**/}
           <div
-            className="mt-2 bg-main-700 text-white border rounded-md w-52 py-2 shadow-lg hover:cursor-pointer hover:text-main-700 hover:bg-white hover:shadow-2xl hover:border-blue-700"
+            className="mt-2 bg-main-700 text-white border rounded-md w-[90%] py-2 shadow-lg hover:cursor-pointer hover:text-main-700 hover:bg-white hover:shadow-2xl hover:border-blue-700"
             onClick={() => navigate(`/${path.USER_LAYOUT}/${path.DEPOSIT}`)}
           >
             <div className="flex items-center justify-center gap-4">

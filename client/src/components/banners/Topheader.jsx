@@ -19,6 +19,9 @@ import { PiUserGearFill } from "react-icons/pi";
 import path from "~/utils/path";
 
 const Topheader = ({ location }) => {
+  const { isAvailable } = useUserStore();
+  console.log(isAvailable);
+
   const navigate = useNavigate();
   const { current, logOut } = useUserStore();
   const optionBox = useRef();
@@ -53,6 +56,11 @@ const Topheader = ({ location }) => {
           <span className="text-gray-300">example@mail.com</span>
         </span>
       </span>
+      {!isAvailable && (
+        <div className="my-16 text-lg font-bold animate-pulse bg-red-600 text-white p-4 rounded">
+          Tài khoản của bạn đã bị khóa !!!
+        </div>
+      )}
       <div className="flex items-center gap-6">
         <div className="flex items-center text-gray-300 gap-6">
           <FaFacebookF />
