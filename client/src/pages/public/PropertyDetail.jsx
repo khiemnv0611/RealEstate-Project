@@ -189,7 +189,7 @@ const PropertyDetail = () => {
               <div className="flex flex-col gap-2">
                 <span className="font-bold text-lg text-main-600">Vị trí</span>
                 <div className="bg-gray-300 h-[600px] w-full">
-                  {/* <Map address={propertyDetail.address} /> */}
+                  <Map address={propertyDetail.address} />
                 </div>
               </div>
               <div className="flex flex-col gap-2">

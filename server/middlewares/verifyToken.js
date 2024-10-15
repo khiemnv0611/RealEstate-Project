@@ -33,7 +33,7 @@ const isOwner = (req, res, next) => {
 const isAdmin = (req, res, next) => {
   const { roleCodes } = req.user;
 
-  const hasAdminRole = roleCodes.some(role => role.roleCode === 'ROL1');
+  const hasAdminRole = roleCodes.some((role) => role.roleCode === "ROL1");
 
   if (!hasAdminRole) {
     return throwErrorWithStatus(401, "Bạn không có quyền truy cập.", res, next);

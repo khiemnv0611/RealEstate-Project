@@ -8,7 +8,7 @@ const properties = require("./property");
 const propertyType = require("./propertyType");
 // const momoRoutes = require("./momo");
 const paymentRoutes = require("./payment");
-const membership = require("./membership")
+const membership = require("./membership");
 
 const initRoutes = (app) => {
   app.use("/api/auth", auth);

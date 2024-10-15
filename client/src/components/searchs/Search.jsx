@@ -46,7 +46,7 @@ const Search = ({ navigate, direction = "horizontal" }) => {
     <form
       className={twMerge(
         clsx(
-          "bg-white py-4 grid grid-cols-4 rounded-md shadow-lg mx-auto -mt-[4em] relative z-20"
+          "bg-white py-4 grid grid-cols-4 rounded-md shadow-lg mx-auto -mt-[300px] relative z-20"
         ),
         direction === "vertical"
           ? "flex flex-col gap-4 h-fit w-[400px] px-8"

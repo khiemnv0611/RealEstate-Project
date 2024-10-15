@@ -127,7 +127,7 @@ export const cityDistricts = {
   "Thành phố Hồ Chí Minh": {
     "Quận 1": ["Phường 1", "Phường 2"],
     "Quận 2": ["Phường 3", "Phường 4"],
-    "Quận 3": ["Phường 7", "Phường 8"],
+    "Quận 3": ["Phường 6", "Phường 8"],
     "Bình Tân": ["Phường 5", "Phường 6"],
     "Quận 7": ["Phường 9", "Phường 10"],
     "Thủ Đức": ["Phường Linh Chiểu", "Phường Linh Đông"],

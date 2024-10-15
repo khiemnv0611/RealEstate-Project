@@ -18,7 +18,7 @@ import { ImageList, ImageListItem } from "@mui/material";
 
 const ManagePosts = ({ onChangeDataCount }) => {
   const [page, setPage] = useState(0); // Quản lý trang hiện tại
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Số lượng hàng mỗi trang
+  const [rowsPerPage, setRowsPerPage] = useState(3); // Số lượng hàng mỗi trang
   const [searchPostedBy, setSearchPostedBy] = useState(""); // Tìm kiếm tên người đăng
   const [selectedPropertyType, setSelectedPropertyType] = useState(null); // Loại hình dự án
   const [selectedListingType, setSelectedListingType] = useState(""); // Loại giao dịch
